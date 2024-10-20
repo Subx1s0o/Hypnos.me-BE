@@ -8,16 +8,25 @@ datasource db {
 }
 
 model Product {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title    String
-  createdAt DateTime @db.Date
-  updatedAt DateTime @updatedAt
-  image       String
-  price Int
-  priceType PriceType
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  title             String
+  createdAt         DateTime    @default(now()) @db.Date
+  updatedAt         DateTime    @updatedAt
+  image             String
+  price             Int
+  isPriceForPair    Boolean     @default(false)
+  description       String
+  
+  width             Float?      
+  thickness         Float?    
+  weight            Float?     
+  pairWeight        Float?     
+
+  goldSamples       GoldSample[] 
 }
 
-enum PriceType {
-  PER_UNIT
-  PER_PAIR
+type GoldSample {
+  sampleValue       String     
+  weightMale        Float        
+  weightFemale      Float       
 }
