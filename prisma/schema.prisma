@@ -7,10 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Song {
+model Product {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  author    String
+  title    String
   createdAt DateTime @db.Date
-  title     String
-  url       String
+  updatedAt DateTime @updatedAt
+  image       String
+  price Int
+  priceType PriceType
+}
+
+enum PriceType {
+  PER_UNIT
+  PER_PAIR
 }

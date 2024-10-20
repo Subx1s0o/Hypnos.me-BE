@@ -1,29 +1,25 @@
-import PrismaService from '@lib/common/prisma/prisma.service';
-import {
-  CACHE_MANAGER,
-  CacheInterceptor,
-  CacheKey,
-} from '@nestjs/cache-manager';
-import { Controller, Get, Inject, UseInterceptors } from '@nestjs/common';
-import { Cache } from 'cache-manager';
+import { CacheService, PrismaService } from '@lib/common';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
+import { Controller, Get, UseInterceptors } from '@nestjs/common';
 
 @Controller('goods')
 export class GoodsController {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(CACHE_MANAGER) private readonly cache: Cache,
+    private readonly cache: CacheService,
   ) {}
 
   @Get()
   @UseInterceptors(CacheInterceptor)
   @CacheKey('goods')
   async getAllGoods() {
-    return this.prisma.song.findMany();
+    const goods = await this.prisma.product.findMany();
+    return goods;
   }
 
   @Get('cache')
   async getCache() {
-    return await this.cache.store.keys();
+    return await this.cache.getKeys();
   }
 
   @Get('reset')
