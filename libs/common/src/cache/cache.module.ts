@@ -9,7 +9,7 @@ import { CacheService } from './cache.service';
     NestCacheModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         store: redisStore,
-        url: configService.get('REDIS_STORE'),
+        url: configService.get('REDIS_STORE') as string,
         no_ready_check: true,
       }),
       inject: [ConfigService],

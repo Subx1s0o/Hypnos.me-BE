@@ -1,17 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
-
-export type Config = Record<
-  'DATABASE_URL' | 'REDIS_STORE' | 'PORT',
-  string | number
->;
+import { ConfigType } from 'types';
 
 @Injectable()
 export class ConfigService {
   constructor(private readonly nestConfigService: NestConfigService) {}
 
-  get<T extends keyof Config>(key: T): Config[T] {
+  get<T extends keyof ConfigType>(key: T): ConfigType[T] {
     const value = this.nestConfigService.get<T>(key);
-    return value as Config[T];
+    return value as ConfigType[T];
   }
 }
