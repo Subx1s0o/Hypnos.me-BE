@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { TokensResponse } from 'types';
 import { AuthService } from './auth.service';
+import { RefreshTokenDto } from './dtos/refreshToken.dto';
 import { SignInDto } from './dtos/signIn.dto';
 import { SignUpDto } from './dtos/signUp.dto';
 
@@ -19,7 +20,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Body() refreshToken: string): Promise<TokensResponse> {
-    return await this.authService.refresh(refreshToken);
+  async refresh(@Body() data: RefreshTokenDto): Promise<TokensResponse> {
+    return await this.authService.refresh(data.refreshToken);
   }
 }
