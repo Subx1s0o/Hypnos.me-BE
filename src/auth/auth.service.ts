@@ -25,6 +25,12 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
+      accessTokenValidUntil: new Date(
+        new Date().setMinutes(new Date().getMinutes() + 30),
+      ),
+      refreshTokenValidUntil: new Date(
+        new Date().setDate(new Date().getDate() + 5),
+      ),
     };
   }
 
