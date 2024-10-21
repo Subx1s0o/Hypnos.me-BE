@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { TokensResponse } from 'types';
 import { AuthService } from './auth.service';
 import { RefreshTokenDto } from './dtos/refreshToken.dto';
@@ -14,11 +14,13 @@ export class AuthController {
     return await this.authService.signUp(data);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   async signIn(@Body() data: SignInDto): Promise<TokensResponse> {
     return await this.authService.signIn(data);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('refresh')
   async refresh(@Body() data: RefreshTokenDto): Promise<TokensResponse> {
     return await this.authService.refresh(data.refreshToken);
