@@ -5,9 +5,12 @@
     "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/config": "^3.2.3",
     "cache-manager": "^5.4.0",
-    "cache-manager-redis-store": "^2.0.0"
+    "cache-manager-redis-store": "^2.0.0",
+    "@nestjs-modules/mailer": "^2.0.2",
+    "nodemailer": "^6.9.15"
   },
   "devDependencies": {
-    "@types/cache-manager-redis-store": "^2.0.4"
+    "@types/cache-manager-redis-store": "^2.0.4",
+    "@types/nodemailer": "^6.4.16"
   }
 }

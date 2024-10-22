@@ -44,10 +44,10 @@ export class AuthController {
     @Body() data: ChangePasswordDto,
     @Req() req: Request & { user: string },
   ): Promise<any> {
-    const userID = req.user; // Отримуємо ID користувача
+    const userID = req.user;
 
     if (!userID) {
-      throw new BadRequestException('User ID is required'); // Переконайтеся, що ID не undefined
+      throw new BadRequestException('User ID is required');
     }
     return await this.authService.changePassword(
       data.oldPassword,

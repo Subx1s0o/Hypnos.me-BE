@@ -159,7 +159,6 @@ export class AuthService {
       );
     }
     const hashedPassword = await hash(newPassword, 8);
-    console.log(hashedPassword);
 
     try {
       await this.prismaService.user.update({
