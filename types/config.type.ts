@@ -5,6 +5,7 @@ export type ConfigType = Record<
   | 'JWT_SECRET'
   | 'MAILER_HOST'
   | 'MAILER_USERNAME'
-  | 'MAILER_PASSWORD',
+  | 'MAILER_PASSWORD'
+  | 'MAILER_FROM',
   string | number
 >;

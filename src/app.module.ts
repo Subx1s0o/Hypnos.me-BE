@@ -5,6 +5,13 @@ import { GoodsModule } from './goods/goods.module';
 import { PromocodesModule } from './promocodes/promocodes.module';
 import { UserModule } from './user/user.module';
 @Module({
-  imports: [GoodsModule, PrismaModule, ConfigModule, AuthModule, PromocodesModule, UserModule],
+  imports: [
+    GoodsModule,
+    PrismaModule,
+    ConfigModule,
+    AuthModule,
+    PromocodesModule,
+    UserModule,
+  ],
 })
 export class AppModule {}
