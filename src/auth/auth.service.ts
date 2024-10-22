@@ -2,7 +2,9 @@ import { PrismaService } from '@lib/common';
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -128,5 +130,54 @@ export class AuthService {
     }
 
     return this.generateTokens(verified.sub);
+  }
+
+  async changePassword(
+    oldPasssword: string,
+    newPassword: string,
+    userID: string,
+  ) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userID },
+    });
+
+    if (!user) {
+      throw new BadRequestException('User does not exist');
+    }
+
+    if (oldPasssword === newPassword) {
+      throw new BadRequestException(
+        'The new password must be different from the old password',
+      );
+    }
+
+    const verifiedPassword = await compare(oldPasssword, user.password);
+
+    if (!verifiedPassword) {
+      throw new ForbiddenException(
+        "The old password doesn't match with real password",
+      );
+    }
+    const hashedPassword = await hash(newPassword, 8);
+    console.log(hashedPassword);
+
+    try {
+      await this.prismaService.user.update({
+        where: { id: userID },
+        data: {
+          password: hashedPassword,
+        },
+      });
+    } catch {
+      throw new InternalServerErrorException(
+        'Error while changing the password, please try again later',
+      );
+    }
+
+    return {
+      status: 'OK',
+      message: 'The password is successfully changed',
+      statusCode: 200,
+    };
   }
 }
