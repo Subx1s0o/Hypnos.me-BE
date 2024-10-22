@@ -1,24 +1,29 @@
-import { PrismaService } from '@lib/common';
+import { ConfigService, PrismaService } from '@lib/common';
+import { MailerService } from '@nestjs-modules/mailer';
 import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { TokensResponse } from 'types';
 import { v4 as uuid } from 'uuid';
-import { SignInDto } from './dtos/signIn.dto';
-import { SignUpDto } from './dtos/signUp.dto';
+import { SignInDto, SignUpDto } from './dtos';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prismaService: PrismaService,
+    private readonly mailer: MailerService,
+    private readonly config: ConfigService,
   ) {}
 
   private generateTokens(id: string): TokensResponse {
@@ -125,7 +130,7 @@ export class AuthService {
 
     if (!verified) {
       throw new UnauthorizedException(
-        'The Token is Wrong or Expired, Please Sign-In',
+        'The Token is Invalid or Expired, Please Sign-In',
       );
     }
 
@@ -173,10 +178,72 @@ export class AuthService {
       );
     }
 
-    return {
-      status: 'OK',
-      message: 'The password is successfully changed',
-      statusCode: 200,
-    };
+    throw new HttpException(
+      'The password is successfully changed',
+      HttpStatus.OK,
+    );
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.prismaService.users.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new BadRequestException("The user wasn't found, Please Sign-Up");
+    }
+
+    const token = this.jwtService.sign({ id: user.id }, { expiresIn: '20m' });
+
+    try {
+      await this.mailer.sendMail({
+        from: this.config.get('MAILER_FROM') as string,
+        to: email,
+        text: token,
+      });
+    } catch {
+      throw new InternalServerErrorException(
+        `Error while sending email to ${email}`,
+      );
+    }
+
+    throw new HttpException(
+      `The email was successfully sended to ${email}`,
+      HttpStatus.OK,
+    );
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const verified = this.jwtService.verify(token);
+
+    if (!verified) {
+      throw new BadRequestException('The Token is Invalid or Expired');
+    }
+
+    const user = await this.prismaService.users.findUnique({
+      where: { id: verified.id },
+    });
+
+    if (!user) {
+      throw new NotFoundException("The User Wasn't Found, try Sign-Up first");
+    }
+
+    const hashPassword = await hash(newPassword, 8);
+
+    try {
+      await this.prismaService.users.update({
+        where: { id: verified.id },
+        data: {
+          password: hashPassword,
+        },
+      });
+    } catch {
+      throw new InternalServerErrorException('Error while updating User');
+    }
+
+    throw new HttpException(
+      'The password was successfully reset',
+      HttpStatus.OK,
+    );
   }
 }

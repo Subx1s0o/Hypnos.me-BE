@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -12,10 +13,15 @@ import { Request } from 'express';
 import { TokensResponse } from 'types';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { ChangePasswordDto } from './dtos/changePassword.dto';
-import { RefreshTokenDto } from './dtos/refreshToken.dto';
-import { SignInDto } from './dtos/signIn.dto';
-import { SignUpDto } from './dtos/signUp.dto';
+import {
+  ChangePasswordDto,
+  ForgotPasswordDto,
+  RefreshTokenDto,
+  ResetPasswordDto,
+  SignInDto,
+  SignUpDto,
+} from './dtos';
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -49,10 +55,33 @@ export class AuthController {
     if (!userID) {
       throw new BadRequestException('User ID is required');
     }
+
     return await this.authService.changePassword(
       data.oldPassword,
       data.newPassword,
       userID,
+    );
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('forgot-password')
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return await this.authService.forgotPassword(forgotPasswordDto.email);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('reset-password')
+  async resetPassword(
+    @Query('token') token: string,
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ) {
+    if (!token) {
+      throw new BadRequestException('Token is required');
+    }
+
+    return await this.authService.resetPassword(
+      token,
+      resetPasswordDto.newPassword,
     );
   }
 }
