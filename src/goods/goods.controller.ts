@@ -13,7 +13,7 @@ export class GoodsController {
   @UseInterceptors(CacheInterceptor)
   @CacheKey('goods')
   async getAllGoods() {
-    const goods = await this.prisma.product.findMany();
+    const goods = await this.prisma.products.findMany();
     return goods;
   }
 

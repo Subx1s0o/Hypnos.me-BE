@@ -40,14 +40,14 @@ export class AuthService {
   private async getReferrerId(referralCode?: string): Promise<string | null> {
     if (!referralCode) return null;
 
-    const referrer = await this.prismaService.user.findUnique({
+    const referrer = await this.prismaService.users.findUnique({
       where: { referredCode: referralCode },
     });
     return referrer ? referrer.id : null;
   }
 
   async signUp(data: SignUpDto) {
-    const isUserExists = await this.prismaService.user.findUnique({
+    const isUserExists = await this.prismaService.users.findUnique({
       where: { email: data.email },
     });
 
@@ -71,7 +71,7 @@ export class AuthService {
       referredBy: await this.getReferrerId(data.referredCode),
     };
 
-    const storedUser = await this.prismaService.user.create({
+    const storedUser = await this.prismaService.users.create({
       data: {
         ...newUser,
         bonusesHistory: [],
@@ -81,13 +81,13 @@ export class AuthService {
     });
 
     if (storedUser.referredBy) {
-      await this.prismaService.user.update({
+      await this.prismaService.users.update({
         where: { id: storedUser.referredBy },
         data: {
           bonuses: { increment: 20 },
         },
       });
-      await this.prismaService.user.update({
+      await this.prismaService.users.update({
         where: { id: storedUser.id },
         data: {
           bonuses: { increment: 20 },
@@ -99,7 +99,7 @@ export class AuthService {
   }
 
   async signIn(data: SignInDto) {
-    const user = await this.prismaService.user.findUnique({
+    const user = await this.prismaService.users.findUnique({
       where: { email: data.email },
     });
 
@@ -137,7 +137,7 @@ export class AuthService {
     newPassword: string,
     userID: string,
   ) {
-    const user = await this.prismaService.user.findUnique({
+    const user = await this.prismaService.users.findUnique({
       where: { id: userID },
     });
 
@@ -161,7 +161,7 @@ export class AuthService {
     const hashedPassword = await hash(newPassword, 8);
 
     try {
-      await this.prismaService.user.update({
+      await this.prismaService.users.update({
         where: { id: userID },
         data: {
           password: hashedPassword,
