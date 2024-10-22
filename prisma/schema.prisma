@@ -13,7 +13,7 @@ type GoldSample {
   weightFemale      Float       
 }
 
-model Product {
+model products {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   title             String
   createdAt         DateTime    @default(now()) @db.Date
@@ -22,30 +22,37 @@ model Product {
   price             Int
   isPriceForPair    Boolean     @default(false)
   description       String
-  
   width             Float?      
   thickness         Float?    
   weight            Float?     
   pairWeight        Float?     
-
   goldSamples       GoldSample[] 
 }
 
-model User {
+model users {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   firstName         String
   secondName        String
   email             String      @unique
   password          String
+  bonuses           Int         @default(0)
+  role              String      @default("user")
+  bonusesHistory    Json     
+  ordersHistory     Json     
+  cart              Json 
+  phone             String?
+  birthday          DateTime? 
+  referredCode      String      @unique
+  referredBy        String?     
   subscribed        Boolean     @default(false)
   createdAt         DateTime    @default(now()) @db.Date
   updatedAt         DateTime    @updatedAt
-  phone             String?
-  birthday          DateTime? 
-  bonuses           Int         @default(0)
-  referredCode      String      @unique
-  referredBy        String?     
-  bonusesHistory    Json     
-  ordersHistory     Json     
-  cart              Json
+}
+
+model promocodes {
+    id                String      @id @default(auto()) @map("_id") @db.ObjectId
+    code              String
+    discount          Int 
+    count             Int
+    expirationDate    DateTime
 }
