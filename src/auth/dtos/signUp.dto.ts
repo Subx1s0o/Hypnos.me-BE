@@ -27,4 +27,8 @@ export class SignUpDto {
   @IsNotEmpty()
   @MinLength(7)
   password: string;
+
+  @IsOptional()
+  @IsString()
+  referredCode?: string;
 }

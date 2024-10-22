@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 type GoldSample {
   sampleValue       String     
   weightMale        Float        
@@ -41,4 +40,12 @@ model User {
   subscribed        Boolean     @default(false)
   createdAt         DateTime    @default(now()) @db.Date
   updatedAt         DateTime    @updatedAt
+  phone             String?
+  birthday          DateTime? 
+  bonuses           Int         @default(0)
+  referredCode      String      @unique
+  referredBy        String?     
+  bonusesHistory    Json     
+  ordersHistory     Json     
+  cart              Json
 }

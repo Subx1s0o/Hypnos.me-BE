@@ -8,6 +8,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { TokensResponse } from 'types';
+import { v4 as uuid } from 'uuid';
 import { SignInDto } from './dtos/signIn.dto';
 import { SignUpDto } from './dtos/signUp.dto';
 
@@ -34,6 +35,15 @@ export class AuthService {
     };
   }
 
+  private async getReferrerId(referralCode?: string): Promise<string | null> {
+    if (!referralCode) return null;
+
+    const referrer = await this.prismaService.user.findUnique({
+      where: { referredCode: referralCode },
+    });
+    return referrer ? referrer.id : null;
+  }
+
   async signUp(data: SignUpDto) {
     const isUserExists = await this.prismaService.user.findUnique({
       where: { email: data.email },
@@ -45,15 +55,43 @@ export class AuthService {
       );
     }
 
-    const hashedPassword = await hash(data.password, 10);
+    const hashedPassword = await hash(data.password, 8);
+
+    const referralCodeGenerated = uuid()
+      .replace(/-/g, '')
+      .slice(0, 7)
+      .toUpperCase();
 
     const newUser = {
       ...data,
       password: hashedPassword,
+      referredCode: referralCodeGenerated,
+      referredBy: await this.getReferrerId(data.referredCode),
     };
+
     const storedUser = await this.prismaService.user.create({
-      data: newUser,
+      data: {
+        ...newUser,
+        bonusesHistory: [],
+        ordersHistory: [],
+        cart: [],
+      },
     });
+
+    if (storedUser.referredBy) {
+      await this.prismaService.user.update({
+        where: { id: storedUser.referredBy },
+        data: {
+          bonuses: { increment: 20 },
+        },
+      });
+      await this.prismaService.user.update({
+        where: { id: storedUser.id },
+        data: {
+          bonuses: { increment: 20 },
+        },
+      });
+    }
 
     return this.generateTokens(storedUser.id);
   }
