@@ -69,38 +69,36 @@ export class AuthService {
       .slice(0, 7)
       .toUpperCase();
 
-    const newUser = {
-      ...data,
-      password: hashedPassword,
-      referredCode: referralCodeGenerated,
-      referredBy: await this.getReferrerId(data.referredCode),
-    };
-
-    const storedUser = await this.prismaService.users.create({
+    const newUser = await this.prismaService.users.create({
       data: {
-        ...newUser,
+        firstName: data.firstName,
+        secondName: data.secondName,
+        email: data.email,
+        password: hashedPassword,
+        referredCode: referralCodeGenerated,
+        referredBy: await this.getReferrerId(data.referredCode),
         bonusesHistory: [],
         ordersHistory: [],
         cart: [],
       },
     });
 
-    if (storedUser.referredBy) {
+    if (newUser.referredBy) {
       await this.prismaService.users.update({
-        where: { id: storedUser.referredBy },
+        where: { id: newUser.referredBy },
         data: {
           bonuses: { increment: 20 },
         },
       });
       await this.prismaService.users.update({
-        where: { id: storedUser.id },
+        where: { id: newUser.id },
         data: {
           bonuses: { increment: 20 },
         },
       });
     }
 
-    return this.generateTokens(storedUser.id);
+    return this.generateTokens(newUser.id);
   }
 
   async signIn(data: SignInDto) {
