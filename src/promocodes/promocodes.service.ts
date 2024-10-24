@@ -19,7 +19,9 @@ export class PromocodesService {
     });
 
     if (promo) {
-      throw new ConflictException('The Promocode with same name already exist');
+      throw new ConflictException(
+        'Promocode with the same name already exists.',
+      );
     }
 
     await this.prisma.promocodes.create({
@@ -32,8 +34,8 @@ export class PromocodesService {
     });
 
     throw new HttpException(
-      'Promocode was successfully created',
-      HttpStatus.OK,
+      'Promocode was successfully created.',
+      HttpStatus.CREATED,
     );
   }
 
@@ -42,52 +44,50 @@ export class PromocodesService {
   }
 
   async remove(id: string) {
-    try {
-      await this.prisma.promocodes.delete({ where: { id } });
-    } catch (error) {
-      throw new NotFoundException("The promocode with that ID wasn't found");
+    const promo = await this.prisma.promocodes.findUnique({ where: { id } });
+
+    if (!promo) {
+      throw new NotFoundException('Promocode not found.');
     }
+
+    await this.prisma.promocodes.delete({ where: { id } });
+
     throw new HttpException(
-      'Promocode was successfully deleted',
+      'Promocode was successfully deleted.',
       HttpStatus.OK,
     );
   }
+
   async applyPromoCode(code: string) {
     const promoCode = await this.prisma.promocodes.findUnique({
       where: { code },
     });
 
     if (!promoCode) {
-      throw new NotFoundException('Promocode not found');
+      throw new NotFoundException('Promocode not found.');
     }
 
     const now = new Date();
     if (promoCode.expirationDate < now) {
-      await this.prisma.promocodes.delete({
-        where: { code },
-      });
-      throw new BadRequestException('Promocode has expired');
+      await this.prisma.promocodes.delete({ where: { code } });
+      throw new BadRequestException('Promocode has expired.');
     }
 
     if (promoCode.count <= 0) {
-      await this.prisma.promocodes.delete({
-        where: { code },
-      });
-      throw new BadRequestException('Promocode has been used up');
+      await this.prisma.promocodes.delete({ where: { code } });
+      throw new BadRequestException('Promocode has been used up.');
     }
 
     const discount = promoCode.discount;
 
     await this.prisma.promocodes.update({
       where: { code },
-      data: {
-        count: promoCode.count - 1,
-      },
+      data: { count: promoCode.count - 1 },
     });
 
     throw new HttpException(
       {
-        message: 'Promocode applied successfully',
+        message: 'Promocode applied successfully.',
         discount,
       },
       HttpStatus.OK,
