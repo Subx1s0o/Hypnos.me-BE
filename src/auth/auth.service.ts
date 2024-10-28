@@ -88,12 +88,26 @@ export class AuthService {
         where: { id: newUser.referredBy },
         data: {
           bonuses: { increment: 20 },
+          bonusesHistory: {
+            push: {
+              receivedDate: new Date(),
+              amount: 20,
+              description: 'Somebody use your referal :)',
+            },
+          },
         },
       });
       await this.prismaService.users.update({
         where: { id: newUser.id },
         data: {
           bonuses: { increment: 20 },
+          bonusesHistory: {
+            push: {
+              receivedDate: new Date(),
+              amount: 20,
+              description: 'Adding from redeeming referral code ',
+            },
+          },
         },
       });
     }

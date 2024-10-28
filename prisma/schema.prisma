@@ -37,9 +37,9 @@ model users {
   password          String
   bonuses           Int         @default(0)
   role              String      @default("user")
-  bonusesHistory    Json     
-  ordersHistory     Json     
-  cart              Json 
+  bonusesHistory    Json[]     
+  ordersHistory     Json[]     
+  cart              Json[] 
   phone             String?
   birthday          DateTime? 
   referredCode      String      @unique

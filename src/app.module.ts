@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { GoodsModule } from './goods/goods.module';
 
-import { AdminModule } from './admin/admin.module';
+import { OwnerModule } from './owner/owner.module';
 import { PromocodesModule } from './promocodes/promocodes.module';
 import { UserModule } from './user/user.module';
 @Module({
@@ -13,8 +13,7 @@ import { UserModule } from './user/user.module';
     ConfigModule,
     AuthModule,
     UserModule,
-    AdminModule,
-
+    OwnerModule,
     PromocodesModule,
   ],
 })

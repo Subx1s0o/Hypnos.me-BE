@@ -8,8 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AdminGuard } from 'src/admin/admin.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { AdminGuard } from 'src/owner/admin.guard';
 import { PromoCode } from 'types/promocode.type';
 import { ApplyPromoCodeDto, CreatePromoCodeDto } from './dto';
 import { PromocodesService } from './promocodes.service';
