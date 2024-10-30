@@ -1,10 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/hypnos/src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "webpack": true
+    "webpack": true,
+    "tsConfigPath": "apps/hypnos/tsconfig.app.json"
   },
   "projects": {
     "common": {
@@ -15,6 +16,35 @@
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json"
       }
+    },
+    "source": {
+      "type": "library",
+      "root": "libs/source",
+      "entryFile": "index",
+      "sourceRoot": "libs/source/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/source/tsconfig.lib.json"
+      }
+    },
+    "hypnos": {
+      "type": "application",
+      "root": "apps/hypnos",
+      "entryFile": "main",
+      "sourceRoot": "apps/hypnos/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/hypnos/tsconfig.app.json"
+      }
+    },
+    "payments": {
+      "type": "application",
+      "root": "apps/payments",
+      "entryFile": "main",
+      "sourceRoot": "apps/payments/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/payments/tsconfig.app.json"
+      }
     }
-  }
+  },
+  "monorepo": true,
+  "root": "apps/hypnos"
 }

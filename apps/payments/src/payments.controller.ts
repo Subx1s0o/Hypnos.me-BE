@@ -1,14 +1,11 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { Stripe } from 'stripe';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { PaymentsService } from './payments.service';
 
 @Controller('payments')
 export class PaymentsController {
-  constructor(
-    private readonly paymentsService: PaymentsService,
-    @Inject('STRIPE_CLIENT') private readonly stripeClient: Stripe,
-  ) {}
+  constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post('create-session')
   async createSession(@Body() createSessionDto: CreateSessionDto) {

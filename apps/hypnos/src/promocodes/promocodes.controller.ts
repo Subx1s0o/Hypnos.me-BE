@@ -1,15 +1,5 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { AdminGuard } from 'src/owner/admin.guard';
 import { PromoCode } from 'types/promocode.type';
 import { ApplyPromoCodeDto, CreatePromoCodeDto } from './dto';
 import { PromocodesService } from './promocodes.service';
@@ -19,7 +9,6 @@ import { PromocodesService } from './promocodes.service';
 export class PromocodesController {
   constructor(private readonly promocodesService: PromocodesService) {}
 
-  @UseGuards(AdminGuard)
   @Post()
   @ApiResponse({
     status: 200,
@@ -42,7 +31,6 @@ export class PromocodesController {
     return await this.promocodesService.create(createPromoCodeDto);
   }
 
-  @UseGuards(AdminGuard)
   @Get()
   @ApiResponse({
     status: 200,
@@ -62,7 +50,6 @@ export class PromocodesController {
     return await this.promocodesService.findAll();
   }
 
-  @UseGuards(AdminGuard)
   @Delete(':id')
   @ApiResponse({
     status: 200,
@@ -92,7 +79,6 @@ export class PromocodesController {
     return await this.promocodesService.remove(id);
   }
 
-  @UseGuards(AuthGuard)
   @Post('apply')
   @ApiResponse({
     status: 200,
