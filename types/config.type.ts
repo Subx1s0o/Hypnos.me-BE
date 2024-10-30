@@ -6,6 +6,7 @@ export type ConfigType = Record<
   | 'MAILER_HOST'
   | 'MAILER_USERNAME'
   | 'MAILER_PASSWORD'
-  | 'MAILER_FROM',
+  | 'MAILER_FROM'
+  | 'STRIPE_SECRET_KEY',
   string | number
 >;
