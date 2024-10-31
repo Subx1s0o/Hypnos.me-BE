@@ -6,8 +6,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorators/Roles';
-import { RolesEnum } from '../enum/roles';
+import { Role } from 'types';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -16,10 +15,10 @@ export class RolesGuard implements CanActivate {
     private readonly prisma: PrismaService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride<RolesEnum[]>(
-      ROLES_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>('roles', [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     const userId = context.switchToHttp().getRequest().user;
 

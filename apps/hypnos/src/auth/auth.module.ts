@@ -1,6 +1,5 @@
 import { ConfigService } from '@lib/common';
 import { MailerModule } from '@lib/common/mailer/mailer.module';
-import { AuthGuard } from '@lib/entities/guards/auth.guard';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
@@ -16,7 +15,7 @@ import { AuthService } from './auth.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthGuard],
+  providers: [AuthService],
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

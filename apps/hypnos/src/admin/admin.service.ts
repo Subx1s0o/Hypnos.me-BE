@@ -1,5 +1,5 @@
 import { PrismaService } from '@lib/common';
-import { RolesEnum } from '@lib/entities/enum/roles';
+
 import {
   HttpException,
   HttpStatus,
@@ -27,7 +27,7 @@ export class AdminService {
 
     const updatedUser = await this.prisma.users.update({
       where: { id: user.id },
-      data: { role: RolesEnum.ADMIN },
+      data: { role: 'admin' },
     });
 
     return omitPassword(updatedUser);
@@ -35,7 +35,7 @@ export class AdminService {
 
   async getAdmins(): Promise<Omit<User, 'password'>[]> {
     const admins = await this.prisma.users.findMany({
-      where: { role: RolesEnum.ADMIN },
+      where: { role: 'admin' },
     });
     return omitPassword(admins) as Omit<User, 'password'>[];
   }

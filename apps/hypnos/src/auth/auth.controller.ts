@@ -1,3 +1,4 @@
+import { Auth } from '@lib/entities/decorators/Auth';
 import {
   BadRequestException,
   Body,
@@ -7,12 +8,10 @@ import {
   Post,
   Query,
   Req,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { TokensResponse } from 'types';
-import { AuthGuard } from '../../../../libs/entities/src/guards/auth.guard';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -86,7 +85,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('change-password')
-  @UseGuards(AuthGuard)
+  @Auth()
   @ApiResponse({
     status: 200,
     description: 'The password was changed successfully',

@@ -1,4 +1,5 @@
 import { JsonValue } from '@prisma/client/runtime/library';
+import { Role } from './role.type';
 
 type BonusesHistoryEntry = {
   amount: number;
@@ -17,7 +18,7 @@ export type User = {
   email: string;
   password: string;
   bonuses: number;
-  role: 'admin' | 'user' | 'owner';
+  role: Role;
   bonusesHistory: BonusesHistoryEntry[];
   ordersHistory: OrdersHistoryEntry[];
   cart: JsonValue[];

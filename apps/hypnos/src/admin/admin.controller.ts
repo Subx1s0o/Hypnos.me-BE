@@ -1,27 +1,15 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from 'types';
 import { CreateAdminDto } from './dtos/create.dto';
 
 import { AdminService } from './admin.service';
 
-import { Roles } from '@lib/entities/decorators/Roles';
-import { RolesEnum } from '@lib/entities/enum/roles';
-import { AuthGuard } from '@lib/entities/guards/auth.guard';
-import { RolesGuard } from '@lib/entities/guards/roles.guard';
+import { Auth } from '@lib/entities/decorators/Auth';
 
 @Controller('admin')
 @ApiTags('admin')
-@Roles(RolesEnum.OWNER, RolesEnum.ADMIN)
-@UseGuards(AuthGuard, RolesGuard)
+@Auth('owner')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
