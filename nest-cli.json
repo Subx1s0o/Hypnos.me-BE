@@ -17,13 +17,13 @@
         "tsConfigPath": "libs/common/tsconfig.lib.json"
       }
     },
-    "source": {
+    "entities": {
       "type": "library",
-      "root": "libs/source",
+      "root": "libs/entities",
       "entryFile": "index",
-      "sourceRoot": "libs/source/src",
+      "sourceRoot": "libs/entities/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/source/tsconfig.lib.json"
+        "tsConfigPath": "libs/entities/tsconfig.lib.json"
       }
     },
     "hypnos": {
@@ -42,6 +42,15 @@
       "sourceRoot": "apps/payments/src",
       "compilerOptions": {
         "tsConfigPath": "apps/payments/tsconfig.app.json"
+      }
+    },
+    "promocodes": {
+      "type": "application",
+      "root": "apps/promocodes",
+      "entryFile": "main",
+      "sourceRoot": "apps/promocodes/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/promocodes/tsconfig.app.json"
       }
     }
   },

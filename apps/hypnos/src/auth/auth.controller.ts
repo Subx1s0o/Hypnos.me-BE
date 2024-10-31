@@ -12,7 +12,7 @@ import {
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { TokensResponse } from 'types';
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from '../../../../libs/entities/src/guards/auth.guard';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,

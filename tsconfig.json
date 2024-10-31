@@ -24,11 +24,11 @@
       "@lib/common/*": [
         "libs/common/src/*"
       ],
-      "@lib/source": [
-        "libs/source/src"
+      "@lib/entities": [
+        "libs/entities/src"
       ],
-      "@lib/source/*": [
-        "libs/source/src/*"
+      "@lib/entities/*": [
+        "libs/entities/src/*"
       ]
     }
   }
