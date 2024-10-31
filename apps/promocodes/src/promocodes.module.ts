@@ -1,4 +1,4 @@
-import { ConfigService } from '@lib/common';
+import { ConfigModule, ConfigService, PrismaModule } from '@lib/common';
 import { AuthGuard } from '@lib/entities/guards/auth.guard';
 import { Module } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
@@ -7,6 +7,8 @@ import { PromocodesService } from './promocodes.service';
 
 @Module({
   imports: [
+    PrismaModule,
+    ConfigModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET') as string,
