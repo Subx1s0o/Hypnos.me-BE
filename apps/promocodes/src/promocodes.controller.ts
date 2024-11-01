@@ -1,13 +1,5 @@
-import { AuthGuard } from '@lib/entities/guards/auth.guard';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Auth } from '@lib/entities/decorators/Auth';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PromoCode } from 'types/promocode.type';
 import { ApplyPromoCodeDto, CreatePromoCodeDto } from './dto';
@@ -36,7 +28,7 @@ export class PromocodesController {
     status: 403,
     description: 'Access denied: Admins only.',
   })
-  @UseGuards(AuthGuard)
+  @Auth('admin')
   async create(@Body() createPromoCodeDto: CreatePromoCodeDto): Promise<void> {
     return await this.promocodesService.create(createPromoCodeDto);
   }
@@ -85,7 +77,7 @@ export class PromocodesController {
     status: 403,
     description: 'Access denied: Admins only.',
   })
-  @UseGuards(AuthGuard)
+  @Auth('admin')
   async remove(@Param('id') id: string): Promise<void> {
     return await this.promocodesService.remove(id);
   }

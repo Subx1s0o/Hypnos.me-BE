@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { User } from 'types';
 
+export function omitPassword(user: User): Omit<User, 'password'>;
+export function omitPassword(user: User[]): Omit<User, 'password'>[];
+
 export function omitPassword(
   user: User | User[],
 ): Omit<User, 'password'> | Omit<User, 'password'>[] {

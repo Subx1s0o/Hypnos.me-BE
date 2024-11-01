@@ -1,6 +1,9 @@
-import { IsEmail } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
 export class CreateAdminDto {
-  @IsEmail()
-  email: string;
+  @IsNotEmpty()
+  userId: string;
+
+  @IsEnum({ admin: 'admin', user: 'user' })
+  role: 'admin' | 'user';
 }

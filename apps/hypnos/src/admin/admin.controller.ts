@@ -19,8 +19,8 @@ export class AdminController {
   }
 
   @Post()
-  async addAdmin(@Body() data: CreateAdminDto) {
-    return await this.adminService.addAdmin(data);
+  async changeRole(@Body() data: CreateAdminDto) {
+    return await this.adminService.changeRole(data);
   }
 
   @Delete(':id')

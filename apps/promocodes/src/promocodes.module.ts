@@ -1,7 +1,6 @@
 import { ConfigModule, ConfigService, PrismaModule } from '@lib/common';
-import { AuthGuard } from '@lib/entities/guards/auth.guard';
 import { Module } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { PromocodesController } from './promocodes.controller';
 import { PromocodesService } from './promocodes.service';
 
@@ -17,6 +16,6 @@ import { PromocodesService } from './promocodes.service';
     }),
   ],
   controllers: [PromocodesController],
-  providers: [PromocodesService, JwtService, AuthGuard],
+  providers: [PromocodesService],
 })
 export class PromocodesModule {}
