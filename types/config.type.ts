@@ -7,6 +7,9 @@ export type ConfigType = Record<
   | 'MAILER_USERNAME'
   | 'MAILER_PASSWORD'
   | 'MAILER_FROM'
-  | 'STRIPE_SECRET_KEY',
-  string | number
+  | 'STRIPE_SECRET_KEY'
+  | 'CLD_CLOUD_NAME'
+  | 'CLD_API_KEY'
+  | 'CLD_API_SECRET',
+  string
 >;

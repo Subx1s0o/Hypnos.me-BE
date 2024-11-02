@@ -3,6 +3,6 @@ import { PromocodesModule } from './promocodes.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(PromocodesModule);
-  await app.listen(process.env.port ?? 3000);
+  await app.listen(5003);
 }
 bootstrap();

@@ -7,12 +7,12 @@ import { ConfigService } from '../config/config.service';
     NodeMailer.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         transport: {
-          host: configService.get('MAILER_HOST') as string,
+          host: configService.get('MAILER_HOST'),
           port: 587,
           secure: false,
           auth: {
-            user: configService.get('MAILER_USERNAME') as string,
-            pass: configService.get('MAILER_PASSWORD') as string,
+            user: configService.get('MAILER_USERNAME'),
+            pass: configService.get('MAILER_PASSWORD'),
           },
         },
       }),

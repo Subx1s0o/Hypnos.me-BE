@@ -52,6 +52,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/promocodes/tsconfig.app.json"
       }
+    },
+    "cloudinary": {
+      "type": "application",
+      "root": "apps/cloudinary",
+      "entryFile": "main",
+      "sourceRoot": "apps/cloudinary/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/cloudinary/tsconfig.app.json"
+      }
     }
   },
   "monorepo": true,

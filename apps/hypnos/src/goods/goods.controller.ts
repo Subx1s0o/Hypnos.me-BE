@@ -1,18 +1,25 @@
-import { PrismaService } from '@lib/common';
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { GoodsService } from './goods.service';
 
 @Controller('goods')
 @ApiTags('goods')
 export class GoodsController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly goodsService: GoodsService) {}
 
-  @Get()
-  async getAllGoods() {
-    const goods = await this.prisma.products.findMany();
-    return goods;
-  }
+  // @Get()
+  // async getAllGoods() {
+  //   return await this.goodsService.getAllGoods();
+  // }
+
+  // @Post()
+  // @Auth('admin')
+  // async createGood(data: CreateGoodDto) {
+  //   return await this.goodsService.createGood(data);
+  // }
 
   @Post()
-  async createGood() {}
+  sayHello(@Body() data: string) {
+    return this.goodsService.sayHello(data);
+  }
 }
