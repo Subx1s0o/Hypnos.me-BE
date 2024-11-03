@@ -13,12 +13,25 @@ type GoldSample {
   weightFemale      Float       
 }
 type Media {
-  main      String
-  media_1   String?
-  media_2   String?
-  media_3   String?
-  media_4   String?
+  main      MediaDetail
+  media_1   MediaDetail?
+  media_2   MediaDetail?
+  media_3   MediaDetail?
+  media_4   MediaDetail?
 }
+
+type MediaDetail {
+  url      String
+  status   MediaStatus
+}
+
+enum MediaStatus {
+  fulfilled
+  pending
+  rejected
+  not_uploaded
+}
+
 model products {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   title             String
@@ -26,6 +39,7 @@ model products {
   updatedAt         DateTime    @updatedAt
   media             Media      
   price             Int
+  discountPercent   Int?
   isPriceForPair    Boolean     @default(false)
   description       String
   width             Float?      
