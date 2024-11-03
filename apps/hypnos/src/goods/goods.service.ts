@@ -1,26 +1,48 @@
 import { PrismaService } from '@lib/common';
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { InjectQueue } from '@nestjs/bull';
+import { Injectable } from '@nestjs/common';
+import { Queue } from 'bull';
+import { CreateGoodDto } from './dto/create.dto';
 
 @Injectable()
 export class GoodsService {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject('CLOUDINARY_SERVICE')
-    private readonly cloudinaryClient: ClientProxy,
+    @InjectQueue('image-upload') private imageUploadQueue: Queue,
   ) {}
 
-  // async createGood(data: CreateGoodDto) {
-  //   const createdGood = await this.prisma.products.create({ data: data });
+  async createGood(data: CreateGoodDto) {
+    const good = await this.prisma.products.create({
+      data: {
+        title: data.title,
+        media: {
+          main: '',
+          media_1: '',
+          media_2: '',
+          media_3: '',
+          media_4: '',
+        },
+        quantity: data.quantity,
+        price: data.price,
+        isPriceForPair: data.isPriceForPair,
+        description: data.description,
+        width: data.width,
+        thickness: data.thickness,
+        weight: data.weight,
+        pairWeight: data.pairWeight,
+        goldSamples: data.goldSamples.map((sample) => ({
+          sampleValue: sample.sampleValue,
+          weightMale: sample.weightMale,
+          weightFemale: sample.weightFemale,
+        })),
+      },
+    });
 
-  //   const uploadResponse = await this.cloudinaryClient.send('upload_images', {
-  //     productId: createdGood.id,
-  //     media: data.media,
-  //   });
+    await this.imageUploadQueue.add({
+      id: good.id,
+      media: data.media,
+    });
 
-  //   return createdGood;
-  // }
-  async sayHello(data: string) {
-    return this.cloudinaryClient.send('say_hello', data);
+    return good;
   }
 }

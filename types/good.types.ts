@@ -9,7 +9,13 @@ export type good = {
   title: string;
   createdAt: Date;
   updatedAt: Date;
-  image: string;
+  media: {
+    main: string;
+    media_1?: string;
+    media_2?: string;
+    media_3?: string;
+    media_4?: string;
+  };
   price: number;
   isPriceForPair: boolean;
   description: string;

@@ -1,64 +1,59 @@
 import {
   IsArray,
   IsBoolean,
-  IsInt,
   IsNotEmpty,
   IsNumber,
-  IsObject,
   IsOptional,
-  IsString,
+  Min,
 } from 'class-validator';
 
 export class CreateGoodDto {
-  @IsString()
+  @IsNotEmpty()
   title: string;
 
   @IsNotEmpty()
-  @IsObject()
-  media: Media;
+  media: {
+    main: string | null;
+    media_1?: string | null;
+    media_2?: string | null;
+    media_3?: string | null;
+    media_4?: string | null;
+  };
 
-  @IsInt()
+  @IsNotEmpty()
   price: number;
 
   @IsBoolean()
   isPriceForPair: boolean;
 
-  @IsString()
+  @IsNotEmpty()
   description: string;
 
-  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
+  quantity: number;
+
+  @IsOptional()
+  @IsNumber()
+  width?: number;
+
+  @IsOptional()
+  @IsNumber()
+  thickness?: number;
+
+  @IsOptional()
+  @IsNumber()
+  weight?: number;
+
+  @IsOptional()
+  @IsNumber()
+  pairWeight?: number;
+
   @IsArray()
-  goldSamples: GoldSample[];
-}
-
-class GoldSample {
-  @IsString()
-  sampleValue: string;
-
-  @IsNumber()
-  weightMale: number;
-
-  @IsNumber()
-  weightFemale: number;
-}
-
-class Media {
-  @IsString()
-  main: string;
-
-  @IsOptional()
-  @IsString()
-  media_1?: string;
-
-  @IsOptional()
-  @IsString()
-  media_2?: string;
-
-  @IsOptional()
-  @IsString()
-  media_3?: string;
-
-  @IsOptional()
-  @IsString()
-  media_4?: string;
+  @IsNotEmpty()
+  goldSamples: {
+    sampleValue: string;
+    weightMale: number;
+    weightFemale: number;
+  }[];
 }
