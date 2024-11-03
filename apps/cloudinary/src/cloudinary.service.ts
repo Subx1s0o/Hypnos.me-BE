@@ -1,34 +1,40 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Media } from '@prisma/client';
+import { MediaData } from '../types/media.type';
 
 @Injectable()
 export class CloudinaryService {
   constructor(@Inject('Cloudinary') private readonly cloudinaryClient) {}
 
-  async uploadImages(data: Media) {
-    const uploadPromises = Object.values(data).map(async (file) => {
-      if (file) {
-        try {
-          const result = await this.cloudinaryClient.uploader.upload(file, {
-            transformation: [{ quality: 'auto', fetch_format: 'avif' }],
-          });
-          return result.secure_url;
-        } catch (error) {
-          console.error('Error uploading image:', error);
-          return '';
+  async uploadImages(data: MediaData) {
+    const folderPath = `products/${data.id}`;
+
+    const uploadPromises = Object.entries(data.media).map(
+      async ([key, file]) => {
+        if (file) {
+          try {
+            const result = await this.cloudinaryClient.uploader.upload(file, {
+              folder: folderPath,
+              public_id: key,
+              transformation: [{ quality: 'auto', fetch_format: 'avif' }],
+            });
+            return { url: result.secure_url, status: 'fulfilled' };
+          } catch (error) {
+            console.error('Error uploading image:', error);
+            return { url: '', status: 'rejected' };
+          }
         }
-      }
-      return '';
-    });
+        return { url: '', status: 'not_uploaded' };
+      },
+    );
 
     const results = await Promise.all(uploadPromises);
 
     return {
-      main: results[0] || '',
-      media_1: results[1] || '',
-      media_2: results[2] || '',
-      media_3: results[3] || '',
-      media_4: results[4] || '',
+      main: results[0] || { url: '', status: 'not_uploaded' },
+      media_1: results[1] || { url: '', status: 'not_uploaded' },
+      media_2: results[2] || { url: '', status: 'not_uploaded' },
+      media_3: results[3] || { url: '', status: 'not_uploaded' },
+      media_4: results[4] || { url: '', status: 'not_uploaded' },
     };
   }
 }

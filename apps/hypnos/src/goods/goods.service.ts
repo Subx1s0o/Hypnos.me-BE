@@ -20,11 +20,11 @@ export class GoodsService {
       data: {
         title: data.title,
         media: {
-          main: '',
-          media_1: '',
-          media_2: '',
-          media_3: '',
-          media_4: '',
+          main: { url: '', status: 'pending' },
+          media_1: { url: '', status: 'pending' },
+          media_2: { url: '', status: 'pending' },
+          media_3: { url: '', status: 'pending' },
+          media_4: { url: '', status: 'pending' },
         },
         quantity: data.quantity,
         price: data.price,

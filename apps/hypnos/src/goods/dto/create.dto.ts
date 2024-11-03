@@ -20,6 +20,11 @@ export class CreateGoodDto {
     media_4?: string | null;
   };
 
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  discountPercent: number;
+
   @IsNotEmpty()
   price: number;
 

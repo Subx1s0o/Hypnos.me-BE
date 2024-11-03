@@ -18,24 +18,28 @@ export class GoodsProcessor {
   async handleImageUpload(job: Job) {
     const { id, media } = job.data;
     const photos = await lastValueFrom(
-      this.cloudinaryClient.send('upload_images', media),
+      this.cloudinaryClient.send('upload_images', { id, media }),
     );
 
     console.log('Зображення завантажено:', photos);
-
-    const updatedProduct = await this.prisma.products.update({
-      where: { id },
-      data: {
-        media: {
-          main: photos.main || '',
-          media_1: photos.media_1 || '',
-          media_2: photos.media_2 || '',
-          media_3: photos.media_3 || '',
-          media_4: photos.media_4 || '',
+    let updatedProduct;
+    try {
+      updatedProduct = await this.prisma.products.update({
+        where: { id },
+        data: {
+          media: {
+            main: photos.main || '',
+            media_1: photos.media_1 || '',
+            media_2: photos.media_2 || '',
+            media_3: photos.media_3 || '',
+            media_4: photos.media_4 || '',
+          },
+          status: photos.main ? 'fulfilled' : 'rejected',
         },
-        status: photos.main ? 'fulfilled' : 'rejected',
-      },
-    });
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
 
     return updatedProduct;
   }
