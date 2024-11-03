@@ -11,6 +11,10 @@ export class GoodsService {
     @InjectQueue('image-upload') private imageUploadQueue: Queue,
   ) {}
 
+  async getAllGoods() {
+    return await this.prisma.products.findMany();
+  }
+
   async createGood(data: CreateGoodDto) {
     const good = await this.prisma.products.create({
       data: {

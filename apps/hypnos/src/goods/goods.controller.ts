@@ -1,4 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Auth } from '@lib/entities/decorators/Auth';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateGoodDto } from './dto/create.dto';
 import { GoodsService } from './goods.service';
@@ -7,13 +8,13 @@ import { GoodsService } from './goods.service';
 export class GoodsController {
   constructor(private readonly goodsService: GoodsService) {}
 
-  // @Get()
-  // async getAllGoods() {
-  //   return await this.goodsService.getAllGoods();
-  // }
+  @Get()
+  async getAllGoods() {
+    return await this.goodsService.getAllGoods();
+  }
 
   @Post()
-  // @Auth('admin')
+  @Auth('admin')
   async createGood(@Body() data: CreateGoodDto) {
     return await this.goodsService.createGood(data);
   }
