@@ -1,12 +1,20 @@
 import { PrismaService } from '@lib/common';
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { Queue } from 'bull';
+import { lastValueFrom } from 'rxjs';
 import { CreateGoodDto } from './dto/create.dto';
 
 @Injectable()
 export class GoodsService {
   constructor(
+    @Inject('CLOUDINARY_SERVICE')
+    private readonly cloudinaryClient: ClientProxy,
     private readonly prisma: PrismaService,
     @InjectQueue('image-upload') private imageUploadQueue: Queue,
   ) {}
@@ -48,5 +56,35 @@ export class GoodsService {
     });
 
     return good;
+  }
+
+  async changeOrAddImage(data) {
+    console.log(data);
+
+    const res = await lastValueFrom(
+      this.cloudinaryClient.send('upload_or_add_images', data),
+    );
+
+    if (res.status === 'rejected') {
+      throw new InternalServerErrorException(
+        'Error while updating or adding image',
+      );
+    }
+
+    const mediaName = res.name;
+
+    await this.prisma.products.update({
+      where: { id: data.id },
+      data: {
+        media: {
+          update: {
+            [mediaName]: {
+              url: res.url,
+              status: res.status,
+            },
+          },
+        },
+      },
+    });
   }
 }

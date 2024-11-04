@@ -18,8 +18,7 @@ export class CloudinaryService {
               transformation: [{ quality: 'auto', fetch_format: 'avif' }],
             });
             return { url: result.secure_url, status: 'fulfilled' };
-          } catch (error) {
-            console.error('Error uploading image:', error);
+          } catch {
             return { url: '', status: 'rejected' };
           }
         }
@@ -36,5 +35,54 @@ export class CloudinaryService {
       media_3: results[3] || { url: '', status: 'not_uploaded' },
       media_4: results[4] || { url: '', status: 'not_uploaded' },
     };
+  }
+
+  async uploadOrUpdateImage({
+    id,
+    data: { name, image },
+  }: {
+    id: string;
+    data: { name: string; image: string };
+  }) {
+    const folderPath = `products/${id}`;
+    console.log('Початок обробки:', { id, name, image, folderPath });
+
+    try {
+      const resource = await this.cloudinaryClient.api.resource(
+        `${folderPath}/${name}`,
+        {
+          type: 'upload',
+        },
+      );
+      console.log('Ресурс знайдено, оновлюємо:', resource);
+
+      const result = await this.cloudinaryClient.uploader.upload(image, {
+        folder: folderPath,
+        public_id: name,
+        overwrite: true,
+        transformation: [{ quality: 'auto', fetch_format: 'avif' }],
+      });
+      console.log('Ресурс успішно оновлено:', result);
+      return { name, url: result.secure_url, status: 'fulfilled' };
+    } catch (error) {
+      if (error.error?.http_code === 404) {
+        console.log('Ресурс не знайдено, завантажуємо новий.');
+      } else {
+        console.error(
+          'Помилка під час спроби знайти ресурс:',
+          error.error?.message,
+        );
+        return { name, url: '', status: 'rejected' };
+      }
+    }
+
+    const result = await this.cloudinaryClient.uploader.upload(image, {
+      folder: folderPath,
+      public_id: name,
+      transformation: [{ quality: 'auto', fetch_format: 'avif' }],
+    });
+
+    console.log('Новий ресурс успішно завантажено:', result);
+    return { name, url: result.secure_url, status: 'fulfilled' };
   }
 }

@@ -11,4 +11,10 @@ export class CloudinaryController {
   upload(@Payload() data: MediaData) {
     return this.cloudinaryService.uploadImages(data);
   }
+
+  @MessagePattern('upload_or_add_images')
+  uploadOrAdd(@Payload() data) {
+    console.log(data);
+    return this.cloudinaryService.uploadOrUpdateImage(data);
+  }
 }

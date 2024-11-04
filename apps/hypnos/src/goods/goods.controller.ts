@@ -1,5 +1,5 @@
-import { Auth } from '@lib/entities/decorators/Auth';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+// import { Auth } from '@lib/entities/decorators/Auth';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateGoodDto } from './dto/create.dto';
 import { GoodsService } from './goods.service';
@@ -14,8 +14,13 @@ export class GoodsController {
   }
 
   @Post()
-  @Auth('admin')
+  // @Auth('admin')
   async createGood(@Body() data: CreateGoodDto) {
     return await this.goodsService.createGood(data);
+  }
+
+  @Patch('images/:id')
+  async updateOrAddImage(@Param('id') id: string, @Body() data) {
+    return await this.goodsService.changeOrAddImage({ id, data });
   }
 }

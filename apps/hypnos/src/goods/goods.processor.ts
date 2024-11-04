@@ -21,7 +21,6 @@ export class GoodsProcessor {
       this.cloudinaryClient.send('upload_images', { id, media }),
     );
 
-    console.log('Зображення завантажено:', photos);
     let updatedProduct;
     try {
       updatedProduct = await this.prisma.products.update({
