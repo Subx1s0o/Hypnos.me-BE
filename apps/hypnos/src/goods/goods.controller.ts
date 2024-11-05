@@ -1,4 +1,3 @@
-// import { Auth } from '@lib/entities/decorators/Auth';
 import { Auth, CATEGORIES } from '@lib/entities';
 import {
   Body,
@@ -34,6 +33,7 @@ export class GoodsController {
   }
 
   @Patch('images/:id')
+  @Auth('admin')
   async updateOrAddImage(
     @Param('id') id: string,
     @Body() data: UpdateOrAddDto,

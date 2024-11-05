@@ -18,9 +18,17 @@ export class GoodsProcessor {
   @Process()
   async handleImageUpload(job: Job<GoodsJobType>) {
     const { id, media } = job.data;
-    const photos = await lastValueFrom(
-      this.cloudinaryClient.send('upload_images', { id, media }),
-    );
+    console.log(id, media);
+    let photos;
+    try {
+      photos = await lastValueFrom(
+        this.cloudinaryClient.send('upload_images', { id, media }),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log(photos);
 
     let updatedProduct;
     try {

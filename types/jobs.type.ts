@@ -1,4 +1,4 @@
-import { MEDIA_NAMES } from '@lib/entities/constans/media_names';
+import { MEDIA_NAMES } from '@lib/entities';
 
 export type GoodsJobType = {
   id: string;

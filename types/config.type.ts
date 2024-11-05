@@ -10,6 +10,7 @@ export type ConfigType = Record<
   | 'STRIPE_SECRET_KEY'
   | 'CLD_CLOUD_NAME'
   | 'CLD_API_KEY'
-  | 'CLD_API_SECRET',
+  | 'CLD_API_SECRET'
+  | 'AMQP_URL',
   string
 >;

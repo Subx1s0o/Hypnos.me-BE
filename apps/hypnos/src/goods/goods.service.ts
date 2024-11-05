@@ -1,16 +1,19 @@
 import { PrismaService } from '@lib/common';
 import { InjectQueue } from '@nestjs/bull';
 import {
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
-import { CATEGORIES } from '@lib/entities/constans/CATEGORIES';
+import { CATEGORIES } from '@lib/entities';
 import { Queue } from 'bull';
 import { lastValueFrom } from 'rxjs';
 import { CreateGoodDto } from './dto/create.dto';
+import { UpdateOrAddDto } from './dto/update.dto';
 
 @Injectable()
 export class GoodsService {
@@ -75,12 +78,14 @@ export class GoodsService {
     return good;
   }
 
-  async changeOrAddImage(data) {
+  async changeOrAddImage(data: { id: string; data: UpdateOrAddDto }) {
     console.log(data);
-
+    console.log(this.cloudinaryClient);
     const res = await lastValueFrom(
       this.cloudinaryClient.send('upload_or_add_images', data),
     );
+
+    console.log(res);
 
     if (res.status === 'rejected') {
       throw new InternalServerErrorException(
@@ -103,5 +108,10 @@ export class GoodsService {
         },
       },
     });
+
+    throw new HttpException(
+      'The product was successfully updated',
+      HttpStatus.OK,
+    );
   }
 }

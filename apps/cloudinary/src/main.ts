@@ -10,7 +10,7 @@ async function bootstrap() {
   app.connectMicroservice({
     transport: Transport.RMQ,
     options: {
-      urls: [configService.get<string>('AMQP_URL')],
+      urls: [configService.get('AMQP_URL')],
       queue: 'cloudinary_queue',
     },
   });

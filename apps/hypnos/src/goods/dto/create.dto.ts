@@ -28,7 +28,10 @@ export class CreateGoodDto {
   discountPercent: number;
 
   @IsNotEmpty()
-  @IsEnum(CATEGORIES, { message: 'Category must be one of the defined types.' })
+  @IsEnum(CATEGORIES, {
+    message:
+      'Category must be one of the defined types: classic, neo_classic, conceptual, geometrical, symbolical, futuristic',
+  })
   category: CATEGORIES;
 
   @IsNotEmpty()
