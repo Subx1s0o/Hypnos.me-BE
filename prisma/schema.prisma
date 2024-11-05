@@ -50,7 +50,7 @@ model products {
   weight            Float?     
   pairWeight        Float?     
   goldSamples       GoldSample[] 
-  status            Status     @default(pending)
+
 }
 
 model users {
@@ -79,11 +79,7 @@ enum Role {
   owner
 }
 
-enum Status {
-  fulfilled
-  pending
-  rejected
-}
+
 
 type bonusesHistory {
   amount          Int

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { MediaData } from '../types/media.type';
+import { MediaData } from './dto/media.dto';
 
 @Injectable()
 export class CloudinaryService {

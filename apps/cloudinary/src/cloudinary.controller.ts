@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { MediaData } from '../types/media.type';
 import { CloudinaryService } from './cloudinary.service';
+import { MediaData } from './dto/media.dto';
 
 @Controller()
 export class CloudinaryController {

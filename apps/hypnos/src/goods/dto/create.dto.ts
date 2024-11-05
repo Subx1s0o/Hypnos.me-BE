@@ -1,4 +1,5 @@
-import { CATEGORIES } from '@lib/entities/constans/CATEGORIES';
+import { CATEGORIES, MEDIA_NAMES, MediaContent } from '@lib/entities';
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -7,6 +8,7 @@ import {
   IsNumber,
   IsOptional,
   Min,
+  ValidateNested,
 } from 'class-validator';
 
 export class CreateGoodDto {
@@ -14,12 +16,10 @@ export class CreateGoodDto {
   title: string;
 
   @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => MediaContent)
   media: {
-    main: string | null;
-    media_1?: string | null;
-    media_2?: string | null;
-    media_3?: string | null;
-    media_4?: string | null;
+    [key in MEDIA_NAMES]: string;
   };
 
   @IsOptional()

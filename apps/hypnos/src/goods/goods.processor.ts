@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Job } from 'bull';
 import { lastValueFrom } from 'rxjs';
+import { GoodsJobType } from 'types';
 
 @Injectable()
 @Processor('image-upload')
@@ -15,7 +16,7 @@ export class GoodsProcessor {
   ) {}
 
   @Process()
-  async handleImageUpload(job: Job) {
+  async handleImageUpload(job: Job<GoodsJobType>) {
     const { id, media } = job.data;
     const photos = await lastValueFrom(
       this.cloudinaryClient.send('upload_images', { id, media }),
@@ -33,7 +34,6 @@ export class GoodsProcessor {
             media_3: photos.media_3 || '',
             media_4: photos.media_4 || '',
           },
-          status: photos.main ? 'fulfilled' : 'rejected',
         },
       });
     } catch (error) {

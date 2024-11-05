@@ -1,6 +1,5 @@
 // import { Auth } from '@lib/entities/decorators/Auth';
-import { CATEGORIES } from '@lib/entities/constans/CATEGORIES';
-import { Auth } from '@lib/entities/decorators/Auth';
+import { Auth, CATEGORIES } from '@lib/entities';
 import {
   Body,
   Controller,
