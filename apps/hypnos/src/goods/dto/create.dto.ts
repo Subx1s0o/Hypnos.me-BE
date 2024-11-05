@@ -1,6 +1,8 @@
+import { CATEGORIES } from '@lib/entities/constans/CATEGORIES';
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -24,6 +26,10 @@ export class CreateGoodDto {
   @IsNumber()
   @Min(1)
   discountPercent: number;
+
+  @IsNotEmpty()
+  @IsEnum(CATEGORIES, { message: 'Category must be one of the defined types.' })
+  category: CATEGORIES;
 
   @IsNotEmpty()
   price: number;

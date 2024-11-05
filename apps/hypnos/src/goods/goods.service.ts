@@ -6,6 +6,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+
+import { CATEGORIES } from '@lib/entities/constans/CATEGORIES';
 import { Queue } from 'bull';
 import { lastValueFrom } from 'rxjs';
 import { CreateGoodDto } from './dto/create.dto';
@@ -19,8 +21,22 @@ export class GoodsService {
     @InjectQueue('image-upload') private imageUploadQueue: Queue,
   ) {}
 
-  async getAllGoods() {
-    return await this.prisma.products.findMany();
+  async getAllGoods({
+    page,
+    limit,
+    category,
+  }: {
+    page: number;
+    limit: number;
+    category?: CATEGORIES;
+  }) {
+    const skip = (page - 1) * limit;
+    return await this.prisma.products.findMany({
+      skip,
+      take: limit,
+      where: category ? { category } : undefined,
+      orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
+    });
   }
 
   async createGood(data: CreateGoodDto) {
@@ -34,6 +50,7 @@ export class GoodsService {
           media_3: { url: '', status: 'pending' },
           media_4: { url: '', status: 'pending' },
         },
+        category: data.category,
         quantity: data.quantity,
         price: data.price,
         isPriceForPair: data.isPriceForPair,

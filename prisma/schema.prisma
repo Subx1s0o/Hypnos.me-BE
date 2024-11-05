@@ -42,8 +42,10 @@ model products {
   discountPercent   Int?
   isPriceForPair    Boolean     @default(false)
   description       String
+  category          Categories
   width             Float?      
   thickness         Float?    
+  views             Int         @default(0)
   quantity          Int
   weight            Float?     
   pairWeight        Float?     
@@ -93,6 +95,14 @@ type ordersHistory  {
   productIds      String[]
 }
 
+enum Categories {
+  classic
+  neo_classic
+  conceptual
+  geometrical
+  symbolical
+  futuristic
+}
 
 
 model promocodes {
