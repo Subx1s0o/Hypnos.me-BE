@@ -1,4 +1,6 @@
-import { Auth, CATEGORIES } from '@lib/entities';
+import { Auth } from '@lib/entities/decorators';
+
+import { CATEGORIES } from '@lib/entities/constans';
 import {
   Body,
   Controller,

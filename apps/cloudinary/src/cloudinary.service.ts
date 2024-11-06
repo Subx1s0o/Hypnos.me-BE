@@ -1,3 +1,4 @@
+import { MEDIA_STATUS } from '@lib/entities/constans';
 import { Inject, Injectable } from '@nestjs/common';
 import { MediaData } from './dto/media.dto';
 
@@ -17,23 +18,23 @@ export class CloudinaryService {
               public_id: key,
               transformation: [{ quality: 'auto', fetch_format: 'avif' }],
             });
-            return { url: result.secure_url, status: 'fulfilled' };
+            return { url: result.secure_url, status: MEDIA_STATUS.FULFILLED };
           } catch {
-            return { url: '', status: 'rejected' };
+            return { url: '', status: MEDIA_STATUS.REJECTED };
           }
         }
-        return { url: '', status: 'not_uploaded' };
+        return { url: '', status: MEDIA_STATUS.NOT_UPLOADED };
       },
     );
 
     const results = await Promise.all(uploadPromises);
 
     return {
-      main: results[0] || { url: '', status: 'not_uploaded' },
-      media_1: results[1] || { url: '', status: 'not_uploaded' },
-      media_2: results[2] || { url: '', status: 'not_uploaded' },
-      media_3: results[3] || { url: '', status: 'not_uploaded' },
-      media_4: results[4] || { url: '', status: 'not_uploaded' },
+      main: results[0] || { url: '', status: MEDIA_STATUS.NOT_UPLOADED },
+      media_1: results[1] || { url: '', status: MEDIA_STATUS.NOT_UPLOADED },
+      media_2: results[2] || { url: '', status: MEDIA_STATUS.NOT_UPLOADED },
+      media_3: results[3] || { url: '', status: MEDIA_STATUS.NOT_UPLOADED },
+      media_4: results[4] || { url: '', status: MEDIA_STATUS.NOT_UPLOADED },
     };
   }
 
@@ -63,7 +64,11 @@ export class CloudinaryService {
         transformation: [{ quality: 'auto', fetch_format: 'avif' }],
       });
       console.log('Ресурс успішно оновлено:', result);
-      return { name, url: result.secure_url, status: 'fulfilled' };
+      return {
+        name,
+        url: result.secure_url,
+        status: MEDIA_STATUS.FULFILLED,
+      };
     } catch (error) {
       if (error.error?.http_code === 404) {
         console.log('Ресурс не знайдено, завантажуємо новий.');
@@ -72,7 +77,7 @@ export class CloudinaryService {
           'Помилка під час спроби знайти ресурс:',
           error.error?.message,
         );
-        return { name, url: '', status: 'rejected' };
+        return { name, url: '', status: MEDIA_STATUS.REJECTED };
       }
     }
 
@@ -83,6 +88,6 @@ export class CloudinaryService {
     });
 
     console.log('Новий ресурс успішно завантажено:', result);
-    return { name, url: result.secure_url, status: 'fulfilled' };
+    return { name, url: result.secure_url, status: MEDIA_STATUS.FULFILLED };
   }
 }
