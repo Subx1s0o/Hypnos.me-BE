@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common/decorators';
 import { Stripe } from 'stripe';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { PaymentsService } from './payments.service';

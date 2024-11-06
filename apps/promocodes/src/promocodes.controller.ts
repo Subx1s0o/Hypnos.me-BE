@@ -1,8 +1,15 @@
-import { Auth } from '@lib/entities/decorators/Auth';
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Auth } from '@lib/entities/decorators';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common/decorators';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PromoCode } from 'types/promocode.type';
-import { ApplyPromoCodeDto, CreatePromoCodeDto } from './dto';
+import { Promocode } from '../types/promocode.type';
+import { ApplyPromocodeDto, CreatePromocodeDto } from './dto';
 import { PromocodesService } from './promocodes.service';
 
 @ApiTags('promocodes')
@@ -29,7 +36,7 @@ export class PromocodesController {
     description: 'Access denied: Admins only.',
   })
   @Auth('admin')
-  async create(@Body() createPromoCodeDto: CreatePromoCodeDto): Promise<void> {
+  async create(@Body() createPromoCodeDto: CreatePromocodeDto): Promise<void> {
     return await this.promocodesService.create(createPromoCodeDto);
   }
 
@@ -37,7 +44,6 @@ export class PromocodesController {
   @ApiResponse({
     status: 200,
     description: 'Retrieved all promocodes.',
-    type: [PromoCode],
   })
   @ApiResponse({
     status: 401,
@@ -48,7 +54,7 @@ export class PromocodesController {
     description: 'Access denied: Admins only.',
   })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
-  async findAll(): Promise<PromoCode[]> {
+  async findAll(): Promise<Promocode[]> {
     return await this.promocodesService.findAll();
   }
 
@@ -104,7 +110,7 @@ export class PromocodesController {
     description: 'Unauthorized. Token is wrong or expired',
   })
   @ApiResponse({ status: 500, description: 'Internal server error.' })
-  async apply(@Body() applyPromoCodeDto: ApplyPromoCodeDto): Promise<void> {
-    return await this.promocodesService.applyPromoCode(applyPromoCodeDto.code);
+  async apply(@Body() applyPromocodeDto: ApplyPromocodeDto): Promise<void> {
+    return await this.promocodesService.applyPromoCode(applyPromocodeDto.code);
   }
 }

@@ -16,7 +16,7 @@ async function bootstrap() {
   });
 
   await app.startAllMicroservices().catch((err) => {
-    console.error('Failed to start microservices:', err);
+    console.error('Failed to start microservice:', err);
   });
 }
 

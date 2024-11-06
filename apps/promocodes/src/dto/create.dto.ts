@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsNotEmpty, IsNumber } from 'class-validator';
 
-export class CreatePromoCodeDto {
+export class CreatePromocodeDto {
   @ApiProperty({ type: String, required: true, example: 'DISCOUNT10' })
   @IsNotEmpty()
   code: string;

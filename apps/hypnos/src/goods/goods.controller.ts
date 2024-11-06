@@ -1,6 +1,4 @@
 import { Auth } from '@lib/entities/decorators';
-
-import { CATEGORIES } from '@lib/entities/constans';
 import {
   Body,
   Controller,
@@ -9,8 +7,9 @@ import {
   Patch,
   Post,
   Query,
-} from '@nestjs/common';
+} from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
+import { CategoriesType, Good } from 'types';
 import { CreateGoodDto } from './dto/create.dto';
 import { UpdateOrAddDto } from './dto/update.dto';
 import { GoodsService } from './goods.service';
@@ -23,14 +22,14 @@ export class GoodsController {
   async getAllGoods(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
-    @Query('category') category?: CATEGORIES,
-  ) {
+    @Query('category') category?: CategoriesType,
+  ): Promise<Good[]> {
     return await this.goodsService.getAllGoods({ page, limit, category });
   }
 
   @Post()
   @Auth('admin')
-  async createGood(@Body() data: CreateGoodDto) {
+  async createGood(@Body() data: CreateGoodDto): Promise<Good> {
     return await this.goodsService.createGood(data);
   }
 

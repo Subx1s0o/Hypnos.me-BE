@@ -1,19 +1,17 @@
 import { PrismaService } from '@lib/common';
+import { MEDIA_STATUS } from '@lib/entities/constans';
 import { InjectQueue } from '@nestjs/bull';
+import { Inject, Injectable } from '@nestjs/common/decorators';
+import { HttpStatus } from '@nestjs/common/enums';
 import {
   HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
   InternalServerErrorException,
-} from '@nestjs/common';
+} from '@nestjs/common/exceptions';
 import { ClientProxy } from '@nestjs/microservices';
-
-import { CATEGORIES } from '@lib/entities';
 import { Queue } from 'bull';
 import { lastValueFrom } from 'rxjs';
-import { CreateGoodDto } from './dto/create.dto';
-import { UpdateOrAddDto } from './dto/update.dto';
+import { CategoriesType, Good } from 'types';
+import { CreateGoodDto, UpdateOrAddDto } from './dto';
 
 @Injectable()
 export class GoodsService {
@@ -31,8 +29,8 @@ export class GoodsService {
   }: {
     page: number;
     limit: number;
-    category?: CATEGORIES;
-  }) {
+    category?: CategoriesType;
+  }): Promise<Good[]> {
     const skip = (page - 1) * limit;
     return await this.prisma.products.findMany({
       skip,
@@ -47,11 +45,11 @@ export class GoodsService {
       data: {
         title: data.title,
         media: {
-          main: { url: '', status: 'pending' },
-          media_1: { url: '', status: 'pending' },
-          media_2: { url: '', status: 'pending' },
-          media_3: { url: '', status: 'pending' },
-          media_4: { url: '', status: 'pending' },
+          main: { url: '', status: MEDIA_STATUS.pending },
+          media_1: { url: '', status: MEDIA_STATUS.pending },
+          media_2: { url: '', status: MEDIA_STATUS.pending },
+          media_3: { url: '', status: MEDIA_STATUS.pending },
+          media_4: { url: '', status: MEDIA_STATUS.pending },
         },
         category: data.category,
         quantity: data.quantity,
@@ -87,7 +85,7 @@ export class GoodsService {
 
     console.log(res);
 
-    if (res.status === 'rejected') {
+    if (res.status === MEDIA_STATUS.rejected) {
       throw new InternalServerErrorException(
         'Error while updating or adding image',
       );

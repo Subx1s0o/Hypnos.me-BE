@@ -18,23 +18,23 @@ export class CloudinaryService {
               public_id: key,
               transformation: [{ quality: 'auto', fetch_format: 'avif' }],
             });
-            return { url: result.secure_url, status: MEDIA_STATUS.FULFILLED };
+            return { url: result.secure_url, status: MEDIA_STATUS.fulfilled };
           } catch {
-            return { url: '', status: MEDIA_STATUS.REJECTED };
+            return { url: '', status: MEDIA_STATUS.rejected };
           }
         }
-        return { url: '', status: MEDIA_STATUS.NOT_UPLOADED };
+        return { url: '', status: MEDIA_STATUS.not_uploaded };
       },
     );
 
     const results = await Promise.all(uploadPromises);
 
     return {
-      main: results[0] || { url: '', status: MEDIA_STATUS.NOT_UPLOADED },
-      media_1: results[1] || { url: '', status: MEDIA_STATUS.NOT_UPLOADED },
-      media_2: results[2] || { url: '', status: MEDIA_STATUS.NOT_UPLOADED },
-      media_3: results[3] || { url: '', status: MEDIA_STATUS.NOT_UPLOADED },
-      media_4: results[4] || { url: '', status: MEDIA_STATUS.NOT_UPLOADED },
+      main: results[0] || { url: '', status: MEDIA_STATUS.not_uploaded },
+      media_1: results[1] || { url: '', status: MEDIA_STATUS.not_uploaded },
+      media_2: results[2] || { url: '', status: MEDIA_STATUS.not_uploaded },
+      media_3: results[3] || { url: '', status: MEDIA_STATUS.not_uploaded },
+      media_4: results[4] || { url: '', status: MEDIA_STATUS.not_uploaded },
     };
   }
 
@@ -67,7 +67,7 @@ export class CloudinaryService {
       return {
         name,
         url: result.secure_url,
-        status: MEDIA_STATUS.FULFILLED,
+        status: MEDIA_STATUS.fulfilled,
       };
     } catch (error) {
       if (error.error?.http_code === 404) {
@@ -77,7 +77,7 @@ export class CloudinaryService {
           'Помилка під час спроби знайти ресурс:',
           error.error?.message,
         );
-        return { name, url: '', status: MEDIA_STATUS.REJECTED };
+        return { name, url: '', status: MEDIA_STATUS.rejected };
       }
     }
 
@@ -88,6 +88,6 @@ export class CloudinaryService {
     });
 
     console.log('Новий ресурс успішно завантажено:', result);
-    return { name, url: result.secure_url, status: MEDIA_STATUS.FULFILLED };
+    return { name, url: result.secure_url, status: MEDIA_STATUS.fulfilled };
   }
 }

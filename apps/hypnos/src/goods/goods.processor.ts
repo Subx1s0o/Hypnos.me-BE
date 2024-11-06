@@ -1,6 +1,6 @@
 import { PrismaService } from '@lib/common';
 import { Process, Processor } from '@nestjs/bull';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common/decorators';
 import { ClientProxy } from '@nestjs/microservices';
 import { Job } from 'bull';
 import { lastValueFrom } from 'rxjs';

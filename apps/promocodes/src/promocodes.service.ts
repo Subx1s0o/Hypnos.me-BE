@@ -1,21 +1,21 @@
 import { PrismaService } from '@lib/common';
+import { Injectable } from '@nestjs/common/decorators';
+import { HttpStatus } from '@nestjs/common/enums';
 import {
   BadRequestException,
   ConflictException,
   HttpException,
-  HttpStatus,
-  Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { CreatePromoCodeDto } from './dto';
+} from '@nestjs/common/exceptions';
+import { CreatePromocodeDto } from './dto';
 
 @Injectable()
 export class PromocodesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createPromoCodeDto: CreatePromoCodeDto) {
+  async create(createPromocodeDto: CreatePromocodeDto) {
     const promo = await this.prisma.promocodes.findUnique({
-      where: { code: createPromoCodeDto.code },
+      where: { code: createPromocodeDto.code },
     });
 
     if (promo) {
@@ -26,10 +26,10 @@ export class PromocodesService {
 
     await this.prisma.promocodes.create({
       data: {
-        code: createPromoCodeDto.code,
-        discount: createPromoCodeDto.discount,
-        count: createPromoCodeDto.count,
-        expirationDate: createPromoCodeDto.expirationDate,
+        code: createPromocodeDto.code,
+        discount: createPromocodeDto.discount,
+        count: createPromocodeDto.count,
+        expirationDate: createPromocodeDto.expirationDate,
       },
     });
 

@@ -1,6 +1,6 @@
-export enum MEDIA_STATUS {
-  PENDING = 'pending',
-  REJECTED = 'rejected',
-  FULFILLED = 'fulfilled',
-  NOT_UPLOADED = 'not_uploaded',
-}
+export const MEDIA_STATUS = {
+  fulfilled: 'fulfilled',
+  pending: 'pending',
+  rejected: 'rejected',
+  not_uploaded: 'not_uploaded',
+} as const;
