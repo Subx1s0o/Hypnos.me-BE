@@ -1,5 +1,5 @@
 import { ConfigModule, ConfigService, PrismaModule } from '@lib/common';
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common/decorators/modules';
 import { JwtModule } from '@nestjs/jwt';
 import { PromocodesController } from './promocodes.controller';
 import { PromocodesService } from './promocodes.service';

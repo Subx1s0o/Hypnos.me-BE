@@ -1,10 +1,7 @@
 import { ConfigService } from '@lib/common';
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common/decorators';
+import { UnauthorizedException } from '@nestjs/common/exceptions';
+import { CanActivate, ExecutionContext } from '@nestjs/common/interfaces';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { Request } from 'express';
 

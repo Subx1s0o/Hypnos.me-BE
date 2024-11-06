@@ -1,5 +1,5 @@
 import { ConfigModule, ConfigService } from '@lib/common';
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common/decorators/modules';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryController } from './cloudinary.controller';
 import { CloudinaryService } from './cloudinary.service';
