@@ -38,7 +38,7 @@ export class GoodsController {
   async updateOrAddImage(
     @Param('id') id: string,
     @Body() data: UpdateOrAddDto,
-  ) {
+  ): Promise<void> {
     return await this.goodsService.changeOrAddImage({ id, data });
   }
 }

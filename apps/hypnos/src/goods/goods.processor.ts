@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@nestjs/common/decorators';
 import { ClientProxy } from '@nestjs/microservices';
 import { Job } from 'bull';
 import { lastValueFrom } from 'rxjs';
-import { GoodsJobType } from 'types';
+import { Good, GoodsJobType } from 'types';
 
 @Injectable()
 @Processor('image-upload')
@@ -16,7 +16,7 @@ export class GoodsProcessor {
   ) {}
 
   @Process()
-  async handleImageUpload(job: Job<GoodsJobType>) {
+  async handleImageUpload(job: Job<GoodsJobType>): Promise<Good> {
     const { id, media } = job.data;
     console.log(id, media);
     let photos;
@@ -30,7 +30,7 @@ export class GoodsProcessor {
 
     console.log(photos);
 
-    let updatedProduct;
+    let updatedProduct: Good;
     try {
       updatedProduct = await this.prisma.products.update({
         where: { id },

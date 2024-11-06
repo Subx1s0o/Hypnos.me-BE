@@ -40,7 +40,7 @@ export class GoodsService {
     });
   }
 
-  async createGood(data: CreateGoodDto) {
+  async createGood(data: CreateGoodDto): Promise<Good> {
     const good = await this.prisma.products.create({
       data: {
         title: data.title,
@@ -76,7 +76,10 @@ export class GoodsService {
     return good;
   }
 
-  async changeOrAddImage(data: { id: string; data: UpdateOrAddDto }) {
+  async changeOrAddImage(data: {
+    id: string;
+    data: UpdateOrAddDto;
+  }): Promise<void> {
     console.log(data);
     console.log(this.cloudinaryClient);
     const res = await lastValueFrom(
