@@ -18,7 +18,10 @@ export class CloudinaryService {
               public_id: key,
               transformation: [{ quality: 'auto', fetch_format: 'avif' }],
             });
-            return { url: result.secure_url, status: MEDIA_STATUS.fulfilled };
+            return {
+              url: result.secure_url as string,
+              status: MEDIA_STATUS.fulfilled,
+            };
           } catch {
             return { url: '', status: MEDIA_STATUS.rejected };
           }
@@ -89,5 +92,9 @@ export class CloudinaryService {
 
     console.log('Новий ресурс успішно завантажено:', result);
     return { name, url: result.secure_url, status: MEDIA_STATUS.fulfilled };
+  }
+
+  async deleteAllPhotos(id: string) {
+    await this.cloudinaryClient.api.delete_resources([id]);
   }
 }

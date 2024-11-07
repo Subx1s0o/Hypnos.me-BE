@@ -166,4 +166,9 @@ export class GoodsService {
       HttpStatus.OK,
     );
   }
+
+  async deleteGood(id: string): Promise<void> {
+    this.cloudinaryClient.send('delete_all_images', id);
+    await this.prisma.products.delete({ where: { id } });
+  }
 }

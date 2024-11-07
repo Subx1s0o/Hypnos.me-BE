@@ -2,6 +2,7 @@ import { Auth } from '@lib/entities/decorators';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -51,5 +52,11 @@ export class GoodsController {
     @Body() data: UpdateOrAddDto,
   ): Promise<void> {
     return await this.goodsService.changeOrAddImage({ id, data });
+  }
+
+  @Delete(':id')
+  @Auth('admin')
+  async deleteGood(@Param('id') id: string): Promise<void> {
+    return this.goodsService.deleteGood(id);
   }
 }
