@@ -1,5 +1,4 @@
-import { CATEGORIES, MEDIA_NAMES, MediaContent } from '@lib/entities';
-import { Type } from 'class-transformer';
+import { CATEGORIES } from '@lib/entities';
 import {
   IsArray,
   IsBoolean,
@@ -8,20 +7,12 @@ import {
   IsNumber,
   IsOptional,
   Min,
-  ValidateNested,
 } from 'class-validator';
 import { CategoriesType } from 'types';
 
-export class CreateGoodDto {
+export class UpdateGoodDto {
   @IsNotEmpty()
   title: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => MediaContent)
-  media: {
-    [key in MEDIA_NAMES]: string;
-  };
 
   @IsOptional()
   @IsNumber()
@@ -71,4 +62,10 @@ export class CreateGoodDto {
     weightMale: number;
     weightFemale: number;
   }[];
+}
+
+export class CategoryDto {
+  @IsEnum(CATEGORIES)
+  @IsOptional()
+  category?: CategoriesType;
 }

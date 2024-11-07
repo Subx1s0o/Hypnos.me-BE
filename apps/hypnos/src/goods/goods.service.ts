@@ -6,12 +6,14 @@ import { HttpStatus } from '@nestjs/common/enums';
 import {
   HttpException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common/exceptions';
 import { ClientProxy } from '@nestjs/microservices';
 import { Queue } from 'bull';
 import { lastValueFrom } from 'rxjs';
 import { CategoriesType, Good } from 'types';
 import { CreateGoodDto, UpdateOrAddDto } from './dto';
+import { UpdateGoodDto } from './dto/update';
 
 @Injectable()
 export class GoodsService {
@@ -27,14 +29,14 @@ export class GoodsService {
     limit,
     category,
   }: {
-    page: number;
-    limit: number;
+    page: string;
+    limit: string;
     category?: CategoriesType;
   }): Promise<Good[]> {
-    const skip = (page - 1) * limit;
+    const skip = (+page - 1) * +limit;
     return await this.prisma.products.findMany({
       skip,
-      take: limit,
+      take: +limit,
       where: category ? { category } : undefined,
       orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
     });
@@ -74,6 +76,55 @@ export class GoodsService {
     });
 
     return good;
+  }
+
+  async updateGood(id: string, data: UpdateGoodDto): Promise<Good> {
+    const good = await this.prisma.products.findUnique({ where: { id } });
+
+    if (!good) {
+      throw new NotFoundException("The good with current ID was'nt found");
+    }
+
+    const allowedUpdateFields = [
+      'title',
+      'category',
+      'price',
+      'description',
+      'width',
+      'thickness',
+      'quantity',
+      'weight',
+      'pairWeight',
+      'goldSamples',
+    ];
+
+    const updateFields: any = {};
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (allowedUpdateFields.includes(key) && good[key] !== value) {
+        updateFields[key] = value;
+      }
+    });
+
+    if (Object.keys(updateFields).length > 0) {
+      const updatedProduct = await this.prisma.products.update({
+        where: { id },
+        data: updateFields,
+      });
+
+      if (!updatedProduct) {
+        throw new InternalServerErrorException(
+          'Prisma Error while updating good',
+        );
+      }
+
+      return updatedProduct;
+    } else {
+      throw new HttpException(
+        'Nothing changed in this good',
+        HttpStatus.NOT_MODIFIED,
+      );
+    }
   }
 
   async changeOrAddImage(data: {
