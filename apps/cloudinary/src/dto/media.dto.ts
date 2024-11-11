@@ -1,4 +1,4 @@
-import { MEDIA_NAMES } from '@lib/entities/constans/media_names';
+import { MEDIA_NAMES } from '@lib/entities/constans';
 import { MediaContent } from '@lib/entities/global.dto/MediaContent';
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';

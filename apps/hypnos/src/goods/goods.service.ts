@@ -9,10 +9,11 @@ import {
   NotFoundException,
 } from '@nestjs/common/exceptions';
 import { ClientProxy } from '@nestjs/microservices';
+import { Prisma } from '@prisma/client';
 import { Queue } from 'bull';
 import { lastValueFrom } from 'rxjs';
 import { CategoriesType, Good } from 'types';
-import { CreateGoodDto, UpdateOrAddDto } from './dto';
+import { CreateGoodDto } from './dto';
 import { UpdateGoodDto } from './dto/update';
 
 @Injectable()
@@ -82,31 +83,45 @@ export class GoodsService {
     const good = await this.prisma.products.findUnique({ where: { id } });
 
     if (!good) {
-      throw new NotFoundException("The good with current ID was'nt found");
+      throw new NotFoundException("The good with current ID wasn't found");
     }
 
-    const allowedUpdateFields = [
-      'title',
-      'category',
-      'price',
-      'description',
-      'width',
-      'thickness',
-      'quantity',
-      'weight',
-      'pairWeight',
-      'goldSamples',
-    ];
+    const updateFields: Prisma.productsUpdateInput = {};
 
-    const updateFields: any = {};
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (allowedUpdateFields.includes(key) && good[key] !== value) {
-        updateFields[key] = value;
-      }
-    });
+    if (data.media) {
+      const updatedMedia = await lastValueFrom(
+        this.cloudinaryClient.send('upload_or_add_images', {
+          id,
+          media: data.media,
+        }),
+      );
+      console.log(updatedMedia);
+      updateFields.media = {
+        main: {
+          url: updatedMedia.main?.url || '',
+          status: updatedMedia.main?.url ? 'fulfilled' : 'not_uploaded',
+        },
+        media_1: {
+          url: updatedMedia.media_1?.url || '',
+          status: updatedMedia.media_1?.url ? 'fulfilled' : 'not_uploaded',
+        },
+        media_2: {
+          url: updatedMedia.media_2?.url || '',
+          status: updatedMedia.media_2?.url ? 'fulfilled' : 'not_uploaded',
+        },
+        media_3: {
+          url: updatedMedia.media_3?.url || '',
+          status: updatedMedia.media_3?.url ? 'fulfilled' : 'not_uploaded',
+        },
+        media_4: {
+          url: updatedMedia.media_4?.url || '',
+          status: updatedMedia.media_4?.url ? 'fulfilled' : 'not_uploaded',
+        },
+      };
+    }
 
     if (Object.keys(updateFields).length > 0) {
+      console.log(updateFields);
       const updatedProduct = await this.prisma.products.update({
         where: { id },
         data: updateFields,
@@ -125,46 +140,6 @@ export class GoodsService {
         HttpStatus.NOT_MODIFIED,
       );
     }
-  }
-
-  async changeOrAddImage(data: {
-    id: string;
-    data: UpdateOrAddDto;
-  }): Promise<void> {
-    console.log(data);
-    console.log(this.cloudinaryClient);
-    const res = await lastValueFrom(
-      this.cloudinaryClient.send('upload_or_add_images', data),
-    );
-
-    console.log(res);
-
-    if (res.status === MEDIA_STATUS.rejected) {
-      throw new InternalServerErrorException(
-        'Error while updating or adding image',
-      );
-    }
-
-    const mediaName = res.name;
-
-    await this.prisma.products.update({
-      where: { id: data.id },
-      data: {
-        media: {
-          update: {
-            [mediaName]: {
-              url: res.url,
-              status: res.status,
-            },
-          },
-        },
-      },
-    });
-
-    throw new HttpException(
-      'The product was successfully updated',
-      HttpStatus.OK,
-    );
   }
 
   async deleteGood(id: string): Promise<void> {

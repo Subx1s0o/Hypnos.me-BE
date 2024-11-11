@@ -24,6 +24,9 @@ export class GoodsProcessor {
       photos = await lastValueFrom(
         this.cloudinaryClient.send('upload_images', { id, media }),
       );
+      if (!photos) {
+        console.error('Error while sending');
+      }
     } catch (error) {
       console.log(error);
     }

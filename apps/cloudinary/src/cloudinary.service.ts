@@ -41,57 +41,82 @@ export class CloudinaryService {
     };
   }
 
-  async uploadOrUpdateImage({
+  async uploadOrUpdateImages({
     id,
-    data: { name, image },
+    media,
   }: {
     id: string;
-    data: { name: string; image: string };
+    media: {
+      main?: string;
+      media_1?: string;
+      media_2?: string;
+      media_3?: string;
+      media_4?: string;
+    };
   }) {
     const folderPath = `products/${id}`;
-    console.log('Початок обробки:', { id, name, image, folderPath });
+    const updatedMedia = {};
 
-    try {
-      const resource = await this.cloudinaryClient.api.resource(
-        `${folderPath}/${name}`,
-        {
-          type: 'upload',
-        },
-      );
-      console.log('Ресурс знайдено, оновлюємо:', resource);
+    for (const [field, image] of Object.entries(media)) {
+      if (image) {
+        try {
+          const resource = await this.cloudinaryClient.api.resource(
+            `${folderPath}/${field}`,
+            { type: 'upload' },
+          );
 
-      const result = await this.cloudinaryClient.uploader.upload(image, {
-        folder: folderPath,
-        public_id: name,
-        overwrite: true,
-        transformation: [{ quality: 'auto', fetch_format: 'avif' }],
-      });
-      console.log('Ресурс успішно оновлено:', result);
-      return {
-        name,
-        url: result.secure_url,
-        status: MEDIA_STATUS.fulfilled,
-      };
-    } catch (error) {
-      if (error.error?.http_code === 404) {
-        console.log('Ресурс не знайдено, завантажуємо новий.');
+          console.log('Ресурс знайдено, оновлюємо:', resource);
+
+          const result = await this.cloudinaryClient.uploader.upload(image, {
+            folder: folderPath,
+            public_id: field,
+            overwrite: true,
+            transformation: [{ quality: 'auto', fetch_format: 'avif' }],
+          });
+
+          console.log('Ресурс успішно оновлено:', result);
+          updatedMedia[field] = {
+            url: result.secure_url,
+            name: field,
+            status: MEDIA_STATUS.fulfilled,
+          };
+        } catch (error) {
+          if (error.error?.http_code === 404) {
+            console.log('Ресурс не знайдено, завантажуємо новий.');
+
+            const result = await this.cloudinaryClient.uploader.upload(image, {
+              folder: folderPath,
+              public_id: field,
+              transformation: [{ quality: 'auto', fetch_format: 'avif' }],
+            });
+
+            console.log('Новий ресурс успішно завантажено:', result);
+            updatedMedia[field] = {
+              url: result.secure_url,
+              name: field,
+              status: MEDIA_STATUS.fulfilled,
+            };
+          } else {
+            console.error(
+              'Помилка під час спроби знайти ресурс:',
+              error.error?.message,
+            );
+            updatedMedia[field] = {
+              url: '',
+              status: MEDIA_STATUS.rejected,
+            };
+          }
+        }
       } else {
-        console.error(
-          'Помилка під час спроби знайти ресурс:',
-          error.error?.message,
-        );
-        return { name, url: '', status: MEDIA_STATUS.rejected };
+        updatedMedia[field] = {
+          url: '',
+          status: MEDIA_STATUS.not_uploaded,
+        };
       }
     }
 
-    const result = await this.cloudinaryClient.uploader.upload(image, {
-      folder: folderPath,
-      public_id: name,
-      transformation: [{ quality: 'auto', fetch_format: 'avif' }],
-    });
-
-    console.log('Новий ресурс успішно завантажено:', result);
-    return { name, url: result.secure_url, status: MEDIA_STATUS.fulfilled };
+    console.log(updatedMedia);
+    return updatedMedia;
   }
 
   async deleteAllPhotos(id: string) {

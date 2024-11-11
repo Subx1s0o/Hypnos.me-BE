@@ -14,8 +14,7 @@ export class CloudinaryController {
 
   @MessagePattern('upload_or_add_images')
   async uploadOrAdd(@Payload() data) {
-    console.log(data);
-    return await this.cloudinaryService.uploadOrUpdateImage(data);
+    return await this.cloudinaryService.uploadOrUpdateImages(data);
   }
 
   @MessagePattern('delete_all_images')
