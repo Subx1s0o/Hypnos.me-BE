@@ -1,5 +1,5 @@
 import { CATEGORIES } from '@lib/entities';
-import { Type } from 'class-transformer'; // Для перетворення об'єкта в DTO
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -99,10 +99,4 @@ export class UpdateGoodDto {
     weightMale: number;
     weightFemale: number;
   }[];
-}
-
-export class CategoryDto {
-  @IsEnum(CATEGORIES)
-  @IsOptional()
-  category?: CategoriesType;
 }

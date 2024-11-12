@@ -1,13 +1,15 @@
+import { CacheModule } from '@lib/common';
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common/decorators/modules';
 import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { GoodsController } from './goods.controller';
-import { GoodsProcessor } from './goods.processor';
+import { GoodsProcessor } from './helpers/goods.processor';
 import { GoodsService } from './goods.service';
 
 @Module({
   imports: [
+    CacheModule,
     BullModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         url: configService.get('REDIS_STORE') as string,

@@ -34,6 +34,7 @@ export class GoodsService {
     limit: string;
     category?: CategoriesType;
   }): Promise<Good[]> {
+    console.log(category);
     const skip = (+page - 1) * +limit;
     return await this.prisma.products.findMany({
       skip,
@@ -71,10 +72,17 @@ export class GoodsService {
       },
     });
 
-    await this.imageUploadQueue.add({
-      id: good.id,
-      media: data.media,
-    });
+    await this.imageUploadQueue.add(
+      {
+        id: good.id,
+        media: data.media,
+      },
+      {
+        attempts: 3,
+        removeOnComplete: true,
+        removeOnFail: true,
+      },
+    );
 
     return good;
   }

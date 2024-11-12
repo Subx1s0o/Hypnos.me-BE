@@ -11,6 +11,7 @@ import { CacheService } from './cache.service';
         store: redisStore,
         url: configService.get('REDIS_STORE') as string,
         no_ready_check: true,
+        ttl: 60 * 60,
       }),
       inject: [ConfigService],
     }),

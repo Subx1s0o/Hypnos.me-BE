@@ -1,4 +1,5 @@
 import { Auth } from '@lib/entities/decorators';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -8,25 +9,31 @@ import {
   Patch,
   Post,
   Query,
+  UseInterceptors,
 } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
-import { Good } from 'types';
+import { CategoriesType, Good } from 'types';
 import { CreateGoodDto } from './dto/create.dto';
-import { CategoryDto, UpdateGoodDto } from './dto/update';
+import { UpdateGoodDto } from './dto/update';
 import { GoodsService } from './goods.service';
+import { ParseCategoryPipe } from './helpers/categories.pipe';
 @Controller('goods')
 @ApiTags('goods')
 export class GoodsController {
   constructor(private readonly goodsService: GoodsService) {}
 
   @Get()
+  @UseInterceptors(CacheInterceptor)
   async getAllGoods(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
-    @Query('category') provided_category?: CategoryDto,
+    @Query('category', new ParseCategoryPipe()) category?: CategoriesType,
   ): Promise<Good[]> {
-    const { category } = provided_category;
-    return await this.goodsService.getAllGoods({ page, limit, category });
+    return await this.goodsService.getAllGoods({
+      page,
+      limit,
+      category,
+    });
   }
 
   @Post()
@@ -36,7 +43,7 @@ export class GoodsController {
   }
 
   @Patch(':id')
-  // @Auth('admin')
+  @Auth('admin')
   async updateGood(
     @Param('id') id: string,
     @Body() data: UpdateGoodDto,
