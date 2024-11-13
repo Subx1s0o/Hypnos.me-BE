@@ -78,8 +78,16 @@ export class AuthService {
         referredCode: referralCodeGenerated,
         referredBy: await this.getReferrerId(data.referredCode),
         bonusesHistory: [],
-        ordersHistory: [],
-        cart: [],
+        cart: {
+          create: {
+            items: {
+              create: [],
+            },
+          },
+        },
+      },
+      include: {
+        cart: true,
       },
     });
 

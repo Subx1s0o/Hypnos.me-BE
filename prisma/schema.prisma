@@ -8,21 +8,22 @@ datasource db {
 }
 
 type GoldSample {
-  sampleValue       String     
-  weightMale        Float        
-  weightFemale      Float       
+  sampleValue  String
+  weightMale   Float
+  weightFemale Float
 }
+
 type Media {
-  main      MediaDetail
-  media_1   MediaDetail?
-  media_2   MediaDetail?
-  media_3   MediaDetail?
-  media_4   MediaDetail?
+  main    MediaDetail
+  media_1 MediaDetail?
+  media_2 MediaDetail?
+  media_3 MediaDetail?
+  media_4 MediaDetail?
 }
 
 type MediaDetail {
-  url      String
-  status   MediaStatus
+  url    String
+  status MediaStatus
 }
 
 enum MediaStatus {
@@ -33,44 +34,43 @@ enum MediaStatus {
 }
 
 model products {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  title             String
-  createdAt         DateTime    @default(now()) @db.Date
-  updatedAt         DateTime    @updatedAt
-  media             Media      
-  price             Int
-  discountPercent   Int?
-  isPriceForPair    Boolean     @default(false)
-  description       String
-  category          Categories
-  width             Float?      
-  thickness         Float?    
-  views             Int         @default(0)
-  quantity          Int
-  weight            Float?     
-  pairWeight        Float?     
-  goldSamples       GoldSample[] 
-
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  createdAt       DateTime     @default(now()) @db.Date
+  updatedAt       DateTime     @updatedAt
+  media           Media
+  price           Int
+  discountPercent Int?
+  isPriceForPair  Boolean      @default(false)
+  description     String
+  category        Categories
+  width           Float?
+  thickness       Float?
+  views           Int          @default(0)
+  quantity        Int
+  weight          Float?
+  pairWeight      Float?
+  goldSamples     GoldSample[]
+  cartItems       CartItem[]
 }
 
 model users {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  firstName         String
-  secondName        String
-  email             String      @unique
-  password          String
-  bonuses           Int         @default(0)
-  role              Role        @default(user) 
-  bonusesHistory    bonusesHistory[]    
-  ordersHistory     ordersHistory[]     
-  cart              Json[] 
-  phone             String?
-  birthday          DateTime? 
-  referredCode      String      @unique
-  referredBy        String?     
-  subscribed        Boolean     @default(false)
-  createdAt         DateTime    @default(now()) @db.Date
-  updatedAt         DateTime    @updatedAt
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  firstName      String
+  secondName     String
+  email          String           @unique
+  password       String
+  bonuses        Int              @default(0)
+  role           Role             @default(user)
+  bonusesHistory bonusesHistory[]
+  cart           Cart?
+  phone          String?
+  birthday       DateTime?
+  referredCode   String           @unique
+  referredBy     String?
+  subscribed     Boolean          @default(false)
+  createdAt      DateTime         @default(now()) @db.Date
+  updatedAt      DateTime         @updatedAt
 }
 
 enum Role {
@@ -79,16 +79,10 @@ enum Role {
   owner
 }
 
-
-
 type bonusesHistory {
-  amount          Int
-  receivedDate    DateTime 
-  description     String
-}
-
-type ordersHistory  {
-  productIds      String[]
+  amount       Int
+  receivedDate DateTime
+  description  String
 }
 
 enum Categories {
@@ -100,11 +94,25 @@ enum Categories {
   futuristic
 }
 
-
 model promocodes {
-    id                String      @id @default(auto()) @map("_id") @db.ObjectId
-    code              String      @unique
-    discount          Int 
-    count             Int
-    expirationDate    DateTime
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  code           String   @unique
+  discount       Int
+  count          Int
+  expirationDate DateTime
+}
+
+model Cart {
+  id     String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId String     @unique @db.ObjectId
+  user   users      @relation(fields: [userId], references: [id])
+  items  CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  cartId    String   @db.ObjectId
+  productId String   @db.ObjectId
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  product   products @relation(fields: [productId], references: [id])
 }
