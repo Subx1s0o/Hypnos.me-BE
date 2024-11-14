@@ -1,5 +1,6 @@
 import { PrismaService } from '@lib/common';
 import { Process, Processor } from '@nestjs/bull';
+import { BadGatewayException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common/decorators';
 import { Job } from 'bull';
 import { User } from 'types';
@@ -13,7 +14,7 @@ export class ReferralProcessor {
   async processReferral(job: Job<{ user: User }>) {
     const { user } = job.data;
 
-    if (user.referredBy) {
+    try {
       await this.prisma.users.update({
         where: { id: user.referredBy },
         data: {
@@ -27,7 +28,11 @@ export class ReferralProcessor {
           },
         },
       });
+    } catch (error) {
+      throw new BadGatewayException('Error while updating bonuses to referrer');
+    }
 
+    try {
       await this.prisma.users.update({
         where: { id: user.id },
         data: {
@@ -41,6 +46,8 @@ export class ReferralProcessor {
           },
         },
       });
+    } catch (error) {
+      throw new BadGatewayException('Error while updating bonuses to user');
     }
   }
 }

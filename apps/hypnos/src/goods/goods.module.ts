@@ -4,15 +4,19 @@ import { Module } from '@nestjs/common/decorators/modules';
 import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { GoodsController } from './goods.controller';
-import { GoodsProcessor } from './helpers/goods.processor';
 import { GoodsService } from './goods.service';
+import { GoodsProcessor } from './helpers/goods.processor';
 
 @Module({
   imports: [
     CacheModule,
     BullModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
-        url: configService.get('REDIS_STORE') as string,
+        url: configService.get<string>('REDIS_STORE'),
+        defaultJobOptions: {
+          removeOnComplete: true,
+          removeOnFail: true,
+        },
       }),
       inject: [ConfigService],
     }),

@@ -96,10 +96,11 @@ export class AuthService {
     });
 
     if (newUser.referredBy) {
-      await this.referralQueue.add('processReferral', { newUser });
+      console.log(newUser);
+      await this.referralQueue.add('processReferral', { user: newUser });
     }
 
-    const tokens = await this.authHelpers.generateTokens(newUser.id);
+    const tokens = this.authHelpers.generateTokens(newUser.id);
     const userWithoutPassword = omitPassword(newUser);
     const cleanedCart = this.authHelpers.cleanCartData(newUser.cart);
 
