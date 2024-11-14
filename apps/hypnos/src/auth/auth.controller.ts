@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { TokensResponse } from 'types';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
@@ -21,6 +20,8 @@ import {
   SignInDto,
   SignUpDto,
 } from './dtos';
+import { AuthResponse } from './types/auth-response.type';
+import { TokensResponse } from './types/tokens-response.type';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -31,7 +32,6 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     description: 'The user has been created successfully',
-    type: TokensResponse,
   })
   @ApiResponse({
     status: 400,
@@ -41,7 +41,7 @@ export class AuthController {
     status: 500,
     description: 'Internal server error, please try again later',
   })
-  async signUp(@Body() data: SignUpDto): Promise<TokensResponse> {
+  async signUp(@Body() data: SignUpDto): Promise<AuthResponse> {
     return await this.authService.signUp(data);
   }
 
@@ -50,7 +50,6 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'The user has been logged successfully',
-    type: TokensResponse,
   })
   @ApiResponse({
     status: 400,
@@ -60,7 +59,7 @@ export class AuthController {
     status: 500,
     description: 'Internal server error, please try again later',
   })
-  async signIn(@Body() data: SignInDto): Promise<TokensResponse> {
+  async signIn(@Body() data: SignInDto): Promise<AuthResponse> {
     return await this.authService.signIn(data);
   }
 
@@ -68,8 +67,7 @@ export class AuthController {
   @Post('refresh')
   @ApiResponse({
     status: 200,
-    description: 'The tokens were refreshed successfully',
-    type: TokensResponse,
+    description: 'The auth were refreshed successfully',
   })
   @ApiResponse({
     status: 401,

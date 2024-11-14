@@ -1,14 +1,10 @@
-import { JsonValue } from '@prisma/client/runtime/library';
+import { CartCleaned } from './cart.types';
 import { Role } from './role.type';
 
 type BonusesHistoryEntry = {
   amount: number;
   receivedDate: Date;
   description: string;
-};
-
-type OrdersHistoryEntry = {
-  productIds: string[];
 };
 
 export type User = {
@@ -20,8 +16,7 @@ export type User = {
   bonuses: number;
   role: Role;
   bonusesHistory: BonusesHistoryEntry[];
-  ordersHistory: OrdersHistoryEntry[];
-  cart: JsonValue[];
+  cart?: CartCleaned;
   phone?: string;
   birthday?: Date;
   referredCode: string;

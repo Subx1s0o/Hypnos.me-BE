@@ -115,4 +115,5 @@ model CartItem {
   productId String   @db.ObjectId
   cart      Cart     @relation(fields: [cartId], references: [id])
   product   products @relation(fields: [productId], references: [id])
+  quantity  Int
 }

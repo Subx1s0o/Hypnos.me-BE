@@ -1,5 +1,6 @@
 import { ConfigService, PrismaService } from '@lib/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { InjectQueue } from '@nestjs/bull';
 import {
   BadRequestException,
   ConflictException,
@@ -13,9 +14,13 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
-import { TokensResponse } from 'types';
+import { Queue } from 'bull';
+import { AuthResponse } from 'types';
+import { omitPassword } from 'utils/omitPassword';
 import { v4 as uuid } from 'uuid';
 import { SignInDto, SignUpDto } from './dtos';
+import { AuthHelpersService } from './helpers/auth-helpers.service';
+import { TokensResponse } from './types/tokens-response.type';
 
 @Injectable()
 export class AuthService {
@@ -24,34 +29,11 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private readonly mailer: MailerService,
     private readonly config: ConfigService,
+    @InjectQueue('referral-queue') private referralQueue: Queue,
+    private readonly authHelpers: AuthHelpersService,
   ) {}
 
-  private generateTokens(id: string): TokensResponse {
-    const accessToken = this.jwtService.sign({ id }, { expiresIn: '30m' });
-    const refreshToken = this.jwtService.sign({ id }, { expiresIn: '5d' });
-
-    return {
-      accessToken,
-      refreshToken,
-      accessTokenValidUntil: new Date(
-        new Date().setMinutes(new Date().getMinutes() + 30),
-      ),
-      refreshTokenValidUntil: new Date(
-        new Date().setDate(new Date().getDate() + 5),
-      ),
-    };
-  }
-
-  private async getReferrerId(referralCode?: string): Promise<string | null> {
-    if (!referralCode) return null;
-
-    const referrer = await this.prismaService.users.findUnique({
-      where: { referredCode: referralCode },
-    });
-    return referrer ? referrer.id : null;
-  }
-
-  async signUp(data: SignUpDto) {
+  async signUp(data: SignUpDto): Promise<AuthResponse> {
     const isUserExists = await this.prismaService.users.findUnique({
       where: { email: data.email },
     });
@@ -62,12 +44,19 @@ export class AuthService {
       );
     }
 
-    const hashedPassword = await hash(data.password, 8);
-
+    const hashedPassword = await hash(data.password, 10);
     const referralCodeGenerated = uuid()
-      .replace(/-/g, '')
+      .replace(/-/g, ' ')
       .slice(0, 7)
       .toUpperCase();
+
+    const cartItems =
+      data.cart && data.cart.length > 0
+        ? data.cart.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+          }))
+        : [];
 
     const newUser = await this.prismaService.users.create({
       data: {
@@ -76,56 +65,59 @@ export class AuthService {
         email: data.email,
         password: hashedPassword,
         referredCode: referralCodeGenerated,
-        referredBy: await this.getReferrerId(data.referredCode),
+        referredBy: await this.authHelpers.getReferrerId(data.referredCode),
         bonusesHistory: [],
         cart: {
           create: {
             items: {
-              create: [],
+              create: cartItems,
             },
           },
         },
       },
       include: {
-        cart: true,
+        cart: {
+          include: {
+            items: {
+              include: {
+                product: {
+                  select: {
+                    id: true,
+                    title: true,
+                    price: true,
+                    media: { select: { main: { select: { url: true } } } },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 
     if (newUser.referredBy) {
-      await this.prismaService.users.update({
-        where: { id: newUser.referredBy },
-        data: {
-          bonuses: { increment: 20 },
-          bonusesHistory: {
-            push: {
-              receivedDate: new Date(),
-              amount: 20,
-              description: 'Somebody use your referal :)',
-            },
-          },
-        },
-      });
-      await this.prismaService.users.update({
-        where: { id: newUser.id },
-        data: {
-          bonuses: { increment: 20 },
-          bonusesHistory: {
-            push: {
-              receivedDate: new Date(),
-              amount: 20,
-              description: 'Adding from redeeming referral code ',
-            },
-          },
-        },
-      });
+      await this.referralQueue.add('processReferral', { newUser });
     }
 
-    return this.generateTokens(newUser.id);
+    const tokens = await this.authHelpers.generateTokens(newUser.id);
+    const userWithoutPassword = omitPassword(newUser);
+    const cleanedCart = this.authHelpers.cleanCartData(newUser.cart);
+
+    return {
+      user: {
+        ...userWithoutPassword,
+        cart: cleanedCart,
+      },
+      ...tokens,
+    };
   }
 
-  async signIn(data: SignInDto) {
+  async signIn(data: SignInDto): Promise<AuthResponse> {
     const user = await this.prismaService.users.findUnique({
       where: { email: data.email },
+      include: {
+        cart: { include: { items: { include: { product: true } } } },
+      },
     });
 
     if (!user) {
@@ -142,10 +134,22 @@ export class AuthService {
       );
     }
 
-    return this.generateTokens(user.id);
+    const updatedCart = await this.authHelpers.updateCart(user.id, data.cart);
+
+    const tokens = await this.authHelpers.generateTokens(user.id);
+    const userWithoutPassword = omitPassword(user);
+    const cleanedCart = this.authHelpers.cleanCartData(updatedCart);
+
+    return {
+      user: {
+        ...userWithoutPassword,
+        cart: cleanedCart,
+      },
+      ...tokens,
+    };
   }
 
-  async refresh(refreshToken: string) {
+  async refresh(refreshToken: string): Promise<TokensResponse> {
     const verified = this.jwtService.verify(refreshToken);
 
     if (!verified) {
@@ -154,7 +158,7 @@ export class AuthService {
       );
     }
 
-    return this.generateTokens(verified.sub);
+    return this.authHelpers.generateTokens(verified.sub);
   }
 
   async changePassword(
@@ -183,7 +187,7 @@ export class AuthService {
         "The old password doesn't match with real password",
       );
     }
-    const hashedPassword = await hash(newPassword, 8);
+    const hashedPassword = await hash(newPassword, 10);
 
     try {
       await this.prismaService.users.update({
@@ -248,7 +252,7 @@ export class AuthService {
       throw new NotFoundException("The User Wasn't Found, try Sign-Up first");
     }
 
-    const hashPassword = await hash(newPassword, 8);
+    const hashPassword = await hash(newPassword, 10);
 
     try {
       await this.prismaService.users.update({

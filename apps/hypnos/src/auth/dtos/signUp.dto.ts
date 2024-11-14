@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
   IsBoolean,
   IsEmail,
   IsNotEmpty,
@@ -42,4 +43,8 @@ export class SignUpDto {
   @IsOptional()
   @IsString()
   referredCode?: string;
+
+  @ApiProperty({ type: Array, required: true })
+  @IsArray()
+  cart: { productId: string; quantity: number }[];
 }
