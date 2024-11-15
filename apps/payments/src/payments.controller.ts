@@ -1,20 +1,20 @@
-import { Body, Controller, Post } from '@nestjs/common/decorators';
-import { Stripe } from 'stripe';
-import { CreateSessionDto } from './dto/create-session.dto';
+import { CreateSessionDto } from '@lib/entities/global.dto';
+import { Body, Controller, Post } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
+import Stripe from 'stripe';
 import { PaymentsService } from './payments.service';
 
-@Controller('payments')
+@Controller()
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Post('create-session')
-  async createSession(@Body() createSessionDto: CreateSessionDto) {
-    return this.paymentsService.createCheckoutSession(
-      createSessionDto.products,
-    );
+  @MessagePattern('create-session')
+  async createSession(data: CreateSessionDto) {
+    return await this.paymentsService.createCheckoutSession(data);
   }
 
   @Post('webhook')
+  @MessagePattern('webhook')
   async webhook(@Body() event: Stripe.Event) {
     return this.paymentsService.handleWebhook(event);
   }

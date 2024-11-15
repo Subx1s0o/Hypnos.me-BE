@@ -1,24 +1,24 @@
+import { ConfigModule, ConfigService, PrismaModule } from '@lib/common';
 import { Module } from '@nestjs/common/decorators/modules';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
+
 import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, PrismaModule],
   controllers: [PaymentsController],
   providers: [
-    PaymentsService,
     {
       provide: 'STRIPE_CLIENT',
       useFactory: (configService: ConfigService) => {
-        return new Stripe(configService.get<string>('STRIPE_SECRET_KEY'), {
+        return new Stripe(configService.get('STRIPE_SECRET_KEY'), {
           apiVersion: '2024-09-30.acacia',
         });
       },
       inject: [ConfigService],
     },
+    PaymentsService,
   ],
-  exports: ['STRIPE_CLIENT', PaymentsService],
 })
 export class PaymentsModule {}

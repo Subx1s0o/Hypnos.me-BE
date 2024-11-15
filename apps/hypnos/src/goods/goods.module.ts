@@ -1,7 +1,6 @@
-import { CacheModule } from '@lib/common';
+import { CacheModule, ConfigService } from '@lib/common';
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common/decorators/modules';
-import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { GoodsController } from './goods.controller';
 import { GoodsService } from './goods.service';
@@ -12,7 +11,7 @@ import { GoodsProcessor } from './helpers/goods.processor';
     CacheModule,
     BullModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
-        url: configService.get<string>('REDIS_STORE'),
+        url: configService.get('REDIS_STORE'),
         defaultJobOptions: {
           removeOnComplete: true,
           removeOnFail: true,
@@ -29,7 +28,7 @@ import { GoodsProcessor } from './helpers/goods.processor';
         useFactory: async (configService: ConfigService) => ({
           transport: Transport.RMQ,
           options: {
-            urls: [configService.get<string>('AMQP_URL')],
+            urls: [configService.get('AMQP_URL')],
             queue: 'cloudinary_queue',
           },
         }),
