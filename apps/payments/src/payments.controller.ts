@@ -1,7 +1,6 @@
 import { CreateSessionDto } from '@lib/entities/global.dto';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import Stripe from 'stripe';
 import { PaymentsService } from './payments.service';
 
 @Controller()
@@ -13,9 +12,9 @@ export class PaymentsController {
     return await this.paymentsService.createCheckoutSession(data);
   }
 
-  @Post('webhook')
-  @MessagePattern('webhook')
-  async webhook(@Body() event: Stripe.Event) {
-    return this.paymentsService.handleWebhook(event);
-  }
+  // @Post('webhook')
+  // @MessagePattern('webhook')
+  // async webhook(@Body() event: Stripe.Event) {
+  //   return this.paymentsService.handleWebhook(event);
+  // }
 }

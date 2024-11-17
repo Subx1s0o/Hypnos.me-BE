@@ -18,11 +18,4 @@ export class PaymentsController {
 
     return res;
   }
-
-  @Post('webhook')
-  async webhook(): Promise<void> {
-    const res = await lastValueFrom(this.paymentsService.send('webhook', data));
-
-    return res;
-  }
 }
