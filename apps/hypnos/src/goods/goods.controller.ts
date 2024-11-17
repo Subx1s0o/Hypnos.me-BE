@@ -28,7 +28,7 @@ export class GoodsController {
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
     @Query('category', new ParseCategoryPipe()) category?: CategoriesType,
-  ): Promise<Good[]> {
+  ): Promise<{ data: Good[]; totalPages: number }> {
     return await this.goodsService.getAllGoods({
       page,
       limit,

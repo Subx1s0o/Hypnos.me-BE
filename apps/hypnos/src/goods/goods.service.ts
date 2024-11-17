@@ -4,6 +4,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Inject, Injectable } from '@nestjs/common/decorators';
 import { HttpStatus } from '@nestjs/common/enums';
 import {
+  BadRequestException,
   HttpException,
   InternalServerErrorException,
   NotFoundException,
@@ -33,14 +34,38 @@ export class GoodsService {
     page: string;
     limit: string;
     category?: CategoriesType;
-  }): Promise<Good[]> {
-    const skip = (+page - 1) * +limit;
-    return await this.prisma.products.findMany({
+  }): Promise<{ data: Good[]; totalPages: number }> {
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    if (
+      isNaN(pageNumber) ||
+      isNaN(limitNumber) ||
+      pageNumber <= 0 ||
+      limitNumber <= 0
+    ) {
+      throw new BadRequestException('Invalid page or limit');
+    }
+
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const totalItems = await this.prisma.products.count({
+      where: category ? { category } : {},
+    });
+
+    const totalPages = Math.ceil(totalItems / limitNumber);
+
+    const products = await this.prisma.products.findMany({
       skip,
-      take: +limit,
-      where: category ? { category } : undefined,
+      take: limitNumber,
+      where: category ? { category } : {},
       orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
     });
+
+    return {
+      data: products,
+      totalPages,
+    };
   }
 
   async createGood(data: CreateGoodDto): Promise<Good> {
