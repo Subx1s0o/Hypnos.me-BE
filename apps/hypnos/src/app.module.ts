@@ -16,6 +16,5 @@ import { PaymentsModule } from './payments/payments.module';
     AdminModule,
     PaymentsModule,
   ],
-
 })
 export class AppModule {}

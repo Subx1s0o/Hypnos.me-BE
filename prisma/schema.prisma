@@ -87,7 +87,7 @@ type bonusesHistory {
 
 enum Categories {
   classic
-  neo_classic
+  neoclassic
   conceptual
   geometrical
   symbolical

@@ -1,6 +1,6 @@
 export const CATEGORIES = {
   CLASSIC: 'classic',
-  NEO_CLASSIC: 'neo_classic',
+  NEO_CLASSIC: 'neoclassic',
   CONCEPTUAL: 'conceptual',
   GEOMETRICAL: 'geometrical',
   SYMBOLICAL: 'symbolical',

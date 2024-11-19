@@ -2,6 +2,7 @@ import { MEDIA_STATUS } from '@lib/entities/constans';
 import { Inject, Injectable } from '@nestjs/common/decorators';
 import { v2 as Cloudinary } from 'cloudinary';
 import { MediaData } from './dto/media.dto';
+
 @Injectable()
 export class CloudinaryService {
   constructor(

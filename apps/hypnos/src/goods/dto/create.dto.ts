@@ -31,7 +31,7 @@ export class CreateGoodDto {
   @IsNotEmpty()
   @IsEnum(CATEGORIES, {
     message:
-      'Category must be one of the defined types: classic, neo_classic, conceptual, geometrical, symbolical, futuristic',
+      'Category must be one of the defined types: classic, neoclassic, conceptual, geometrical, symbolical, futuristic',
   })
   category: CategoriesType;
 
