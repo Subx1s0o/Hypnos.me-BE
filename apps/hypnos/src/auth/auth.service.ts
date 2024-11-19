@@ -15,7 +15,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { Queue } from 'bull';
-import { AuthResponse } from 'types';
+import { AuthResponse } from './types/auth-response.type';
 import { omitPassword } from 'utils/omitPassword';
 import { v4 as uuid } from 'uuid';
 import { SignInDto, SignUpDto } from './dtos';
