@@ -71,7 +71,7 @@ export class GoodsService {
   async createGood(data: CreateGoodDto): Promise<Good> {
     const good = await this.prisma.products.create({
       data: {
-        title: data.title,
+        ...data,
         media: {
           main: { url: '', status: MEDIA_STATUS.pending },
           media_1: { url: '', status: MEDIA_STATUS.pending },
@@ -79,15 +79,6 @@ export class GoodsService {
           media_3: { url: '', status: MEDIA_STATUS.pending },
           media_4: { url: '', status: MEDIA_STATUS.pending },
         },
-        category: data.category,
-        quantity: data.quantity,
-        price: data.price,
-        isPriceForPair: data.isPriceForPair,
-        description: data.description,
-        width: data.width,
-        thickness: data.thickness,
-        weight: data.weight,
-        pairWeight: data.pairWeight,
         goldSamples: data.goldSamples.map((sample) => ({
           sampleValue: sample.sampleValue,
           weightMale: sample.weightMale,
