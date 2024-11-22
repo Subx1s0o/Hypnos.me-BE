@@ -1,0 +1,47 @@
+# Етап builder
+FROM node:20-alpine AS builder
+
+WORKDIR /usr/src/app
+
+# Копіюємо package.json та встановлюємо залежності
+COPY package.json .
+RUN npm install
+
+# Копіюємо код додатка та необхідні файли
+COPY apps/hypnos apps/hypnos
+COPY libs libs
+COPY tsconfig.json tsconfig.json
+COPY types types
+COPY utils utils
+COPY prisma prisma
+
+# Виконуємо генерацію Prisma
+RUN npx prisma generate
+
+# Створюємо білд
+RUN npm run build
+
+# Етап production
+FROM node:20-alpine AS prod
+
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+WORKDIR /usr/src/app
+
+# Копіюємо тільки production-залежності
+COPY package.json .
+RUN npm install --production
+
+# Копіюємо білд із builder
+COPY --from=builder /usr/src/app/dist ./dist
+
+# Копіюємо схеми Prisma для виконання npx prisma generate
+COPY --from=builder /usr/src/app/prisma ./prisma
+COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
+
+# Генеруємо Prisma клієнт
+RUN npx prisma generate
+
+# Запускаємо додаток
+CMD ["node", "dist/apps/hypnos/src/main"]
