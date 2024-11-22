@@ -13,3 +13,9 @@ services:
       dockerfile: ./apps/cloudinary/dockerfile
     env_file:
       - .env
+  promocodes:
+    build:
+      context: .
+      dockerfile: ./apps/promocodes/dockerfile
+    env_file:
+      - .env

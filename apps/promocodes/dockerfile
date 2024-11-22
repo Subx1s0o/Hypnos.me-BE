@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 COPY package.json .
 RUN npm install
 
-COPY apps/cloudinary apps/cloudinary
+COPY apps/promocodes apps/promocodes
 COPY libs libs
 COPY tsconfig.json tsconfig.json
 COPY types types
@@ -17,7 +17,7 @@ COPY prisma prisma
 RUN npx prisma generate
 
 
-RUN npm run build cloudinary
+RUN npm run build promocodes
 
 FROM node:20-alpine AS prod
 
@@ -38,4 +38,4 @@ COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 RUN npx prisma generate
 
 
-CMD ["node", "dist/apps/cloudinary/src/main"]
+CMD ["node", "dist/apps/promocodes/src/main"]
