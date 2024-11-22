@@ -37,13 +37,13 @@ export class GoodsController {
   }
 
   @Post()
-  @Auth('admin')
+  @Auth('admin', "owner")
   async createGood(@Body() data: CreateGoodDto): Promise<Good> {
     return await this.goodsService.createGood(data);
   }
 
   @Patch(':id')
-  @Auth('admin')
+  @Auth('admin', "owner")
   async updateGood(
     @Param('id') id: string,
     @Body() data: UpdateGoodDto,
@@ -52,7 +52,7 @@ export class GoodsController {
   }
 
   @Delete(':id')
-  @Auth('admin')
+  @Auth('admin', "owner")
   async deleteGood(@Param('id') id: string): Promise<void> {
     return this.goodsService.deleteGood(id);
   }
