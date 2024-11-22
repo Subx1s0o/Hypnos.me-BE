@@ -19,3 +19,9 @@ services:
       dockerfile: ./apps/promocodes/dockerfile
     env_file:
       - .env
+  payments:
+    build:
+      context: .
+      dockerfile: ./apps/payments/dockerfile
+    env_file:
+      - .env
