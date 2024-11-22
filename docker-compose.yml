@@ -7,3 +7,9 @@ services:
       - .env
     ports:
       - "8080:8080"
+  cloudinary:
+    build:
+      context: .
+      dockerfile: ./apps/cloudinary/dockerfile
+    env_file:
+      - .env

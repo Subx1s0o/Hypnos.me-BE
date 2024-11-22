@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 COPY package.json .
 RUN npm install
 
-COPY apps/hypnos apps/hypnos
+COPY apps/cloudinary apps/cloudinary
 COPY libs libs
 COPY tsconfig.json tsconfig.json
 COPY types types
@@ -38,4 +38,4 @@ COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 RUN npx prisma generate
 
 
-CMD ["node", "dist/apps/hypnos/src/main"]
+CMD ["node", "dist/apps/cloudinary/src/main"]
