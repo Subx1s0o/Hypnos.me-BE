@@ -75,6 +75,8 @@ export class GoodsService {
     if (!data) {
       throw new NotFoundException("The good with that slug wasn't found");
     }
+
+    return data;
   }
 
   async createGood(data: CreateGoodDto): Promise<Good> {
