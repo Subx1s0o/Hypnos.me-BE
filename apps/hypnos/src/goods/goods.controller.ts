@@ -38,13 +38,18 @@ export class GoodsController {
     });
   }
 
-  @Get()
+  @Get(':slug')
+  async getGood(@Param('slug') slug: string) {
+    return await this.goodsService.getGood(slug);
+  }
+
+  @Get('search')
   async searchGood(@Body() data: SearchDto) {
     return await this.goodsService.search(data);
   }
 
   @Post()
-  // @Auth('admin', 'owner')
+  @Auth('admin', 'owner')
   async createGood(@Body() data: CreateGoodDto): Promise<Good> {
     return await this.goodsService.createGood(data);
   }

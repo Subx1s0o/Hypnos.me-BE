@@ -125,4 +125,33 @@ export class CloudinaryService {
   async deleteAllPhotos(id: string) {
     await this.cloudinaryClient.api.delete_resources([id]);
   }
+
+  async deleteFilesFromFolder(folderName: string) {
+    try {
+      const result = await this.cloudinaryClient.api.resources({
+        type: 'upload',
+        prefix: folderName,
+        max_results: 500,
+      });
+
+      const deletePromises = result.resources.map(async (file) => {
+        return await this.cloudinaryClient.uploader.destroy(file.public_id);
+      });
+
+      await Promise.all(deletePromises);
+      console.log(`Файли з папки ${folderName} успішно видалені`);
+
+      await this.cloudinaryClient.api.delete_folder(folderName);
+      console.log(`Папка ${folderName} успішно видалена`);
+    } catch (error) {
+      console.error(`Помилка при видаленні папки ${folderName}:`, error);
+    }
+  }
+
+  async clearAllFolders() {
+    const folders = ['products'];
+    for (const folder of folders) {
+      await this.deleteFilesFromFolder(folder);
+    }
+  }
 }

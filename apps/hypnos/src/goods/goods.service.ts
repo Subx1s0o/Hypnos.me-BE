@@ -16,6 +16,7 @@ import { lastValueFrom } from 'rxjs';
 import { CategoriesType, Good } from 'types';
 import { CreateGoodDto, SearchDto } from './dto';
 import { UpdateGoodDto } from './dto/update';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class GoodsService {
@@ -68,16 +69,29 @@ export class GoodsService {
     };
   }
 
+  async getGood(slug: string) {
+    const data = await this.prisma.products.findUnique({ where: { slug } });
+
+    if (!data) {
+      throw new NotFoundException("The good with that slug wasn't found");
+    }
+  }
+
   async createGood(data: CreateGoodDto): Promise<Good> {
     const slug = data.title
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .trim();
+
+    const uniqueId = v4().replace(/-/g, '').slice(0, 7).toLowerCase();
+
+    const readySlug = `${slug}-${uniqueId}`;
+
     const good = await this.prisma.products.create({
       data: {
         ...data,
-        slug,
+        slug: readySlug,
         media: {
           main: { url: '', status: MEDIA_STATUS.pending },
           media_1: { url: '', status: MEDIA_STATUS.pending },
