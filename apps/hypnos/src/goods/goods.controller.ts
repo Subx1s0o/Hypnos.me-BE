@@ -44,7 +44,7 @@ export class GoodsController {
   }
 
   @Post()
-  @Auth('admin', 'owner')
+  // @Auth('admin', 'owner')
   async createGood(@Body() data: CreateGoodDto): Promise<Good> {
     return await this.goodsService.createGood(data);
   }

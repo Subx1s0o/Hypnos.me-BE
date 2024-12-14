@@ -69,9 +69,15 @@ export class GoodsService {
   }
 
   async createGood(data: CreateGoodDto): Promise<Good> {
+    const slug = data.title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .trim();
     const good = await this.prisma.products.create({
       data: {
         ...data,
+        slug,
         media: {
           main: { url: '', status: MEDIA_STATUS.pending },
           media_1: { url: '', status: MEDIA_STATUS.pending },
