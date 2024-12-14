@@ -14,7 +14,7 @@ import { Prisma } from '@prisma/client';
 import { Queue } from 'bull';
 import { lastValueFrom } from 'rxjs';
 import { CategoriesType, Good } from 'types';
-import { CreateGoodDto } from './dto';
+import { CreateGoodDto, SearchDto } from './dto';
 import { UpdateGoodDto } from './dto/update';
 
 @Injectable()
@@ -168,5 +168,15 @@ export class GoodsService {
   async deleteGood(id: string): Promise<void> {
     this.cloudinaryClient.send('delete_all_images', id);
     await this.prisma.products.delete({ where: { id } });
+  }
+
+  async search(data: SearchDto) {
+    const products = await this.prisma.products.findMany({
+      where: {
+        title: { contains: data.title, mode: 'insensitive' },
+      },
+    });
+
+    return products;
   }
 }

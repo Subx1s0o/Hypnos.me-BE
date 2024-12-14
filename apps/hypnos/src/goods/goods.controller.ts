@@ -17,6 +17,8 @@ import { CreateGoodDto } from './dto/create.dto';
 import { UpdateGoodDto } from './dto/update';
 import { GoodsService } from './goods.service';
 import { ParseCategoryPipe } from './helpers/categories.pipe';
+import { SearchDto } from './dto';
+
 @Controller('goods')
 @ApiTags('goods')
 export class GoodsController {
@@ -36,14 +38,19 @@ export class GoodsController {
     });
   }
 
+  @Get()
+  async searchGood(@Body() data: SearchDto) {
+    return await this.goodsService.search(data);
+  }
+
   @Post()
-  @Auth('admin', "owner")
+  @Auth('admin', 'owner')
   async createGood(@Body() data: CreateGoodDto): Promise<Good> {
     return await this.goodsService.createGood(data);
   }
 
   @Patch(':id')
-  @Auth('admin', "owner")
+  @Auth('admin', 'owner')
   async updateGood(
     @Param('id') id: string,
     @Body() data: UpdateGoodDto,
@@ -52,7 +59,7 @@ export class GoodsController {
   }
 
   @Delete(':id')
-  @Auth('admin', "owner")
+  @Auth('admin', 'owner')
   async deleteGood(@Param('id') id: string): Promise<void> {
     return this.goodsService.deleteGood(id);
   }
