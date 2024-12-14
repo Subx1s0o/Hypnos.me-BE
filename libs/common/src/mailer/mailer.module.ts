@@ -1,6 +1,8 @@
 import { MailerModule as NodeMailer } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
+import { MjmlAdapter } from '@nestjs-modules/mailer/dist/adapters/mjml.adapter';
+import mjml2html from 'mjml';
 
 @Module({
   imports: [
@@ -13,6 +15,22 @@ import { ConfigService } from '../config/config.service';
           auth: {
             user: configService.get('MAILER_USERNAME'),
             pass: configService.get('MAILER_PASSWORD'),
+          },
+        },
+        template: {
+          dir: __dirname + '/templates',
+          adapter: new MjmlAdapter({
+            compile: (template: string) => {
+              return {
+                render: () => {
+                  const { html } = mjml2html(template);
+                  return html;
+                },
+              };
+            },
+          }),
+          options: {
+            strict: true,
           },
         },
       }),
