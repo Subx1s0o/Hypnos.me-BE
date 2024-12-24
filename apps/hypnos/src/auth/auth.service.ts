@@ -16,11 +16,12 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { Queue } from 'bull';
 import { AuthResponse } from './types/auth-response.type';
-import { omitPassword } from 'utils/omitPassword';
+
 import { v4 as uuid } from 'uuid';
 import { SignInDto, SignUpDto } from './dtos';
 import { AuthHelpersService } from './helpers/auth-helpers.service';
 import { TokensResponse } from './types/tokens-response.type';
+import { exclude } from 'utils/exclude';
 
 @Injectable()
 export class AuthService {
@@ -101,7 +102,7 @@ export class AuthService {
     }
 
     const tokens = this.authHelpers.generateTokens(newUser.id);
-    const userWithoutPassword = omitPassword(newUser);
+    const userWithoutPassword = exclude(newUser, ['password']);
     const cleanedCart = this.authHelpers.cleanCartData(newUser.cart);
 
     return {
@@ -137,8 +138,8 @@ export class AuthService {
 
     const updatedCart = await this.authHelpers.updateCart(user.id, data.cart);
 
-    const tokens = await this.authHelpers.generateTokens(user.id);
-    const userWithoutPassword = omitPassword(user);
+    const tokens = this.authHelpers.generateTokens(user.id);
+    const userWithoutPassword = exclude(user, ['password']);
     const cleanedCart = this.authHelpers.cleanCartData(updatedCart);
 
     return {
