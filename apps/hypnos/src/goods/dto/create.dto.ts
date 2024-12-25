@@ -1,4 +1,3 @@
-import { CATEGORIES, MEDIA_NAMES, MediaContent } from '@lib/entities';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -10,7 +9,47 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { CATEGORIES, MEDIA_NAMES, MediaContent } from '@lib/entities';
 import { CategoriesType } from 'types';
+
+export class RingDetailsDto {
+  @IsNotEmpty()
+  @IsNumber()
+  purityValue: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  maleWeight: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  femaleWeight: number;
+
+  @IsOptional()
+  @IsNumber()
+  pairWeight?: number;
+}
+
+export class DiamondDetailsDto {
+  @IsNotEmpty()
+  @IsNumber()
+  quantity: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  weight: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  diameter: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  purity: number;
+
+  @IsNotEmpty()
+  color: string;
+}
 
 export class CreateGoodDto {
   @IsNotEmpty()
@@ -26,7 +65,7 @@ export class CreateGoodDto {
   @IsOptional()
   @IsNumber()
   @Min(1)
-  discountPercent: number;
+  discountPercent?: number;
 
   @IsNotEmpty()
   @IsEnum(CATEGORIES, {
@@ -36,6 +75,7 @@ export class CreateGoodDto {
   category: CategoriesType;
 
   @IsNotEmpty()
+  @IsNumber()
   price: number;
 
   @IsBoolean()
@@ -48,27 +88,23 @@ export class CreateGoodDto {
   @Min(1)
   quantity: number;
 
-  @IsOptional()
   @IsNumber()
-  width?: number;
+  width: number;
 
-  @IsOptional()
   @IsNumber()
-  thickness?: number;
-
-  @IsOptional()
-  @IsNumber()
-  weight?: number;
-
-  @IsOptional()
-  @IsNumber()
-  pairWeight?: number;
+  thickness: number;
 
   @IsArray()
-  @IsNotEmpty()
-  goldSamples: {
-    sampleValue: string;
-    weightMale: number;
-    weightFemale: number;
-  }[];
+  @ValidateNested({ each: true })
+  @Type(() => RingDetailsDto)
+  ringDetails?: RingDetailsDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DiamondDetailsDto)
+  diamondDetails?: DiamondDetailsDto[];
+
+  @IsArray()
+  @IsNumber({}, { each: true })
+  sizeDetails?: number[];
 }

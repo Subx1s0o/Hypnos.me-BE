@@ -14,17 +14,27 @@ type Media = {
   media_4?: MediaDetail;
 };
 
-type GoldSample = {
-  sampleValue: string;
-  weightMale: number;
-  weightFemale: number;
+export type CategoriesType = (typeof CATEGORIES)[keyof typeof CATEGORIES];
+
+export type RingDetails = {
+  purityValue: number;
+  maleWeight: number;
+  femaleWeight: number;
+  pairWeight?: number;
 };
 
-export type CategoriesType = (typeof CATEGORIES)[keyof typeof CATEGORIES];
+export type DiamondDetails = {
+  quantity: number;
+  weight: number;
+  diameter: number;
+  purity: number;
+  color: string;
+};
 
 export type Good = {
   id: string;
   title: string;
+  slug: string;
   createdAt: Date;
   updatedAt: Date;
   media: Media;
@@ -37,7 +47,18 @@ export type Good = {
   thickness?: number;
   views: number;
   quantity: number;
-  weight?: number;
-  pairWeight?: number;
-  goldSamples: GoldSample[];
+  ringDetails: RingDetails[];
+  diamondDetails: DiamondDetails[];
+  sizeDetails: number[];
+};
+
+export type GoodPreview = {
+  category: CategoriesType;
+  discountPercent: number;
+  media: { main: { url: string; status: MediaStatusType } };
+  id: string;
+  price: number;
+  isPriceForPair: boolean;
+  slug: string;
+  title: string;
 };

@@ -5,6 +5,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -12,7 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
-import { CategoriesType, Good } from 'types';
+import { CategoriesType, GoodPreview } from 'types';
 import { CreateGoodDto } from './dto/create.dto';
 import { UpdateGoodDto } from './dto/update';
 import { GoodsService } from './goods.service';
@@ -30,7 +31,7 @@ export class GoodsController {
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
     @Query('category', new ParseCategoryPipe()) category?: CategoriesType,
-  ): Promise<{ data: Good[]; totalPages: number }> {
+  ): Promise<{ data: GoodPreview[]; totalPages: number }> {
     return await this.goodsService.getAllGoods({
       page,
       limit,
@@ -49,23 +50,29 @@ export class GoodsController {
   }
 
   @Post()
+  @HttpCode(204)
   @Auth('admin', 'owner')
-  async createGood(@Body() data: CreateGoodDto): Promise<Good> {
-    return await this.goodsService.createGood(data);
+  async createGood(@Body() data: CreateGoodDto): Promise<void> {
+    await this.goodsService.createGood(data);
+    return null;
   }
 
   @Patch(':id')
+  @HttpCode(204)
   @Auth('admin', 'owner')
   async updateGood(
     @Param('id') id: string,
     @Body() data: UpdateGoodDto,
-  ): Promise<Good> {
-    return await this.goodsService.updateGood(id, data);
+  ): Promise<void> {
+    await this.goodsService.updateGood(id, data);
+    return null;
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @Auth('admin', 'owner')
   async deleteGood(@Param('id') id: string): Promise<void> {
-    return this.goodsService.deleteGood(id);
+    await this.goodsService.deleteGood(id);
+    return null;
   }
 }

@@ -13,7 +13,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Prisma } from '@prisma/client';
 import { Queue } from 'bull';
 import { lastValueFrom } from 'rxjs';
-import { CategoriesType, Good } from 'types';
+import { CategoriesType, GoodPreview } from 'types';
 import { CreateGoodDto, SearchDto } from './dto';
 import { UpdateGoodDto } from './dto/update';
 import { v4 } from 'uuid';
@@ -35,7 +35,7 @@ export class GoodsService {
     page: string;
     limit: string;
     category?: CategoriesType;
-  }): Promise<{ data: Good[]; totalPages: number }> {
+  }): Promise<{ data: GoodPreview[]; totalPages: number }> {
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
 
@@ -61,6 +61,16 @@ export class GoodsService {
       take: limitNumber,
       where: category ? { category } : {},
       orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
+      select: {
+        category: true,
+        discountPercent: true,
+        media: { select: { main: true } },
+        id: true,
+        price: true,
+        isPriceForPair: true,
+        slug: true,
+        title: true,
+      },
     });
 
     return {
@@ -79,7 +89,7 @@ export class GoodsService {
     return data;
   }
 
-  async createGood(data: CreateGoodDto): Promise<Good> {
+  async createGood(data: CreateGoodDto): Promise<void> {
     const slug = data.title
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
@@ -101,10 +111,10 @@ export class GoodsService {
           media_3: { url: '', status: MEDIA_STATUS.pending },
           media_4: { url: '', status: MEDIA_STATUS.pending },
         },
-        goldSamples: data.goldSamples.map((sample) => ({
-          sampleValue: sample.sampleValue,
-          weightMale: sample.weightMale,
-          weightFemale: sample.weightFemale,
+        ringDetails: data.ringDetails.map((ring) => ({
+          purityValue: ring.purityValue,
+          maleWeight: ring.maleWeight,
+          femaleWeight: ring.femaleWeight,
         })),
       },
     });
@@ -120,11 +130,9 @@ export class GoodsService {
         removeOnFail: true,
       },
     );
-
-    return good;
   }
 
-  async updateGood(id: string, data: UpdateGoodDto): Promise<Good> {
+  async updateGood(id: string, data: UpdateGoodDto): Promise<void> {
     const good = await this.prisma.products.findUnique({ where: { id } });
 
     if (!good) {
@@ -177,8 +185,6 @@ export class GoodsService {
           'Prisma Error while updating good',
         );
       }
-
-      return updatedProduct;
     } else {
       throw new HttpException(
         'Nothing changed in this good',
