@@ -35,25 +35,26 @@ enum MediaStatus {
 }
 
 model products {
-  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
   title           String
-  slug            String       @unique
-  createdAt       DateTime     @default(now()) @db.Date
-  updatedAt       DateTime     @updatedAt
+  slug            String          @unique
+  createdAt       DateTime        @default(now()) @db.Date
+  updatedAt       DateTime        @updatedAt
   media           Media
   price           Int
   discountPercent Int?
-  isPriceForPair  Boolean      @default(false)
+  isPriceForPair  Boolean         @default(false)
   description     String
   category        Categories
   width           Float?
   thickness       Float?
-  views           Int          @default(0)
+  views           Int             @default(0)
   quantity        Int
   weight          Float?
   pairWeight      Float?
   goldSamples     GoldSample[]
   cartItems       CartItem[]
+  FavoritesItem   FavoritesItem[]
 }
 
 model users {
@@ -66,6 +67,7 @@ model users {
   role           Role             @default(user)
   bonusesHistory bonusesHistory[]
   cart           Cart?
+  favorites      Favorites?
   phone          String?
   birthday       DateTime?
   referredCode   String           @unique
@@ -111,6 +113,13 @@ model Cart {
   items  CartItem[]
 }
 
+model Favorites {
+  id     String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId String          @unique @db.ObjectId
+  user   users           @relation(fields: [userId], references: [id])
+  items  FavoritesItem[]
+}
+
 model CartItem {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   cartId    String   @db.ObjectId
@@ -118,4 +127,12 @@ model CartItem {
   cart      Cart     @relation(fields: [cartId], references: [id])
   product   products @relation(fields: [productId], references: [id])
   quantity  Int
+}
+
+model FavoritesItem {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  favoritesId String    @db.ObjectId
+  productId   String    @db.ObjectId
+  favorites   Favorites @relation(fields: [favoritesId], references: [id])
+  product     products  @relation(fields: [productId], references: [id])
 }

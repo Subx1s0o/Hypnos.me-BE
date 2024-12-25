@@ -1,5 +1,5 @@
 import { Auth } from '@lib/entities';
-import { Controller, Get, Req } from '@nestjs/common/decorators';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { UserService } from './user.service';
@@ -9,9 +9,15 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get('favorites')
   @Auth()
-  async getMe(@Req() req: Request & { user: string }) {
-    return await this.userService.getMe(req.user);
+  async getFavorits(@Req() req: Request & { user: string }) {
+    return await this.userService.getFavorites(req.user);
+  }
+
+  @Auth()
+  @Post('favorites')
+  async addTofavorites(@Body() data, @Req() req: Request & { user: string }) {
+    return await this.userService.createFavorite(req.user, data.productId);
   }
 }

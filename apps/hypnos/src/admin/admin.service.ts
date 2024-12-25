@@ -6,8 +6,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from 'types';
-import { omitPassword } from 'utils/omitPassword';
+
 import { CreateAdminDto } from './dtos/create.dto';
+import { exclude } from 'utils/exclude';
 
 @Injectable()
 export class AdminService {
@@ -39,15 +40,18 @@ export class AdminService {
 
     await this.cache.set(cacheKey, updatedUser, 300);
 
-    return omitPassword(updatedUser);
+    return exclude(updatedUser, ['password']);
   }
 
   async getAdmins(): Promise<Omit<User, 'password'>[]> {
     const admins = await this.prisma.users.findMany({
+      omit: {
+        password: true,
+      },
       where: { role: 'admin' },
     });
 
-    return omitPassword(admins);
+    return admins;
   }
 
   async deleteAdmin(id: string) {
