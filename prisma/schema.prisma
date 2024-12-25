@@ -8,21 +8,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-type GoldSample {
-  sampleValue  String
-  weightMale   Float
-  weightFemale Float
+type RingDetails {
+  purityValue  Int
+  maleWeight   Float
+  femaleWeight Float
+  pairWeight   Float?
+}
+
+type DiamondDetails {
+  quantity Int
+  weight   Float
+  diameter Float
+  purity   Int
+  color    String
 }
 
 type Media {
-  main    MediaDetail
-  media_1 MediaDetail?
-  media_2 MediaDetail?
-  media_3 MediaDetail?
-  media_4 MediaDetail?
+  main    MediaDetails
+  media_1 MediaDetails?
+  media_2 MediaDetails?
+  media_3 MediaDetails?
+  media_4 MediaDetails?
 }
 
-type MediaDetail {
+type MediaDetails {
   url    String
   status MediaStatus
 }
@@ -35,24 +44,24 @@ enum MediaStatus {
 }
 
 model products {
-  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
   title           String
-  slug            String          @unique
-  createdAt       DateTime        @default(now()) @db.Date
-  updatedAt       DateTime        @updatedAt
+  slug            String           @unique
+  createdAt       DateTime         @default(now()) @db.Date
+  updatedAt       DateTime         @updatedAt
   media           Media
   price           Int
   discountPercent Int?
-  isPriceForPair  Boolean         @default(false)
+  isPriceForPair  Boolean          @default(false)
   description     String
   category        Categories
   width           Float?
   thickness       Float?
-  views           Int             @default(0)
+  views           Int              @default(0)
   quantity        Int
-  weight          Float?
-  pairWeight      Float?
-  goldSamples     GoldSample[]
+  ringDetails     RingDetails[]
+  diamondDetails  DiamondDetails[]
+  sizeDetails     Int[]
   cartItems       CartItem[]
   FavoritesItem   FavoritesItem[]
 }
