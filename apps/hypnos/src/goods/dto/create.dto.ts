@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   Min,
   ValidateNested,
@@ -99,10 +100,10 @@ export class CreateGoodDto {
   @Type(() => RingDetailsDto)
   ringDetails?: RingDetailsDto[];
 
-  @IsArray()
+  @IsObject()
   @ValidateNested({ each: true })
   @Type(() => DiamondDetailsDto)
-  diamondDetails?: DiamondDetailsDto[];
+  diamondDetails?: DiamondDetailsDto;
 
   @IsArray()
   @IsNumber({}, { each: true })

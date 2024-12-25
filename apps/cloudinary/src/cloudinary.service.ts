@@ -34,7 +34,7 @@ export class CloudinaryService {
     );
 
     const results = await Promise.all(uploadPromises);
-
+    console.log(results);
     return {
       main: results[0] || { url: '', status: MEDIA_STATUS.not_uploaded },
       media_1: results[1] || { url: '', status: MEDIA_STATUS.not_uploaded },

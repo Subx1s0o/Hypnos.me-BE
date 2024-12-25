@@ -48,7 +48,7 @@ export type Good = {
   views: number;
   quantity: number;
   ringDetails: RingDetails[];
-  diamondDetails: DiamondDetails[];
+  diamondDetails: DiamondDetails;
   sizeDetails: number[];
 };
 

@@ -116,6 +116,7 @@ export class GoodsService {
           maleWeight: ring.maleWeight,
           femaleWeight: ring.femaleWeight,
         })),
+        diamondDetails: data.diamondDetails,
       },
     });
 
