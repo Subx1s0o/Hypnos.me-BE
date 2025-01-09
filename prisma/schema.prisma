@@ -1,11 +1,143 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["omitApi"]
 }
 
-datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+// ----------> Models
+
+model products {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  slug            String          @unique
+  createdAt       DateTime        @default(now()) @db.Date
+  updatedAt       DateTime        @updatedAt
+  media           Media
+  price           Int
+  discountPercent Int?
+  isPriceForPair  Boolean         @default(false)
+  description     String
+  category        Categories
+  width           Float?
+  thickness       Float?
+  views           Int             @default(0)
+  quantity        Int
+  ringDetails     RingDetails[]
+  diamondDetails  DiamondDetails
+  sizeDetails     Int[]
+  cartItems       cartItem[]
+  FavoritesItem   favoritesItem[]
+}
+
+model promocodes {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  code           String   @unique
+  discount       Int
+  count          Int
+  expirationDate DateTime
+}
+
+model users {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  firstName      String
+  secondName     String
+  email          String           @unique
+  password       String
+  bonuses        Int              @default(0)
+  role           Role             @default(user)
+  bonusesHistory bonusesHistory[]
+  // viewedProducts viewedProducts[]
+  cart           cart?
+  favorites      favorites?
+  phone          String?
+  birthday       DateTime?
+  referredCode   String           @unique
+  referredBy     String?
+  subscribed     Boolean          @default(false)
+  createdAt      DateTime         @default(now()) @db.Date
+  updatedAt      DateTime         @updatedAt
+}
+
+model cart {
+  id     String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId String     @unique @db.ObjectId
+  user   users      @relation(fields: [userId], references: [id])
+  items  cartItem[]
+}
+
+model favorites {
+  id     String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId String          @unique @db.ObjectId
+  user   users           @relation(fields: [userId], references: [id])
+  items  favoritesItem[]
+}
+
+model cartItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  cartId    String   @db.ObjectId
+  productId String   @db.ObjectId
+  cart      cart     @relation(fields: [cartId], references: [id])
+  product   products @relation(fields: [productId], references: [id])
+  quantity  Int
+}
+
+model favoritesItem {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  favoritesId String    @db.ObjectId
+  productId   String    @db.ObjectId
+  favorites   favorites @relation(fields: [favoritesId], references: [id])
+  product     products  @relation(fields: [productId], references: [id])
+}
+
+// model viewedProducts {
+//   product viewedProduct
+//   date DateTime
+// }
+
+// ----------> Enums
+
+enum MediaStatus {
+  fulfilled
+  pending
+  rejected
+  not_uploaded
+}
+
+enum Categories {
+  classic
+  neoclassic
+  conceptual
+  geometrical
+  symbolical
+  futuristic
+}
+
+enum Role {
+  admin
+  user
+  owner
+}
+
+// ----------> Types
+
+type bonusesHistory {
+  amount       Int
+  receivedDate DateTime
+  description  String
+}
+
+type viewedProduct {
+  slug            String
+  title           String
+  category        String
+  discountPercent Int
+  media           String
+  price           Int
+  isPriceForPair  Boolean
 }
 
 type RingDetails {
@@ -34,114 +166,4 @@ type Media {
 type MediaDetails {
   url    String
   status MediaStatus
-}
-
-enum MediaStatus {
-  fulfilled
-  pending
-  rejected
-  not_uploaded
-}
-
-model products {
-  id              String          @id @default(auto()) @map("_id") @db.ObjectId
-  title           String
-  slug            String          @unique
-  createdAt       DateTime        @default(now()) @db.Date
-  updatedAt       DateTime        @updatedAt
-  media           Media
-  price           Int
-  discountPercent Int?
-  isPriceForPair  Boolean         @default(false)
-  description     String
-  category        Categories
-  width           Float?
-  thickness       Float?
-  views           Int             @default(0)
-  quantity        Int
-  ringDetails     RingDetails[]
-  diamondDetails  DiamondDetails
-  sizeDetails     Int[]
-  cartItems       CartItem[]
-  FavoritesItem   FavoritesItem[]
-}
-
-model users {
-  id             String           @id @default(auto()) @map("_id") @db.ObjectId
-  firstName      String
-  secondName     String
-  email          String           @unique
-  password       String
-  bonuses        Int              @default(0)
-  role           Role             @default(user)
-  bonusesHistory bonusesHistory[]
-  cart           Cart?
-  favorites      Favorites?
-  phone          String?
-  birthday       DateTime?
-  referredCode   String           @unique
-  referredBy     String?
-  subscribed     Boolean          @default(false)
-  createdAt      DateTime         @default(now()) @db.Date
-  updatedAt      DateTime         @updatedAt
-}
-
-enum Role {
-  admin
-  user
-  owner
-}
-
-type bonusesHistory {
-  amount       Int
-  receivedDate DateTime
-  description  String
-}
-
-enum Categories {
-  classic
-  neoclassic
-  conceptual
-  geometrical
-  symbolical
-  futuristic
-}
-
-model promocodes {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  code           String   @unique
-  discount       Int
-  count          Int
-  expirationDate DateTime
-}
-
-model Cart {
-  id     String     @id @default(auto()) @map("_id") @db.ObjectId
-  userId String     @unique @db.ObjectId
-  user   users      @relation(fields: [userId], references: [id])
-  items  CartItem[]
-}
-
-model Favorites {
-  id     String          @id @default(auto()) @map("_id") @db.ObjectId
-  userId String          @unique @db.ObjectId
-  user   users           @relation(fields: [userId], references: [id])
-  items  FavoritesItem[]
-}
-
-model CartItem {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  cartId    String   @db.ObjectId
-  productId String   @db.ObjectId
-  cart      Cart     @relation(fields: [cartId], references: [id])
-  product   products @relation(fields: [productId], references: [id])
-  quantity  Int
-}
-
-model FavoritesItem {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  favoritesId String    @db.ObjectId
-  productId   String    @db.ObjectId
-  favorites   Favorites @relation(fields: [favoritesId], references: [id])
-  product     products  @relation(fields: [productId], references: [id])
 }

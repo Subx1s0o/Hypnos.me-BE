@@ -13,11 +13,11 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Prisma } from '@prisma/client';
 import { Queue } from 'bull';
 import { lastValueFrom } from 'rxjs';
-import { CategoriesType, GoodPreview } from 'types';
+import { CategoriesType, Good, GoodPreview } from 'types';
 import { CreateGoodDto, SearchDto } from './dto';
 import { UpdateGoodDto } from './dto/update';
 import { v4 } from 'uuid';
-
+import { Request } from 'express';
 @Injectable()
 export class GoodsService {
   constructor(
@@ -25,6 +25,7 @@ export class GoodsService {
     private readonly cloudinaryClient: ClientProxy,
     private readonly prisma: PrismaService,
     @InjectQueue('image-upload') private imageUploadQueue: Queue,
+    @InjectQueue('viewed-product') private viewedProductQueue: Queue,
   ) {}
 
   async getAllGoods({
@@ -79,12 +80,25 @@ export class GoodsService {
     };
   }
 
-  async getGood(slug: string) {
+  async getGood(slug: string, _req: Request): Promise<Good> {
     const data = await this.prisma.products.findUnique({ where: { slug } });
 
     if (!data) {
       throw new NotFoundException("The good with that slug wasn't found");
     }
+
+    // await this.viewedProductQueue.add({
+    //   request: req,
+    //   product: {
+    //     slug: data.slug,
+    //     title: data.title,
+    //     category: data.category,
+    //     discountPercent: data.discountPercent,
+    //     media: data.media.main.url,
+    //     price: data.price,
+    //     isPriceForPair: data.isPriceForPair,
+    //   },
+    // });
 
     return data;
   }

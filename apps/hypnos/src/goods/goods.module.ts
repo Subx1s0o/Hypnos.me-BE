@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common/decorators/modules';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { GoodsController } from './goods.controller';
 import { GoodsService } from './goods.service';
-import { GoodsProcessor } from './helpers/goods.processor';
+import { ImageProcessor } from './helpers/image.processor';
 
 @Module({
   imports: [
@@ -22,6 +22,9 @@ import { GoodsProcessor } from './helpers/goods.processor';
     BullModule.registerQueue({
       name: 'image-upload',
     }),
+    BullModule.registerQueue({
+      name: 'viewed-product',
+    }),
     ClientsModule.registerAsync([
       {
         name: 'CLOUDINARY_SERVICE',
@@ -36,7 +39,7 @@ import { GoodsProcessor } from './helpers/goods.processor';
       },
     ]),
   ],
-  providers: [GoodsService, GoodsProcessor],
+  providers: [GoodsService, ImageProcessor],
   controllers: [GoodsController],
 })
 export class GoodsModule {}
