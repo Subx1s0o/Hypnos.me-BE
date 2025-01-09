@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseInterceptors,
 } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
@@ -19,6 +20,7 @@ import { UpdateGoodDto } from './dto/update';
 import { GoodsService } from './goods.service';
 import { ParseCategoryPipe } from './helpers/categories.pipe';
 import { SearchDto } from './dto';
+import { Request } from 'express';
 
 @Controller('goods')
 @ApiTags('goods')
@@ -39,19 +41,19 @@ export class GoodsController {
     });
   }
 
-  @Get(':slug')
-  async getGood(@Param('slug') slug: string) {
-    return await this.goodsService.getGood(slug);
-  }
-
   @Get('search')
   async searchGood(@Body() data: SearchDto) {
     return await this.goodsService.search(data);
   }
 
+  @Get(':slug')
+  async getGood(@Param('slug') slug: string, @Req() req: Request) {
+    return await this.goodsService.getGood(slug, req);
+  }
+
   @Post()
   @HttpCode(204)
-  @Auth('admin', 'owner')
+  // @Auth('admin', 'owner')
   async createGood(@Body() data: CreateGoodDto): Promise<void> {
     await this.goodsService.createGood(data);
     return null;
