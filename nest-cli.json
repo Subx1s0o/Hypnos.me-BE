@@ -1,11 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/hypnos/src",
+  "sourceRoot": "apps/http",
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/hypnos/tsconfig.app.json"
+    "tsConfigPath": "apps/http/tsconfig.app.json"
   },
   "projects": {
     "common": {
@@ -26,43 +26,35 @@
         "tsConfigPath": "libs/entities/tsconfig.lib.json"
       }
     },
-    "hypnos": {
+    "http": {
       "type": "application",
-      "root": "apps/hypnos",
+      "root": "apps/http",
       "entryFile": "main",
-      "sourceRoot": "apps/hypnos/src",
+      "sourceRoot": "apps/http",
       "compilerOptions": {
-        "tsConfigPath": "apps/hypnos/tsconfig.app.json"
+        "tsConfigPath": "apps/http/tsconfig.app.json"
       }
     },
     "payments": {
       "type": "application",
-      "root": "apps/payments",
+      "root": "apps/microservices/payments",
       "entryFile": "main",
-      "sourceRoot": "apps/payments/src",
+      "sourceRoot": "apps/microservices/payments/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/payments/tsconfig.app.json"
+        "tsConfigPath": "apps/microservices/payments/tsconfig.app.json"
       }
     },
-    "promocodes": {
-      "type": "application",
-      "root": "apps/promocodes",
-      "entryFile": "main",
-      "sourceRoot": "apps/promocodes/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/promocodes/tsconfig.app.json"
-      }
-    },
+   
     "cloudinary": {
       "type": "application",
-      "root": "apps/cloudinary",
+      "root": "apps/microservices/cloudinary",
       "entryFile": "main",
-      "sourceRoot": "apps/cloudinary/src",
+      "sourceRoot": "apps/microservices/cloudinary/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/cloudinary/tsconfig.app.json"
+        "tsConfigPath": "apps/microservices/cloudinary/tsconfig.app.json"
       }
     }
   },
   "monorepo": true,
-  "root": "apps/hypnos"
+  "root": "apps/http"
 }

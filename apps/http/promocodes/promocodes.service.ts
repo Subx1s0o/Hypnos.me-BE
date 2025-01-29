@@ -7,7 +7,7 @@ import {
   HttpException,
   NotFoundException,
 } from '@nestjs/common/exceptions';
-import { CreatePromocodeDto } from './dto/create.dto';
+import { CreatePromocodeDto } from './create.dto';
 
 @Injectable()
 export class PromocodesService {

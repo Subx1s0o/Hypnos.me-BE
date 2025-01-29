@@ -2,8 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": false,
-    "outDir": "../../dist/apps/cloudinary"
+    "outDir": "../../dist/apps/http"
   },
-  "include": ["src/**/*"],
+"include": ["./**/*.ts"],
+
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
