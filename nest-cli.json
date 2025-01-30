@@ -10,20 +10,20 @@
   "projects": {
     "common": {
       "type": "library",
-      "root": "libs/common",
+      "root": "src/libs/common",
       "entryFile": "index",
-      "sourceRoot": "libs/common/src",
+      "sourceRoot": "src/libs/common/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/common/tsconfig.lib.json"
+        "tsConfigPath": "src/libs/common/tsconfig.lib.json"
       }
     },
     "entities": {
       "type": "library",
-      "root": "libs/entities",
+      "root": "src/libs/entities",
       "entryFile": "index",
-      "sourceRoot": "libs/entities/src",
+      "sourceRoot": "src/libs/entities/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/entities/tsconfig.lib.json"
+        "tsConfigPath": "src/libs/entities/tsconfig.lib.json"
       }
     },
     "http": {
