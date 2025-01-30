@@ -32,8 +32,8 @@
       "@lib/entities/*": [
         "src/libs/entities/*"
       ],
-      "@payments/*": ["src/app/microservices/payments/src/*"],
-      "@cloudinary/*": ["src/app/microservices/cloudinary/src/*"],
+      "@payments/*": ["src/app/microservices/payments/*"],
+      "@cloudinary/*": ["src/app/microservices/cloudinary/*"],
     },
   }
 }

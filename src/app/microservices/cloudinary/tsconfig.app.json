@@ -4,6 +4,6 @@
     "declaration": false,
     "outDir": "../../../../dist/src/app/microservices/cloudinary"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

@@ -21,7 +21,7 @@
       "type": "application",
       "root": "src/app/microservices/payments",
       "entryFile": "main",
-      "sourceRoot": "src/app/microservices/payments/src",
+      "sourceRoot": "src/app/microservices/payments",
       "compilerOptions": {
         "tsConfigPath": "src/app/microservices/payments/tsconfig.app.json"
       }
@@ -31,7 +31,7 @@
       "type": "application",
       "root": "src/app/microservices/cloudinary",
       "entryFile": "main",
-      "sourceRoot": "src/app/microservices/cloudinary/src",
+      "sourceRoot": "src/app/microservices/cloudinary",
       "compilerOptions": {
         "tsConfigPath": "src/app/microservices/cloudinary/tsconfig.app.json"
       }
