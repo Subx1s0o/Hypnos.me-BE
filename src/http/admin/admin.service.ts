@@ -5,10 +5,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from 'types';
+import { User } from 'src/types';
 
 import { CreateAdminDto } from './dtos/create.dto';
-import { exclude } from 'utils/exclude';
+import { exclude } from 'src/utils/exclude';
 
 @Injectable()
 export class AdminService {

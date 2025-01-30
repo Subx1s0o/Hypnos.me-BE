@@ -12,7 +12,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { CategoriesType } from 'types';
+import { CategoriesType } from 'src/types';
 
 class MediaDto {
   @IsString()

@@ -21,7 +21,7 @@ import { v4 as uuid } from 'uuid';
 import { SignInDto, SignUpDto } from './dtos';
 import { AuthHelpersService } from './helpers/auth-helpers.service';
 import { TokensResponse } from './types/tokens-response.type';
-import { exclude } from 'utils/exclude';
+import { exclude } from '@utils';
 
 @Injectable()
 export class AuthService {

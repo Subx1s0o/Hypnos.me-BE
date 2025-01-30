@@ -14,7 +14,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
-import { CategoriesType, GoodPreview } from 'types';
+import { CategoriesType, GoodPreview } from 'src/types';
 import { CreateGoodDto } from './dto/create.dto';
 import { UpdateGoodDto } from './dto/update';
 import { GoodsService } from './goods.service';

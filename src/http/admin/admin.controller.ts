@@ -1,7 +1,7 @@
 import { Auth } from '@lib/entities/decorators';
 import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { User } from 'types';
+import { User } from 'src/types';
 import { CreateAdminDto } from './dtos/create.dto';
 
 import { AdminService } from './admin.service';

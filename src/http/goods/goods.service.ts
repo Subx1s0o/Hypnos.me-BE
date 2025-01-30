@@ -13,7 +13,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Prisma } from '@prisma/client';
 import { Queue } from 'bull';
 import { lastValueFrom } from 'rxjs';
-import { CategoriesType, Good, GoodPreview } from 'types';
+import { CategoriesType, Good, GoodPreview } from 'src/types';
 import { CreateGoodDto, SearchDto } from './dto';
 import { UpdateGoodDto } from './dto/update';
 import { v4 } from 'uuid';

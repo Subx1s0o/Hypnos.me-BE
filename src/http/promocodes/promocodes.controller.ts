@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common/decorators';
 
-import { Promocode } from 'types';
+import { Promocode } from '@types';
 
 import { PromocodesService } from './promocodes.service';
 import { MessagePattern } from '@nestjs/microservices';

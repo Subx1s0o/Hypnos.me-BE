@@ -11,7 +11,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CATEGORIES, MEDIA_NAMES, MediaContent } from '@lib/entities';
-import { CategoriesType } from 'types';
+import { CategoriesType } from '@types';
 
 export class RingDetailsDto {
   @IsNotEmpty()

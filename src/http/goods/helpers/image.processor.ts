@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@nestjs/common/decorators';
 import { ClientProxy } from '@nestjs/microservices';
 import { Job } from 'bull';
 import { lastValueFrom } from 'rxjs';
-import { Good, ImageJobType } from 'types';
+import { Good, ImageJobType } from '@types';
 
 @Injectable()
 @Processor('image-upload')

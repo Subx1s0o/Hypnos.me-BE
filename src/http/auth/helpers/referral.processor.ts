@@ -3,7 +3,7 @@ import { Process, Processor } from '@nestjs/bull';
 import { BadGatewayException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common/decorators';
 import { Job } from 'bull';
-import { User } from 'types';
+import { User } from 'src/types';
 
 @Injectable()
 @Processor('referral-queue')

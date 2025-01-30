@@ -1,7 +1,7 @@
 import { PrismaService } from '@lib/common';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CartCleaned, CartOriginal } from 'types';
+import { CartCleaned, CartOriginal } from 'src/types';
 import { TokensResponse } from '../types/tokens-response.type';
 
 @Injectable()
