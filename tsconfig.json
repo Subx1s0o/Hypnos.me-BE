@@ -30,8 +30,8 @@
       "@lib/entities/*": [
         "libs/entities/src/*"
       ],
-      "@payments/*": ["apps/microservices/payments/src/*"],
-      "@cloudinary/*": ["apps/microservices/cloudinary/src/*"],
+      "@payments/*": ["src/microservices/payments/src/*"],
+      "@cloudinary/*": ["src/microservices/cloudinary/src/*"],
     },
   }
 }

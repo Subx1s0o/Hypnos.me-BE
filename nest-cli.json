@@ -1,11 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/http",
+  "sourceRoot": "src/http",
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/http/tsconfig.app.json"
+    "tsConfigPath": "src/http/tsconfig.app.json"
   },
   "projects": {
     "common": {
@@ -28,33 +28,33 @@
     },
     "http": {
       "type": "application",
-      "root": "apps/http",
+      "root": "src/http",
       "entryFile": "main",
-      "sourceRoot": "apps/http",
+      "sourceRoot": "src/http",
       "compilerOptions": {
-        "tsConfigPath": "apps/http/tsconfig.app.json"
+        "tsConfigPath": "src/http/tsconfig.app.json"
       }
     },
     "payments": {
       "type": "application",
-      "root": "apps/microservices/payments",
+      "root": "src/microservices/payments",
       "entryFile": "main",
-      "sourceRoot": "apps/microservices/payments/src",
+      "sourceRoot": "src/microservices/payments/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/microservices/payments/tsconfig.app.json"
+        "tsConfigPath": "src/microservices/payments/tsconfig.app.json"
       }
     },
    
     "cloudinary": {
       "type": "application",
-      "root": "apps/microservices/cloudinary",
+      "root": "src/microservices/cloudinary",
       "entryFile": "main",
-      "sourceRoot": "apps/microservices/cloudinary/src",
+      "sourceRoot": "src/microservices/cloudinary/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/microservices/cloudinary/tsconfig.app.json"
+        "tsConfigPath": "src/microservices/cloudinary/tsconfig.app.json"
       }
     }
   },
   "monorepo": true,
-  "root": "apps/http"
+  "root": "src/http"
 }

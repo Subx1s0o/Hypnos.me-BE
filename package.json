@@ -9,7 +9,7 @@
     "build": "nest build && nest build cloudinary && nest build payments",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start:dev": "concurrently --kill-others --names \"http,cloudinary,payments\" -c \"blue,magenta,yellow\" \"nest start -w http\" \"nest start -w cloudinary\" \"nest start -w payments\"",
-    "start:prod": "concurrently --kill-others --names \"http,cloudinary,payments\" -c \"blue,magenta,yellow\" \"node dist/apps/http/main\" \"node dist/apps/microservices/cloudinary/main\" \"node dist/apps/microservices/payments/main\"",
+    "start:prod": "concurrently --kill-others --names \"http,cloudinary,payments\" -c \"blue,magenta,yellow\" \"node dist/src/http/main\" \"node dist/src/microservices/cloudinary/main\" \"node dist/src/microservices/payments/main\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {
