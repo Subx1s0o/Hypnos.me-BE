@@ -1,5 +1,5 @@
 import { PrismaService } from '@lib/common';
-import { MEDIA_STATUS } from '@lib/entities/constans';
+import { MEDIA_STATUS } from 'src/libs/entities/constans';
 import { InjectQueue } from '@nestjs/bull';
 import { Inject, Injectable } from '@nestjs/common/decorators';
 import { HttpStatus } from '@nestjs/common/enums';

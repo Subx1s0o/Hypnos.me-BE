@@ -1,4 +1,4 @@
-import { MEDIA_STATUS } from '@lib/entities/constans';
+import { MEDIA_STATUS } from 'src/libs/entities/constans';
 import { Inject, Injectable } from '@nestjs/common/decorators';
 import { v2 as Cloudinary } from 'cloudinary';
 import { MediaData } from './dto/media.dto';

@@ -1,4 +1,4 @@
-import { MEDIA_NAMES } from '@lib/entities';
+import { MEDIA_NAMES } from 'src/libs/entities';
 
 export type ImageJobType = {
   id: string;

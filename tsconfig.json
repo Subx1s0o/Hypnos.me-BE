@@ -21,16 +21,16 @@
       "@types": ["src/types"],
       "@utils": ["src/utils"],
       "@lib/common": [
-        "src/libs/common/src"
+        "src/libs/common"
       ],
       "@lib/entities": [
-        "src/libs/entities/src"
+        "src/libs/entities"
       ],
       "@lib/common/*": [
-        "src/libs/common/src/*"
+        "src/libs/common/*"
       ],
       "@lib/entities/*": [
-        "src/libs/entities/src/*"
+        "src/libs/entities/*"
       ],
       "@payments/*": ["src/app/microservices/payments/src/*"],
       "@cloudinary/*": ["src/app/microservices/cloudinary/src/*"],

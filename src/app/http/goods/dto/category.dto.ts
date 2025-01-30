@@ -1,4 +1,4 @@
-import { CATEGORIES } from '@lib/entities';
+import { CATEGORIES } from 'src/libs/entities';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsOptional } from 'class-validator';
 

@@ -1,5 +1,5 @@
-import { MEDIA_NAMES } from '@lib/entities/constans';
-import { MediaContent } from '@lib/entities/global.dto/MediaContent';
+import { MEDIA_NAMES } from 'src/libs/entities/constans';
+import { MediaContent } from 'src/libs/entities/global.dto/MediaContent';
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 

@@ -2,8 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": true,
-    "outDir": "../../dist/libs/common"
+    "outDir": "../../dist/libs/entities"
   },
-  "include": ["src/**/*"],
+  "include": ["*/**/*"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

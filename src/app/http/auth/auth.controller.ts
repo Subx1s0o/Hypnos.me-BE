@@ -1,4 +1,4 @@
-import { Auth } from '@lib/entities/decorators/Auth';
+import { Auth } from 'src/libs/entities/decorators/Auth';
 import {
   BadRequestException,
   Body,

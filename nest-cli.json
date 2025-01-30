@@ -8,24 +8,6 @@
     "tsConfigPath": "src/app/http/tsconfig.app.json"
   },
   "projects": {
-    "common": {
-      "type": "library",
-      "root": "src/libs/common",
-      "entryFile": "index",
-      "sourceRoot": "src/libs/common/src",
-      "compilerOptions": {
-        "tsConfigPath": "src/libs/common/tsconfig.lib.json"
-      }
-    },
-    "entities": {
-      "type": "library",
-      "root": "src/libs/entities",
-      "entryFile": "index",
-      "sourceRoot": "src/libs/entities/src",
-      "compilerOptions": {
-        "tsConfigPath": "src/libs/entities/tsconfig.lib.json"
-      }
-    },
     "http": {
       "type": "application",
       "root": "src/app/http",

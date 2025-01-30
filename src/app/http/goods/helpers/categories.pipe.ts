@@ -1,4 +1,4 @@
-import { CATEGORIES } from '@lib/entities';
+import { CATEGORIES } from 'src/libs/entities';
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { CategoriesType } from '@types';
 

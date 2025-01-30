@@ -10,7 +10,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { CATEGORIES, MEDIA_NAMES, MediaContent } from '@lib/entities';
+import { CATEGORIES, MEDIA_NAMES, MediaContent } from 'src/libs/entities';
 import { CategoriesType } from '@types';
 
 export class RingDetailsDto {

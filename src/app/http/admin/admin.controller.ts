@@ -1,4 +1,4 @@
-import { Auth } from '@lib/entities/decorators';
+import { Auth } from 'src/libs/entities/decorators';
 import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from 'src/types';

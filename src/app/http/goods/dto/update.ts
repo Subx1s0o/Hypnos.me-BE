@@ -1,4 +1,4 @@
-import { CATEGORIES } from '@lib/entities';
+import { CATEGORIES } from 'src/libs/entities';
 import { Type } from 'class-transformer';
 import {
   IsArray,

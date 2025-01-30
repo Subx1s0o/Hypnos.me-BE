@@ -1,4 +1,4 @@
-import { CATEGORIES } from '@lib/entities/constans';
+import { CATEGORIES } from 'src/libs/entities/constans';
 import { MediaStatusType } from './media-status.type';
 
 type MediaDetail = {

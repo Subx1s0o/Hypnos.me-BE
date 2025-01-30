@@ -1,4 +1,4 @@
-import { Auth } from '@lib/entities/decorators';
+import { Auth } from 'src/libs/entities/decorators';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import {
   Body,
