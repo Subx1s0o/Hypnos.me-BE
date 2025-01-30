@@ -1,8 +1,8 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "declaration": false,
-    "outDir": "../../dist/src/http"
+    "outDir": "../../../dist/src/app/http"
   },
 "include": ["./**/*.ts"],
 
