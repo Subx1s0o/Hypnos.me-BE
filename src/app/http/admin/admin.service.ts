@@ -1,4 +1,4 @@
-import { CacheService, PrismaService } from '@lib/common';
+import { CacheService, PrismaService } from '@/libs/common';
 import {
   HttpException,
   HttpStatus,

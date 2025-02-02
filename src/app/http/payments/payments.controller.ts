@@ -1,4 +1,4 @@
-import { CreateSessionDto } from 'src/libs/entities/global.dto';
+import { CreateSessionDto } from '@/libs/entities/global.dto';
 import { Body, Controller, Inject, Post } from '@nestjs/common/decorators';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';

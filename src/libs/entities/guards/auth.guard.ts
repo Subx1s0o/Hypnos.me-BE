@@ -1,4 +1,4 @@
-import { ConfigService } from '@lib/common';
+import { ConfigService } from '@/libs/common';
 import { Injectable } from '@nestjs/common/decorators';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { CanActivate, ExecutionContext } from '@nestjs/common/interfaces';

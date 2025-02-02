@@ -1,4 +1,4 @@
-import { PrismaService } from '@lib/common';
+import { PrismaService } from '@/libs/common';
 import { Injectable } from '@nestjs/common/decorators';
 import { HttpStatus } from '@nestjs/common/enums';
 import {

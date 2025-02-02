@@ -1,40 +1,14 @@
 import { CATEGORIES } from 'src/libs/entities';
-import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
-  IsDefined,
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsString,
   Min,
-  ValidateNested,
 } from 'class-validator';
 import { CategoriesType } from 'src/types';
-
-class MediaDto {
-  @IsString()
-  @IsDefined()
-  main: string;
-
-  @IsOptional()
-  @IsString()
-  media_1?: string;
-
-  @IsOptional()
-  @IsString()
-  media_2?: string;
-
-  @IsOptional()
-  @IsString()
-  media_3?: string;
-
-  @IsOptional()
-  @IsString()
-  media_4?: string;
-}
 
 export class UpdateGoodDto {
   @IsOptional()
@@ -57,10 +31,6 @@ export class UpdateGoodDto {
   @IsNotEmpty()
   @IsOptional()
   price: number;
-
-  @ValidateNested()
-  @Type(() => MediaDto)
-  media: MediaDto;
 
   @IsBoolean()
   @IsOptional()

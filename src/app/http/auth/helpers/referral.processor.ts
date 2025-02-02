@@ -1,4 +1,4 @@
-import { PrismaService } from '@lib/common';
+import { PrismaService } from '@/libs/common';
 import { Process, Processor } from '@nestjs/bull';
 import { BadGatewayException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common/decorators';

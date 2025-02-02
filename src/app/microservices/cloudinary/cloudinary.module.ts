@@ -1,4 +1,4 @@
-import { ConfigModule, ConfigService } from '@lib/common';
+import { ConfigModule, ConfigService } from '@/libs/common';
 import { Module } from '@nestjs/common/decorators/modules';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryController } from './cloudinary.controller';
@@ -10,7 +10,7 @@ import { CloudinaryService } from './cloudinary.service';
   providers: [
     CloudinaryService,
     {
-      provide: 'Cloudinary',
+      provide: 'CLOUDINARY_INSTANCE',
       useFactory: (configService: ConfigService) => {
         cloudinary.config({
           cloud_name: configService.get('CLD_CLOUD_NAME'),

@@ -1,4 +1,4 @@
-import { Auth } from 'src/libs/entities';
+import { Auth } from '@/libs/entities';
 import { Body, Controller, Get, Post, Req } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';

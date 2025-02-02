@@ -1,4 +1,4 @@
-import { CreateSessionDto } from '@lib/entities/global.dto';
+import { CreateSessionDto } from '@/libs/entities/global.dto';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { PaymentsService } from './payments.service';

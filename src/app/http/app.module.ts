@@ -1,4 +1,4 @@
-import { ConfigModule, PrismaModule } from '@lib/common';
+import { ConfigModule, PrismaModule } from '@/libs/common';
 import { Module } from '@nestjs/common/decorators';
 
 import { PromocodesModule } from './promocodes/promocodes.module';

@@ -1,4 +1,4 @@
-import { CacheModule } from '@lib/common';
+import { CacheModule } from '@/libs/common';
 import { Module } from '@nestjs/common';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';

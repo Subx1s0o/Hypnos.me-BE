@@ -6,11 +6,13 @@ import { MediaData } from './dto/media.dto';
 @Injectable()
 export class CloudinaryService {
   constructor(
-    @Inject('Cloudinary') private readonly cloudinaryClient: typeof Cloudinary,
+    @Inject('CLOUDINARY_INSTANCE')
+    private readonly cloudinaryClient: typeof Cloudinary,
   ) {}
 
   async uploadImages(data: MediaData) {
-    const folderPath = `products/${data.id}`;
+    console.log(data);
+    const folderPath = `products/${data.mediaId}`;
 
     const uploadPromises = Object.entries(data.media).map(
       async ([key, file]) => {
@@ -45,10 +47,10 @@ export class CloudinaryService {
   }
 
   async uploadOrUpdateImages({
-    id,
+    mediaId,
     media,
   }: {
-    id: string;
+    mediaId: string;
     media: {
       main?: string;
       media_1?: string;
@@ -57,7 +59,8 @@ export class CloudinaryService {
       media_4?: string;
     };
   }) {
-    const folderPath = `products/${id}`;
+    console.log(mediaId);
+    const folderPath = `products/${mediaId}`;
     const updatedMedia = {};
 
     for (const [field, image] of Object.entries(media)) {

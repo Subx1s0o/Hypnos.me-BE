@@ -1,5 +1,5 @@
-import { ConfigService } from '@lib/common';
-import { MailerModule } from '@lib/common/mailer/mailer.module';
+import { ConfigService } from '@/libs/common';
+import { MailerModule } from '@/libs/common/mailer/mailer.module';
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';

@@ -1,5 +1,5 @@
-import { PrismaService } from '@lib/common';
-import { CreateSessionDto } from 'src/libs/entities/global.dto';
+import { PrismaService } from '@/libs/common';
+import { CreateSessionDto } from '@/libs/entities/global.dto';
 import { Inject, Injectable } from '@nestjs/common';
 import { Stripe } from 'stripe';
 

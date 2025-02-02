@@ -5,7 +5,7 @@ import { IsString, ValidateNested } from 'class-validator';
 
 export class MediaData {
   @IsString()
-  id: string;
+  mediaId: string;
 
   @ValidateNested()
   @Type(() => MediaContent)

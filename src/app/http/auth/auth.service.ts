@@ -1,4 +1,4 @@
-import { ConfigService, PrismaService } from '@lib/common';
+import { ConfigService, PrismaService } from '@/libs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { InjectQueue } from '@nestjs/bull';
 import {
@@ -21,7 +21,7 @@ import { v4 as uuid } from 'uuid';
 import { SignInDto, SignUpDto } from './dtos';
 import { AuthHelpersService } from './helpers/auth-helpers.service';
 import { TokensResponse } from './types/tokens-response.type';
-import { exclude } from '@utils';
+import { exclude } from '@/utils';
 
 @Injectable()
 export class AuthService {

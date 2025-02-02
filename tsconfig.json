@@ -18,20 +18,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@types": ["src/types"],
-      "@utils": ["src/utils"],
-      "@lib/common": [
-        "src/libs/common"
-      ],
-      "@lib/entities": [
-        "src/libs/entities"
-      ],
-      "@lib/common/*": [
-        "src/libs/common/*"
-      ],
-      "@lib/entities/*": [
-        "src/libs/entities/*"
-      ],
+        "@/*": ["src/*"],
       "@payments/*": ["src/app/microservices/payments/*"],
       "@cloudinary/*": ["src/app/microservices/cloudinary/*"],
     },

@@ -1,31 +1,25 @@
-import { PrismaService } from '@lib/common';
-import { MEDIA_STATUS } from 'src/libs/entities/constans';
-import { InjectQueue } from '@nestjs/bull';
+import { PrismaService } from '@/libs/common';
 import { Inject, Injectable } from '@nestjs/common/decorators';
-import { HttpStatus } from '@nestjs/common/enums';
 import {
   BadRequestException,
-  HttpException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common/exceptions';
 import { ClientProxy } from '@nestjs/microservices';
-import { Prisma } from '@prisma/client';
-import { Queue } from 'bull';
 import { lastValueFrom } from 'rxjs';
 import { CategoriesType, Good, GoodPreview } from 'src/types';
 import { CreateGoodDto, SearchDto } from './dto';
 import { UpdateGoodDto } from './dto/update';
 import { v4 } from 'uuid';
 import { Request } from 'express';
+import { MEDIA_NAMES } from '@/libs/entities';
+import { Media } from '@prisma/client';
 @Injectable()
 export class GoodsService {
   constructor(
     @Inject('CLOUDINARY_SERVICE')
     private readonly cloudinaryClient: ClientProxy,
     private readonly prisma: PrismaService,
-    @InjectQueue('image-upload') private imageUploadQueue: Queue,
-    @InjectQueue('viewed-product') private viewedProductQueue: Queue,
   ) {}
 
   async getAllGoods({
@@ -103,7 +97,7 @@ export class GoodsService {
     return data;
   }
 
-  async createGood(data: CreateGoodDto): Promise<void> {
+  async createGood(data: CreateGoodDto): Promise<Good> {
     const slug = data.title
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
@@ -111,20 +105,28 @@ export class GoodsService {
       .trim();
 
     const uniqueId = v4().replace(/-/g, '').slice(0, 7).toLowerCase();
-
     const readySlug = `${slug}-${uniqueId}`;
+    const mediaId = v4().replace(/-/g, '').slice(0, 15).toLowerCase();
+
+    const createdMedia = await lastValueFrom(
+      this.cloudinaryClient.send('upload_images', {
+        media: data.media,
+        id: mediaId,
+      }),
+    );
+
+    if (!createdMedia) {
+      throw new InternalServerErrorException(
+        'Something went wrong while uploading media',
+      );
+    }
 
     const good = await this.prisma.products.create({
       data: {
         ...data,
+        mediaId: mediaId,
         slug: readySlug,
-        media: {
-          main: { url: '', status: MEDIA_STATUS.pending },
-          media_1: { url: '', status: MEDIA_STATUS.pending },
-          media_2: { url: '', status: MEDIA_STATUS.pending },
-          media_3: { url: '', status: MEDIA_STATUS.pending },
-          media_4: { url: '', status: MEDIA_STATUS.pending },
-        },
+        media: createdMedia,
         ringDetails: data.ringDetails.map((ring) => ({
           purityValue: ring.purityValue,
           maleWeight: ring.maleWeight,
@@ -134,17 +136,7 @@ export class GoodsService {
       },
     });
 
-    await this.imageUploadQueue.add(
-      {
-        id: good.id,
-        media: data.media,
-      },
-      {
-        attempts: 3,
-        removeOnComplete: true,
-        removeOnFail: true,
-      },
-    );
+    return good;
   }
 
   async updateGood(id: string, data: UpdateGoodDto): Promise<void> {
@@ -154,17 +146,28 @@ export class GoodsService {
       throw new NotFoundException("The good with current ID wasn't found");
     }
 
-    const updateFields: Prisma.productsUpdateInput = {};
+    const updatedProduct = await this.prisma.products.update({
+      where: { id },
+      data,
+    });
 
-    if (data.media) {
-      const updatedMedia = await lastValueFrom(
-        this.cloudinaryClient.send('upload_or_add_images', {
-          id,
-          media: data.media,
-        }),
+    if (!updatedProduct) {
+      throw new InternalServerErrorException(
+        'Prisma Error while updating good',
       );
-      console.log(updatedMedia);
-      updateFields.media = {
+    }
+  }
+
+  async uploadMedia(
+    mediaId: string,
+    media: { [key in MEDIA_NAMES]: string },
+  ): Promise<any> {
+    try {
+      const updatedMedia = await lastValueFrom(
+        this.cloudinaryClient.send('upload_or_add_images', { mediaId, media }),
+      );
+
+      const formattedMedia: Media = {
         main: {
           url: updatedMedia.main?.url || '',
           status: updatedMedia.main?.url ? 'fulfilled' : 'not_uploaded',
@@ -186,24 +189,18 @@ export class GoodsService {
           status: updatedMedia.media_4?.url ? 'fulfilled' : 'not_uploaded',
         },
       };
-    }
 
-    if (Object.keys(updateFields).length > 0) {
-      console.log(updateFields);
-      const updatedProduct = await this.prisma.products.update({
-        where: { id },
-        data: updateFields,
+      console.log(formattedMedia);
+
+      await this.prisma.products.update({
+        where: { mediaId: mediaId },
+        data: { media: formattedMedia },
       });
+    } catch (error) {
+      console.error('Cloudinary upload error:', error);
 
-      if (!updatedProduct) {
-        throw new InternalServerErrorException(
-          'Prisma Error while updating good',
-        );
-      }
-    } else {
-      throw new HttpException(
-        'Nothing changed in this good',
-        HttpStatus.NOT_MODIFIED,
+      throw new InternalServerErrorException(
+        'Failed to upload images to Cloudinary',
       );
     }
   }

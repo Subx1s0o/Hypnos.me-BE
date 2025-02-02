@@ -1,4 +1,4 @@
-import { Auth } from 'src/libs/entities/decorators';
+import { Auth } from '@/libs/entities/decorators';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import {
   Body,
@@ -14,13 +14,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
-import { CategoriesType, GoodPreview } from 'src/types';
+import { CategoriesType, Good, GoodPreview } from 'src/types';
 import { CreateGoodDto } from './dto/create.dto';
 import { UpdateGoodDto } from './dto/update';
 import { GoodsService } from './goods.service';
-import { ParseCategoryPipe } from './helpers/categories.pipe';
+import { ParseCategoryPipe } from '@/libs/entities/pipes/categories.pipe';
 import { SearchDto } from './dto';
 import { Request } from 'express';
+import { MEDIA_NAMES } from '@/libs/entities';
 
 @Controller('goods')
 @ApiTags('goods')
@@ -54,20 +55,29 @@ export class GoodsController {
   @Post()
   @HttpCode(204)
   // @Auth('admin', 'owner')
-  async createGood(@Body() data: CreateGoodDto): Promise<void> {
-    await this.goodsService.createGood(data);
-    return null;
+  async createGood(@Body() data: CreateGoodDto): Promise<Good> {
+    return await this.goodsService.createGood(data);
   }
 
   @Patch(':id')
   @HttpCode(204)
-  @Auth('admin', 'owner')
+  // @Auth('admin', 'owner')
   async updateGood(
     @Param('id') id: string,
     @Body() data: UpdateGoodDto,
   ): Promise<void> {
     await this.goodsService.updateGood(id, data);
     return null;
+  }
+
+  @Patch('/media/:mediaId')
+  @HttpCode(200)
+  // @Auth('admin', 'owner')
+  async uploadMedia(
+    @Param('mediaId') mediaId: string,
+    @Body() data: { [key in MEDIA_NAMES]: string },
+  ): Promise<void> {
+    return await this.goodsService.uploadMedia(mediaId, data);
   }
 
   @Delete(':id')

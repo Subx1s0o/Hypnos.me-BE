@@ -1,30 +1,12 @@
-import { CacheModule, ConfigService } from '@lib/common';
-import { BullModule } from '@nestjs/bull';
+import { CacheModule, ConfigService } from '@/libs/common';
 import { Module } from '@nestjs/common/decorators/modules';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { GoodsController } from './goods.controller';
 import { GoodsService } from './goods.service';
-import { ImageProcessor } from './helpers/image.processor';
 
 @Module({
   imports: [
     CacheModule,
-    BullModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => ({
-        url: configService.get('REDIS_STORE'),
-        defaultJobOptions: {
-          removeOnComplete: true,
-          removeOnFail: true,
-        },
-      }),
-      inject: [ConfigService],
-    }),
-    BullModule.registerQueue({
-      name: 'image-upload',
-    }),
-    BullModule.registerQueue({
-      name: 'viewed-product',
-    }),
     ClientsModule.registerAsync([
       {
         name: 'CLOUDINARY_SERVICE',
@@ -39,7 +21,7 @@ import { ImageProcessor } from './helpers/image.processor';
       },
     ]),
   ],
-  providers: [GoodsService, ImageProcessor],
+  providers: [GoodsService],
   controllers: [GoodsController],
 })
 export class GoodsModule {}

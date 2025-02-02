@@ -1,4 +1,4 @@
-import { ConfigModule, ConfigService, PrismaModule } from '@lib/common';
+import { ConfigModule, ConfigService, PrismaModule } from '@/libs/common';
 import { Module } from '@nestjs/common/decorators/modules';
 import Stripe from 'stripe';
 

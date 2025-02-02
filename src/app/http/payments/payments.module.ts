@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common/decorators/modules';
 
-import { ConfigService } from '@lib/common';
+import { ConfigService } from '@/libs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PaymentsController } from './payments.controller';
 

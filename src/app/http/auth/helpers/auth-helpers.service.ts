@@ -1,4 +1,4 @@
-import { PrismaService } from '@lib/common';
+import { PrismaService } from '@/libs/common';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CartCleaned, CartOriginal } from 'src/types';
