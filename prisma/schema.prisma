@@ -16,7 +16,7 @@ model products {
   slug            String          @unique
   createdAt       DateTime        @default(now()) @db.Date
   updatedAt       DateTime        @updatedAt
-  mediaId         String          @unique
+  mediaId         String?         @unique
   media           Media
   price           Int
   discountPercent Int?
