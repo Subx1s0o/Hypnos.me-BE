@@ -1,13 +1,11 @@
 import { Auth } from 'src/libs/entities/decorators';
 import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { User } from 'src/types';
 import { CreateAdminDto } from './dtos/create.dto';
 
 import { AdminService } from './admin.service';
 
 @Controller('admin')
-@ApiTags('admin')
 @Auth('owner')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}

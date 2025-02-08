@@ -5,7 +5,15 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "src/app/http/tsconfig.app.json"
+    "tsConfigPath": "src/app/http/tsconfig.app.json",
+    "plugins": [ {
+      "name": "@nestjs/swagger",
+      "options": {
+        "classValidatorShim": true,
+        "introspectComments": true,
+        "dtoFileNameSuffix": [".dto.ts", ".entity.ts"]
+      }
+    }]
   },
   "projects": {
     "http": {
