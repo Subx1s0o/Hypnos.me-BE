@@ -8,6 +8,12 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Auth()
+  @Get()
+  async getUser(@Req() req: Request & { user: string }) {
+    return await this.userService.getUser(req.user);
+  }
+
   @Get('favorites')
   @Auth()
   async getFavorits(@Req() req: Request & { user: string }) {

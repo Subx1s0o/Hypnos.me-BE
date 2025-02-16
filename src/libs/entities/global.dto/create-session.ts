@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
 class ProductDto {
   @IsString()
@@ -16,6 +22,7 @@ class ProductDto {
 }
 
 export class CreateSessionDto {
+  @IsNotEmpty()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductDto)

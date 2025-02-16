@@ -97,7 +97,6 @@ export class AuthService {
     });
 
     if (newUser.referredBy) {
-      console.log(newUser);
       await this.referralQueue.add('processReferral', { user: newUser });
     }
 

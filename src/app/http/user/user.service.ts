@@ -5,6 +5,13 @@ import { Injectable } from '@nestjs/common/decorators';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getUser(userId: string) {
+    const user = await this.prisma.users.findUnique({
+      where: { id: userId },
+    });
+    return user;
+  }
+
   async getFavorites(userId: string) {
     const favorites = await this.prisma.favorites.findUnique({
       where: { userId },
