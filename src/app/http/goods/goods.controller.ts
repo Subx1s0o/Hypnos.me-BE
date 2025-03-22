@@ -19,7 +19,6 @@ import { CreateGoodDto } from './dto/create.dto';
 import { UpdateGoodDto } from './dto/update';
 import { GoodsService } from './goods.service';
 import { ParseCategoryPipe } from '@/libs/entities/pipes/categories.pipe';
-import { SearchDto } from './dto';
 import { Request } from 'express';
 import { MEDIA_NAMES } from '@/libs/entities';
 
@@ -33,17 +32,14 @@ export class GoodsController {
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
     @Query('category', new ParseCategoryPipe()) category?: CategoriesType,
+    @Query('search') search?: string,
   ): Promise<{ data: GoodPreview[]; totalPages: number }> {
     return await this.goodsService.getAllGoods({
       page,
       limit,
       category,
+      search,
     });
-  }
-
-  @Get('search')
-  async searchGood(@Body() data: SearchDto) {
-    return await this.goodsService.search(data);
   }
 
   @Get(':slug')

@@ -8,7 +8,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { CategoriesType, Good, GoodPreview } from 'src/types';
-import { CreateGoodDto, SearchDto } from './dto';
+import { CreateGoodDto } from './dto';
 import { UpdateGoodDto } from './dto/update';
 import { v4 } from 'uuid';
 import { Request } from 'express';
@@ -26,10 +26,12 @@ export class GoodsService {
     page,
     limit,
     category,
+    search,
   }: {
     page: string;
     limit: string;
     category?: CategoriesType;
+    search: string;
   }): Promise<{ data: GoodPreview[]; totalPages: number }> {
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
@@ -54,7 +56,10 @@ export class GoodsService {
     const products = await this.prisma.products.findMany({
       skip,
       take: limitNumber,
-      where: category ? { category } : {},
+      where: {
+        category: category ? category : undefined,
+        title: search ? { contains: search, mode: 'insensitive' } : undefined,
+      },
       orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
       select: {
         category: true,
@@ -208,15 +213,5 @@ export class GoodsService {
   async deleteGood(id: string): Promise<void> {
     this.cloudinaryClient.send('delete_all_images', id);
     await this.prisma.products.delete({ where: { id } });
-  }
-
-  async search(data: SearchDto) {
-    const products = await this.prisma.products.findMany({
-      where: {
-        title: { contains: data.title, mode: 'insensitive' },
-      },
-    });
-
-    return products;
   }
 }
