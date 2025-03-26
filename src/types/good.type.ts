@@ -38,6 +38,7 @@ export type Good = {
   createdAt: Date;
   updatedAt: Date;
   media: Media;
+  rating: number;
   price: number;
   discountPercent?: number;
   isPriceForPair: boolean;

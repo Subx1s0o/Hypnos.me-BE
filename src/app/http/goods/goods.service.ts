@@ -86,7 +86,9 @@ export class GoodsService {
     if (product) {
       return product;
     } else {
-      const data = await this.prisma.products.findUnique({ where: { slug } });
+      const data = await this.prisma.products.findUnique({
+        where: { slug },
+      });
 
       if (!data) {
         throw new NotFoundException("The good with that slug wasn't found");

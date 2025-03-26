@@ -1,0 +1,9 @@
+model review {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    email     String
+    comment   String
+    rate      Float
+    productId String   @db.ObjectId
+    product   products @relation(fields: [productId], references: [id])
+}

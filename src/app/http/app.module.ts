@@ -8,6 +8,7 @@ import { GoodsModule } from './goods/goods.module';
 import { PaymentsModule } from './payments/payments.module';
 import { UserModule } from './user/user.module';
 import { RecomendationsModule } from './recomendations/recomendations.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RecomendationsModule } from './recomendations/recomendations.module';
     AdminModule,
     PaymentsModule,
     PromocodesModule,
+    ReviewsModule,
     RecomendationsModule,
   ],
 })
