@@ -6,10 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build && nest build cloudinary && nest build payments",
+    "build": "nest build && nest build cloudinary && nest build payments && nest build viewed-products",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
-    "start:dev": "concurrently --kill-others --names \"http,cloudinary,payments\" -c \"blue,magenta,yellow\" \"nest start -w http\" \"nest start -w cloudinary\" \"nest start -w payments\"",
-    "start:prod": "concurrently --kill-others --names \"http,cloudinary,payments\" -c \"blue,magenta,yellow\" \"node dist/src/app/http/main\" \"node dist/src/app/microservices/cloudinary/main\" \"node dist/src/app/microservices/payments/main\"",
+    "start:dev": "concurrently --kill-others --names \"http,cloudinary,payments,viewed-products\" -c \"blue,magenta,yellow,pink\" \"nest start -w http\" \"nest start -w cloudinary\" \"nest start -w payments\" \"nest start -w viewed-products\"",
+    "start:prod": "concurrently --kill-others --names \"http,cloudinary,payments,viewed-products\" -c \"blue,magenta,yellow,pink\" \"node dist/src/app/http/main\" \"node dist/src/app/microservices/cloudinary/main\" \"node dist/src/app/microservices/payments/main\" \"node dist/src/app/microservices/viewed-products/main\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {

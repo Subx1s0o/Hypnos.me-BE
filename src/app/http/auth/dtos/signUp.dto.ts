@@ -34,5 +34,6 @@ export class SignUpDto {
   referredCode?: string;
 
   @IsArray()
+  @IsOptional()
   cart: { productId: string; quantity: number }[];
 }

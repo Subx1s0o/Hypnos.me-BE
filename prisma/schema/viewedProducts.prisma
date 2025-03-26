@@ -1,4 +1,8 @@
-// model viewedProducts {
-//   product viewedProduct
-//   date DateTime
-// }
+model viewedProducts {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    user      users    @relation(fields: [userId], references: [id])
+    userId    String   @db.ObjectId
+    productId String   @db.ObjectId
+    product   products @relation(fields: [productId], references: [id])
+    date      DateTime
+}

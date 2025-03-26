@@ -20,4 +20,6 @@ model products {
     sizeDetails     Int[]
     cartItems       cartItem[]
     FavoritesItem   favoritesItem[]
+
+    viewedProducts viewedProducts[]
 }

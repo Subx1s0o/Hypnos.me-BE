@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { CartCleaned } from './cart.types';
 import { Role } from './role.type';
 
@@ -25,3 +26,5 @@ export type User = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type AuthRequest = Request & { user?: User };

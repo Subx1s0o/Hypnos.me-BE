@@ -6,6 +6,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Inject,
   Param,
   Patch,
   Post,
@@ -14,17 +15,23 @@ import {
   UseInterceptors,
 } from '@nestjs/common/decorators';
 
-import { CategoriesType, Good, GoodPreview } from 'src/types';
+import { AuthRequest, CategoriesType, Good, GoodPreview } from 'src/types';
 import { CreateGoodDto } from './dto/create.dto';
 import { UpdateGoodDto } from './dto/update';
 import { GoodsService } from './goods.service';
 import { ParseCategoryPipe } from '@/libs/entities/pipes/categories.pipe';
-import { Request } from 'express';
+
 import { MEDIA_NAMES } from '@/libs/entities';
+import { NonNecessaryAuth } from '@/libs/entities/decorators/NonNecessaryAuth';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('goods')
 export class GoodsController {
-  constructor(private readonly goodsService: GoodsService) {}
+  constructor(
+    private readonly goodsService: GoodsService,
+    @Inject('VIEWED_PRODUCTS_SERVICE')
+    private readonly viewedProductsClient: ClientProxy,
+  ) {}
 
   @Get()
   @UseInterceptors(CacheInterceptor)
@@ -43,8 +50,18 @@ export class GoodsController {
   }
 
   @Get(':slug')
-  async getGood(@Param('slug') slug: string, @Req() req: Request) {
-    return await this.goodsService.getGood(slug, req);
+  @NonNecessaryAuth()
+  async getGood(
+    @Param('slug') slug: string,
+    @Req() req: AuthRequest,
+  ): Promise<Good> {
+    if (req.user) {
+      this.viewedProductsClient.send('viewed-product', {
+        user: req.user.id,
+        slug,
+      });
+    }
+    return await this.goodsService.getGood(slug);
   }
 
   @Post()

@@ -7,7 +7,7 @@ model users {
     bonuses        Int              @default(0)
     role           Role             @default(user)
     bonusesHistory bonusesHistory[]
-    // viewedProducts viewedProducts[]
+    viewedProducts viewedProducts[]
     cart           cart?
     favorites      favorites?
     phone          String?

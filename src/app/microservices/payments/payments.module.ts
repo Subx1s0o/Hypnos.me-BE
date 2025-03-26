@@ -12,9 +12,7 @@ import { PaymentsService } from './payments.service';
     {
       provide: 'STRIPE_CLIENT',
       useFactory: (configService: ConfigService) => {
-        return new Stripe(configService.get('STRIPE_SECRET_KEY'), {
-          apiVersion: '2025-01-27.acacia',
-        });
+        return new Stripe(configService.get('STRIPE_SECRET_KEY'));
       },
       inject: [ConfigService],
     },

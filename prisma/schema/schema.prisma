@@ -5,7 +5,7 @@ datasource db {
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["omitApi", "prismaSchemaFolder"]
+  previewFeatures = ["prismaSchemaFolder"]
 }
 
 enum MediaStatus {
@@ -34,16 +34,6 @@ type bonusesHistory {
   amount       Int
   receivedDate DateTime
   description  String
-}
-
-type viewedProduct {
-  slug            String
-  title           String
-  category        String
-  discountPercent Int
-  media           String
-  price           Int
-  isPriceForPair  Boolean
 }
 
 type RingDetails {

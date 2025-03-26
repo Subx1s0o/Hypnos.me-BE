@@ -43,6 +43,16 @@
       "compilerOptions": {
         "tsConfigPath": "src/app/microservices/cloudinary/tsconfig.app.json"
       }
+    },
+
+    "viewed-products": {
+      "type": "application",
+      "root": "src/app/microservices/viewed-products",
+      "entryFile": "main",
+      "sourceRoot": "src/app/microservices/viewed-products",
+      "compilerOptions": {
+        "tsConfigPath": "src/app/microservices/viewed-products/tsconfig.app.json"
+      }
     }
   },
   "monorepo": true,

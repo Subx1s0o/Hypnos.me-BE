@@ -11,9 +11,9 @@ import { CategoriesType, Good, GoodPreview } from 'src/types';
 import { CreateGoodDto } from './dto';
 import { UpdateGoodDto } from './dto/update';
 import { v4 } from 'uuid';
-import { Request } from 'express';
 import { MEDIA_NAMES } from '@/libs/entities';
 import { Media } from '@prisma/client';
+
 @Injectable()
 export class GoodsService {
   constructor(
@@ -79,25 +79,12 @@ export class GoodsService {
     };
   }
 
-  async getGood(slug: string, _req: Request): Promise<Good> {
+  async getGood(slug: string): Promise<Good> {
     const data = await this.prisma.products.findUnique({ where: { slug } });
 
     if (!data) {
       throw new NotFoundException("The good with that slug wasn't found");
     }
-
-    // await this.viewedProductQueue.add({
-    //   request: req,
-    //   product: {
-    //     slug: data.slug,
-    //     title: data.title,
-    //     category: data.category,
-    //     discountPercent: data.discountPercent,
-    //     media: data.media.main.url,
-    //     price: data.price,
-    //     isPriceForPair: data.isPriceForPair,
-    //   },
-    // });
 
     return data;
   }
@@ -195,15 +182,11 @@ export class GoodsService {
         },
       };
 
-      console.log(formattedMedia);
-
       await this.prisma.products.update({
         where: { mediaId: mediaId },
         data: { media: formattedMedia },
       });
     } catch (error) {
-      console.error('Cloudinary upload error:', error);
-
       throw new InternalServerErrorException(
         'Failed to upload images to Cloudinary',
       );

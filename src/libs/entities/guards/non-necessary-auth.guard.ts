@@ -2,11 +2,11 @@ import { ConfigService } from '@/libs/common';
 import { Injectable } from '@nestjs/common/decorators';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { CanActivate, ExecutionContext } from '@nestjs/common/interfaces';
-import { JwtService, TokenExpiredError } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class NonNecessaryAuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private readonly config: ConfigService,
@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException("The Token isn't provided");
+      return true;
     }
 
     try {
@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
 
       request['user'] = payload.id;
     } catch (error) {
-      if (error instanceof TokenExpiredError) {
+      if (error) {
         throw new UnauthorizedException('The Token is Expired, Please Sign-In');
       } else {
         throw new UnauthorizedException('The Token is Invalid, Please Sign-In');
