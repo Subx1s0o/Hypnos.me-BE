@@ -20,10 +20,9 @@ import { CreateGoodDto } from './dto/create.dto';
 import { UpdateGoodDto } from './dto/update';
 import { GoodsService } from './goods.service';
 import { ParseCategoryPipe } from '@/libs/entities/pipes/categories.pipe';
-
 import { MEDIA_NAMES } from '@/libs/entities';
-import { NonNecessaryAuth } from '@/libs/entities/decorators/NonNecessaryAuth';
 import { ClientProxy } from '@nestjs/microservices';
+import { NonNecessaryAuth } from '@/libs/entities/decorators/NonNecessaryAuth';
 
 @Controller('goods')
 export class GoodsController {
@@ -80,7 +79,7 @@ export class GoodsController {
 
   @Patch(':id')
   @HttpCode(204)
-  @Auth('admin', 'owner')
+  @Auth()
   async updateGood(
     @Param('id') id: string,
     @Body() data: UpdateGoodDto,

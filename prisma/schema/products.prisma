@@ -1,25 +1,24 @@
 model products {
-    id              String          @id @default(auto()) @map("_id") @db.ObjectId
+    id              String           @id @default(auto()) @map("_id") @db.ObjectId
     title           String
-    slug            String          @unique
-    createdAt       DateTime        @default(now()) @db.Date
-    updatedAt       DateTime        @updatedAt
-    mediaId         String?         @unique
+    slug            String           @unique
+    createdAt       DateTime         @default(now()) @db.Date
+    updatedAt       DateTime         @updatedAt
+    mediaId         String?          @unique
     media           Media
     price           Int
     discountPercent Int?
-    isPriceForPair  Boolean         @default(false)
+    isPriceForPair  Boolean          @default(false)
     description     String
     category        Categories
     width           Float?
     thickness       Float?
-    views           Int             @default(0)
+    views           Int              @default(0)
     quantity        Int
     ringDetails     RingDetails[]
     diamondDetails  DiamondDetails
     sizeDetails     Int[]
     cartItems       cartItem[]
     FavoritesItem   favoritesItem[]
-
-    viewedProducts viewedProducts[]
+    viewedProducts  viewedProducts[]
 }

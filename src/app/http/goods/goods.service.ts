@@ -1,4 +1,4 @@
-import { PrismaService } from '@/libs/common';
+import { CacheService, PrismaService } from '@/libs/common';
 import { Inject, Injectable } from '@nestjs/common/decorators';
 import {
   BadRequestException,
@@ -19,9 +19,7 @@ export class GoodsService {
   constructor(
     @Inject('CLOUDINARY_SERVICE')
     private readonly cloudinaryClient: ClientProxy,
-
-    @Inject('VIEWED_SERVICE')
-    private readonly viewedProductsClient: ClientProxy,
+    private readonly cache: CacheService,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -83,13 +81,19 @@ export class GoodsService {
   }
 
   async getGood(slug: string): Promise<Good> {
-    const data = await this.prisma.products.findUnique({ where: { slug } });
+    const product = await this.cache.get<Good>(`/goods/${slug}`);
 
-    if (!data) {
-      throw new NotFoundException("The good with that slug wasn't found");
+    if (product) {
+      return product;
+    } else {
+      const data = await this.prisma.products.findUnique({ where: { slug } });
+
+      if (!data) {
+        throw new NotFoundException("The good with that slug wasn't found");
+      }
+
+      return data;
     }
-
-    return data;
   }
 
   async createGood(data: CreateGoodDto): Promise<Good> {
@@ -135,7 +139,14 @@ export class GoodsService {
   }
 
   async updateGood(id: string, data: UpdateGoodDto): Promise<void> {
-    const good = await this.prisma.products.findUnique({ where: { id } });
+    let good: Good;
+    try {
+      good = await this.prisma.products.findUnique({ where: { id } });
+    } catch {
+      throw new BadRequestException(
+        'Prisma Error while getting good, invalid Id',
+      );
+    }
 
     if (!good) {
       throw new NotFoundException("The good with current ID wasn't found");
@@ -145,6 +156,15 @@ export class GoodsService {
       where: { id },
       data,
     });
+
+    const cachedGood = await this.cache.get<Good>(`/goods/${good.slug}`);
+
+    if (cachedGood) {
+      await this.cache.set(`/goods/${good.slug}`, {
+        ...cachedGood,
+        ...data,
+      });
+    }
 
     if (!updatedProduct) {
       throw new InternalServerErrorException(
@@ -185,10 +205,19 @@ export class GoodsService {
         },
       };
 
-      await this.prisma.products.update({
+      const product = await this.prisma.products.update({
         where: { mediaId: mediaId },
         data: { media: formattedMedia },
       });
+
+      const cachedGood = await this.cache.get<Good>(`/goods/${product.slug}`);
+
+      if (cachedGood) {
+        await this.cache.set(`/goods/${product.slug}`, {
+          ...cachedGood,
+          media: formattedMedia,
+        });
+      }
     } catch (error) {
       throw new InternalServerErrorException(
         'Failed to upload images to Cloudinary',
@@ -198,7 +227,13 @@ export class GoodsService {
 
   async deleteGood(id: string): Promise<void> {
     this.cloudinaryClient.send('delete_all_images', id);
-    await this.prisma.products.delete({ where: { id } });
+    const deletedGood = await this.prisma.products.delete({ where: { id } });
+
+    if (!deletedGood) {
+      throw new BadRequestException('Prisma Error while deleting good');
+    }
+
+    await this.cache.del(`/goods/${deletedGood.slug}`);
   }
 
   async getViewedGoods(userId: string): Promise<Good[]> {
