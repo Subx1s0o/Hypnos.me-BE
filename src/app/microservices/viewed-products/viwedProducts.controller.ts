@@ -1,6 +1,6 @@
 import { PrismaService } from '@/libs/common';
 import { Controller, Logger } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller()
 export class ViewedProductsController {
@@ -10,23 +10,43 @@ export class ViewedProductsController {
   ) {}
 
   @MessagePattern('viewed-product')
-  async processViewedProduct({ user, slug }: { user: string; slug: string }) {
-    console.log('hello');
-    this.logger.log('Processing viewed product');
+  async processViewedProduct(
+    @Payload() payload: { user: string; slug: string },
+  ) {
     try {
-      const product = await this.prisma.products.update({
-        where: { slug },
-        data: { views: { increment: 1 } },
-      });
-      await this.prisma.viewedProducts.create({
-        data: {
-          userId: user || null,
-          productId: product.id,
-          date: new Date(),
-        },
-      });
-    } catch {
-      this.logger.error('Error while processing viewed product');
+      if (payload && payload.user && payload.slug) {
+        await this.prisma.$transaction(async (tx) => {
+          await tx.viewedProducts.deleteMany({
+            where: {
+              date: { lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+            },
+          });
+
+          const product = await tx.products.update({
+            where: { slug: payload.slug },
+            data: { views: { increment: 1 } },
+          });
+
+          await tx.viewedProducts.upsert({
+            where: {
+              userId_productId: {
+                userId: payload.user,
+                productId: product.id,
+              },
+            },
+            update: { date: new Date() },
+            create: {
+              userId: payload.user,
+              productId: product.id,
+              date: new Date(),
+            },
+          });
+        });
+      } else {
+        return;
+      }
+    } catch (error) {
+      this.logger.error('Error processing viewed product', error);
     }
   }
 }

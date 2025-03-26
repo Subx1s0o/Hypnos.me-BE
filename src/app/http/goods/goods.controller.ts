@@ -29,7 +29,7 @@ import { ClientProxy } from '@nestjs/microservices';
 export class GoodsController {
   constructor(
     private readonly goodsService: GoodsService,
-    @Inject('VIEWED_PRODUCTS_SERVICE')
+    @Inject('VIEWED_SERVICE')
     private readonly viewedProductsClient: ClientProxy,
   ) {}
 
@@ -49,6 +49,13 @@ export class GoodsController {
     });
   }
 
+  @Auth()
+  @HttpCode(200)
+  @Get('viewed')
+  async getViewedGoods(@Req() req: AuthRequest): Promise<Good[]> {
+    return await this.goodsService.getViewedGoods(req.user.id);
+  }
+
   @Get(':slug')
   @NonNecessaryAuth()
   async getGood(
@@ -56,7 +63,7 @@ export class GoodsController {
     @Req() req: AuthRequest,
   ): Promise<Good> {
     if (req.user) {
-      this.viewedProductsClient.send('viewed-product', {
+      this.viewedProductsClient.emit('viewed-product', {
         user: req.user.id,
         slug,
       });
@@ -66,25 +73,25 @@ export class GoodsController {
 
   @Post()
   @HttpCode(204)
-  // @Auth('admin', 'owner')
+  @Auth('admin', 'owner')
   async createGood(@Body() data: CreateGoodDto): Promise<Good> {
     return await this.goodsService.createGood(data);
   }
 
   @Patch(':id')
   @HttpCode(204)
-  // @Auth('admin', 'owner')
+  @Auth('admin', 'owner')
   async updateGood(
     @Param('id') id: string,
     @Body() data: UpdateGoodDto,
   ): Promise<void> {
     await this.goodsService.updateGood(id, data);
-    return null;
+    return;
   }
 
   @Patch('/media/:mediaId')
   @HttpCode(200)
-  // @Auth('admin', 'owner')
+  @Auth('admin', 'owner')
   async uploadMedia(
     @Param('mediaId') mediaId: string,
     @Body() data: { [key in MEDIA_NAMES]: string },
@@ -97,6 +104,6 @@ export class GoodsController {
   @Auth('admin', 'owner')
   async deleteGood(@Param('id') id: string): Promise<void> {
     await this.goodsService.deleteGood(id);
-    return null;
+    return;
   }
 }

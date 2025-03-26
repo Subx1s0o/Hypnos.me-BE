@@ -1,7 +1,7 @@
 import { PrismaService } from '@/libs/common';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CartCleaned, CartOriginal } from 'src/types';
+import { CartCleaned, CartOriginal, User } from 'src/types';
 import { TokensResponse } from '../types/tokens-response.type';
 
 @Injectable()
@@ -11,9 +11,15 @@ export class AuthHelpersService {
     private readonly prismaService: PrismaService,
   ) {}
 
-  generateTokens(id: string): TokensResponse {
-    const accessToken = this.jwtService.sign({ id }, { expiresIn: '30m' });
-    const refreshToken = this.jwtService.sign({ id }, { expiresIn: '5d' });
+  generateTokens(user: User): TokensResponse {
+    const accessToken = this.jwtService.sign(
+      { id: user.id, role: user.role },
+      { expiresIn: '30m' },
+    );
+    const refreshToken = this.jwtService.sign(
+      { id: user.id, role: user.role },
+      { expiresIn: '5d' },
+    );
     return {
       accessToken,
       refreshToken,

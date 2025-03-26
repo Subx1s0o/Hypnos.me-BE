@@ -1,6 +1,5 @@
 import { ConfigService } from '@/libs/common';
 import { Injectable } from '@nestjs/common/decorators';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { CanActivate, ExecutionContext } from '@nestjs/common/interfaces';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
@@ -25,13 +24,12 @@ export class NonNecessaryAuthGuard implements CanActivate {
         secret: this.config.get('JWT_SECRET') as string,
       });
 
-      request['user'] = payload.id;
-    } catch (error) {
-      if (error) {
-        throw new UnauthorizedException('The Token is Expired, Please Sign-In');
-      } else {
-        throw new UnauthorizedException('The Token is Invalid, Please Sign-In');
-      }
+      request['user'] = {
+        id: payload.id,
+        role: payload.role,
+      };
+    } catch {
+      return true;
     }
 
     return true;

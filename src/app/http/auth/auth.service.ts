@@ -100,7 +100,7 @@ export class AuthService {
       await this.referralQueue.add('processReferral', { user: newUser });
     }
 
-    const tokens = this.authHelpers.generateTokens(newUser.id);
+    const tokens = this.authHelpers.generateTokens(newUser);
     const userWithoutPassword = exclude(newUser, ['password']);
     const cleanedCart = this.authHelpers.cleanCartData(newUser.cart);
 
@@ -137,7 +137,7 @@ export class AuthService {
 
     const updatedCart = await this.authHelpers.updateCart(user.id, data.cart);
 
-    const tokens = this.authHelpers.generateTokens(user.id);
+    const tokens = this.authHelpers.generateTokens(user);
     const userWithoutPassword = exclude(user, ['password']);
     const cleanedCart = this.authHelpers.cleanCartData(updatedCart);
 

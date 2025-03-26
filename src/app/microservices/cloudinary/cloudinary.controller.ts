@@ -9,7 +9,6 @@ export class CloudinaryController {
 
   @MessagePattern('upload_images')
   async upload(@Payload() data: MediaData) {
-    console.log(data);
     return await this.cloudinaryService.uploadImages(data);
   }
 

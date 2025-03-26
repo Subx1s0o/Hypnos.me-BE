@@ -19,6 +19,9 @@ export class GoodsService {
   constructor(
     @Inject('CLOUDINARY_SERVICE')
     private readonly cloudinaryClient: ClientProxy,
+
+    @Inject('VIEWED_SERVICE')
+    private readonly viewedProductsClient: ClientProxy,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -196,5 +199,16 @@ export class GoodsService {
   async deleteGood(id: string): Promise<void> {
     this.cloudinaryClient.send('delete_all_images', id);
     await this.prisma.products.delete({ where: { id } });
+  }
+
+  async getViewedGoods(userId: string): Promise<Good[]> {
+    const userWithViewedProducts = await this.prisma.users.findUnique({
+      where: { id: userId },
+      include: { viewedProducts: { include: { product: true } } },
+    });
+
+    if (!userWithViewedProducts) return [];
+
+    return userWithViewedProducts.viewedProducts.map((vp) => vp.product);
   }
 }

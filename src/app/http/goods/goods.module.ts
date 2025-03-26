@@ -20,12 +20,12 @@ import { GoodsService } from './goods.service';
         inject: [ConfigService],
       },
       {
-        name: 'VIEWED_PRODUCTS_SERVICE',
+        name: 'VIEWED_SERVICE',
         useFactory: async (configService: ConfigService) => ({
           transport: Transport.RMQ,
           options: {
             urls: [configService.get('AMQP_URL')],
-            queue: 'viewed_products_queue',
+            queue: 'viewed_queue',
           },
         }),
         inject: [ConfigService],

@@ -5,4 +5,6 @@ model viewedProducts {
     productId String   @db.ObjectId
     product   products @relation(fields: [productId], references: [id])
     date      DateTime
+
+    @@unique([userId, productId])
 }

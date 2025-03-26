@@ -11,7 +11,6 @@ export class CloudinaryService {
   ) {}
 
   async uploadImages(data: MediaData) {
-    console.log(data);
     const folderPath = `products/${data.mediaId}`;
 
     const uploadPromises = Object.entries(data.media).map(
@@ -36,7 +35,7 @@ export class CloudinaryService {
     );
 
     const results = await Promise.all(uploadPromises);
-    console.log(results);
+
     return {
       main: results[0] || { url: '', status: MEDIA_STATUS.not_uploaded },
       media_1: results[1] || { url: '', status: MEDIA_STATUS.not_uploaded },
@@ -59,19 +58,15 @@ export class CloudinaryService {
       media_4?: string;
     };
   }) {
-    console.log(mediaId);
     const folderPath = `products/${mediaId}`;
     const updatedMedia = {};
 
     for (const [field, image] of Object.entries(media)) {
       if (image) {
         try {
-          const resource = await this.cloudinaryClient.api.resource(
-            `${folderPath}/${field}`,
-            { type: 'upload' },
-          );
-
-          console.log('Ресурс знайдено, оновлюємо:', resource);
+          await this.cloudinaryClient.api.resource(`${folderPath}/${field}`, {
+            type: 'upload',
+          });
 
           const result = await this.cloudinaryClient.uploader.upload(image, {
             folder: folderPath,
@@ -80,7 +75,6 @@ export class CloudinaryService {
             transformation: [{ quality: 'auto', fetch_format: 'avif' }],
           });
 
-          console.log('Ресурс успішно оновлено:', result);
           updatedMedia[field] = {
             url: result.secure_url,
             name: field,
@@ -88,25 +82,18 @@ export class CloudinaryService {
           };
         } catch (error) {
           if (error.error?.http_code === 404) {
-            console.log('Ресурс не знайдено, завантажуємо новий.');
-
             const result = await this.cloudinaryClient.uploader.upload(image, {
               folder: folderPath,
               public_id: field,
               transformation: [{ quality: 'auto', fetch_format: 'avif' }],
             });
 
-            console.log('Новий ресурс успішно завантажено:', result);
             updatedMedia[field] = {
               url: result.secure_url,
               name: field,
               status: MEDIA_STATUS.fulfilled,
             };
           } else {
-            console.error(
-              'Помилка під час спроби знайти ресурс:',
-              error.error?.message,
-            );
             updatedMedia[field] = {
               url: '',
               status: MEDIA_STATUS.rejected,
@@ -121,7 +108,6 @@ export class CloudinaryService {
       }
     }
 
-    console.log(updatedMedia);
     return updatedMedia;
   }
 
@@ -142,13 +128,9 @@ export class CloudinaryService {
       });
 
       await Promise.all(deletePromises);
-      console.log(`Файли з папки ${folderName} успішно видалені`);
 
       await this.cloudinaryClient.api.delete_folder(folderName);
-      console.log(`Папка ${folderName} успішно видалена`);
-    } catch (error) {
-      console.error(`Помилка при видаленні папки ${folderName}:`, error);
-    }
+    } catch (error) {}
   }
 
   async clearAllFolders() {

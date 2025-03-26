@@ -27,4 +27,4 @@ export type User = {
   updatedAt: Date;
 };
 
-export type AuthRequest = Request & { user?: User };
+export type AuthRequest = Request & { user?: { id: string; role: Role } };
