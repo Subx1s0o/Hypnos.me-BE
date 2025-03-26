@@ -61,12 +61,11 @@ export class GoodsController {
     @Param('slug') slug: string,
     @Req() req: AuthRequest,
   ): Promise<Good> {
-    if (req.user) {
-      this.viewedProductsClient.emit('viewed-product', {
-        user: req.user.id,
-        slug,
-      });
-    }
+    this.viewedProductsClient.emit('viewed-product', {
+      user: req.user?.id || null,
+      slug,
+    });
+
     return await this.goodsService.getGood(slug);
   }
 

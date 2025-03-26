@@ -6,6 +6,7 @@ model products {
     updatedAt       DateTime         @updatedAt
     mediaId         String?          @unique
     media           Media
+    rating          Int              @default(0)
     price           Int
     discountPercent Int?
     isPriceForPair  Boolean          @default(false)

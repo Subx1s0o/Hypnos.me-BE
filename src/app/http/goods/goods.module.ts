@@ -15,6 +15,12 @@ import { GoodsService } from './goods.service';
           options: {
             urls: [configService.get('AMQP_URL')],
             queue: 'cloudinary_queue',
+            queueOptions: {
+              durable: true,
+              autoDelete: false,
+            },
+            prefetchCount: 1,
+            persistent: true,
           },
         }),
         inject: [ConfigService],
@@ -26,6 +32,12 @@ import { GoodsService } from './goods.service';
           options: {
             urls: [configService.get('AMQP_URL')],
             queue: 'viewed_queue',
+            queueOptions: {
+              durable: true,
+              autoDelete: false,
+            },
+            prefetchCount: 1,
+            persistent: true,
           },
         }),
         inject: [ConfigService],

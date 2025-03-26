@@ -92,6 +92,7 @@ export class GoodsService {
         throw new NotFoundException("The good with that slug wasn't found");
       }
 
+      await this.cache.set(`/goods/${slug}`, data);
       return data;
     }
   }
@@ -239,7 +240,12 @@ export class GoodsService {
   async getViewedGoods(userId: string): Promise<Good[]> {
     const userWithViewedProducts = await this.prisma.users.findUnique({
       where: { id: userId },
-      include: { viewedProducts: { include: { product: true } } },
+      include: {
+        viewedProducts: {
+          orderBy: { date: 'desc' },
+          include: { product: true },
+        },
+      },
     });
 
     if (!userWithViewedProducts) return [];
