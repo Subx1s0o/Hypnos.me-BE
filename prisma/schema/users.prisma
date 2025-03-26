@@ -1,0 +1,20 @@
+model users {
+    id             String           @id @default(auto()) @map("_id") @db.ObjectId
+    firstName      String
+    secondName     String
+    email          String           @unique
+    password       String
+    bonuses        Int              @default(0)
+    role           Role             @default(user)
+    bonusesHistory bonusesHistory[]
+    // viewedProducts viewedProducts[]
+    cart           cart?
+    favorites      favorites?
+    phone          String?
+    birthday       DateTime?
+    referredCode   String           @unique
+    referredBy     String?
+    subscribed     Boolean          @default(false)
+    createdAt      DateTime         @default(now()) @db.Date
+    updatedAt      DateTime         @updatedAt
+}

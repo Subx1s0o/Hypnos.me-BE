@@ -1,0 +1,14 @@
+model favorites {
+    id     String          @id @default(auto()) @map("_id") @db.ObjectId
+    userId String          @unique @db.ObjectId
+    user   users           @relation(fields: [userId], references: [id])
+    items  favoritesItem[]
+}
+
+model favoritesItem {
+    id          String    @id @default(auto()) @map("_id") @db.ObjectId
+    favoritesId String    @db.ObjectId
+    productId   String    @db.ObjectId
+    favorites   favorites @relation(fields: [favoritesId], references: [id])
+    product     products  @relation(fields: [productId], references: [id])
+}

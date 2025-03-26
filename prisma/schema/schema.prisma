@@ -1,0 +1,75 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi", "prismaSchemaFolder"]
+}
+
+enum MediaStatus {
+  fulfilled
+  pending
+  rejected
+  not_uploaded
+}
+
+enum Categories {
+  classic
+  neoclassic
+  conceptual
+  geometrical
+  symbolical
+  futuristic
+}
+
+enum Role {
+  admin
+  user
+  owner
+}
+
+type bonusesHistory {
+  amount       Int
+  receivedDate DateTime
+  description  String
+}
+
+type viewedProduct {
+  slug            String
+  title           String
+  category        String
+  discountPercent Int
+  media           String
+  price           Int
+  isPriceForPair  Boolean
+}
+
+type RingDetails {
+  purityValue  Int
+  maleWeight   Float
+  femaleWeight Float
+  pairWeight   Float?
+}
+
+type DiamondDetails {
+  quantity Int
+  weight   Float
+  diameter Float
+  purity   Int
+  color    String
+}
+
+type Media {
+  main    MediaDetails
+  media_1 MediaDetails?
+  media_2 MediaDetails?
+  media_3 MediaDetails?
+  media_4 MediaDetails?
+}
+
+type MediaDetails {
+  url    String
+  status MediaStatus
+}

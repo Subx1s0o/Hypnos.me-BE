@@ -1,0 +1,4 @@
+// model viewedProducts {
+//   product viewedProduct
+//   date DateTime
+// }

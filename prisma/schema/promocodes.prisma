@@ -1,0 +1,7 @@
+model promocodes {
+    id             String   @id @default(auto()) @map("_id") @db.ObjectId
+    code           String   @unique
+    discount       Int
+    count          Int
+    expirationDate DateTime
+}
