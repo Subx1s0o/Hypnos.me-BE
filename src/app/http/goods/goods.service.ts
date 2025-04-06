@@ -12,7 +12,8 @@ import { CreateGoodDto } from './dto';
 import { UpdateGoodDto } from './dto/update';
 import { v4 } from 'uuid';
 import { MEDIA_NAMES } from '@/libs/entities';
-import { Media } from '@prisma/client';
+import { Media, Prisma } from '@prisma/client';
+import { ProductCatalogQueryDto } from './dto/product-catalog-query.dto';
 
 @Injectable()
 export class GoodsService {
@@ -33,7 +34,7 @@ export class GoodsService {
     limit: string;
     category?: CategoriesType;
     search: string;
-  }): Promise<{ data: GoodPreview[]; totalPages: number }> {
+  }): Promise<{ data: GoodPreview[]; totalPages: number; count: number }> {
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
 
@@ -77,6 +78,79 @@ export class GoodsService {
     return {
       data: products,
       totalPages,
+      count: totalItems,
+    };
+  }
+
+  async getCatalog(
+    queries: ProductCatalogQueryDto,
+  ): Promise<{ data: GoodPreview[]; totalPages: number; count: number }> {
+    function getOrderBy(order: ProductCatalogQueryDto['order']) {
+      switch (order) {
+        case 'asc-price':
+          return { price: 'asc' as Prisma.SortOrder };
+        case 'desc-price':
+          return { price: 'desc' as Prisma.SortOrder };
+        case 'popularity':
+          return { rating: 'desc' as Prisma.SortOrder };
+        case 'newest':
+          return { createdAt: 'desc' as Prisma.SortOrder };
+        case 'most-viewed':
+          return { views: 'desc' as Prisma.SortOrder };
+        default:
+          return undefined;
+      }
+    }
+    let orderBy: { [key: string]: Prisma.SortOrder } | undefined;
+    if (queries.order) orderBy = getOrderBy(queries.order);
+    const aggregate = await this.prisma.products.findMany({
+      where: {
+        category: queries.category ? queries.category : undefined,
+        title: queries.search
+          ? { contains: queries.search, mode: 'insensitive' }
+          : undefined,
+        price: {
+          gte: queries.minPrice ? queries.minPrice : 0,
+          lte: queries.maxPrice ? queries.maxPrice : Number.MAX_SAFE_INTEGER,
+        },
+      },
+      take: queries.limit,
+      skip: (queries.page - 1) * queries.limit,
+      orderBy: orderBy ? orderBy : undefined,
+      select: {
+        category: true,
+        discountPercent: true,
+        media: { select: { main: true } },
+        id: true,
+        price: true,
+        isPriceForPair: true,
+        slug: true,
+        rating: true,
+        views: true,
+        createdAt: true,
+        title: true,
+      },
+    });
+
+    const count = await this.prisma.products.count({
+      where: {
+        category: queries.category,
+        title: queries.search
+          ? { contains: queries.search, mode: 'insensitive' }
+          : undefined,
+        price: {
+          gte: queries.minPrice,
+          lte: queries.maxPrice,
+        },
+      },
+    });
+
+    const totalPages = Math.ceil(count / queries.limit);
+
+    return {
+      data: aggregate,
+      totalPages,
+      count,
     };
   }
 

@@ -23,6 +23,7 @@ import { ParseCategoryPipe } from '@/libs/entities/pipes/categories.pipe';
 import { MEDIA_NAMES } from '@/libs/entities';
 import { ClientProxy } from '@nestjs/microservices';
 import { NonNecessaryAuth } from '@/libs/entities/decorators/NonNecessaryAuth';
+import { ProductCatalogQueryDto } from './dto/product-catalog-query.dto';
 
 @Controller('goods')
 export class GoodsController {
@@ -39,13 +40,20 @@ export class GoodsController {
     @Query('limit') limit: string = '10',
     @Query('category', new ParseCategoryPipe()) category?: CategoriesType,
     @Query('search') search?: string,
-  ): Promise<{ data: GoodPreview[]; totalPages: number }> {
+  ): Promise<{ data: GoodPreview[]; totalPages: number; count: number }> {
     return await this.goodsService.getAllGoods({
       page,
       limit,
       category,
       search,
     });
+  }
+
+  @Get('catalog')
+  async getCatalog(
+    @Query() queries: ProductCatalogQueryDto,
+  ): Promise<{ data: GoodPreview[]; totalPages: number; count: number }> {
+    return await this.goodsService.getCatalog(queries);
   }
 
   @Auth()
