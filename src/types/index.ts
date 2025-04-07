@@ -1,4 +1,3 @@
-export * from './cart.types';
 export * from './config.type';
 export * from './good.type';
 export * from './jobs.type';
