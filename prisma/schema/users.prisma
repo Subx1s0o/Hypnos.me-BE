@@ -8,7 +8,7 @@ model users {
     role           Role             @default(user)
     bonusesHistory bonusesHistory[]
     viewedProducts viewedProducts[]
-    cart           cart?
+    // cart           cart?
     favorites      favorites?
     phone          String?
     birthday       DateTime?

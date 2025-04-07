@@ -1,5 +1,4 @@
 import {
-  IsArray,
   IsBoolean,
   IsEmail,
   IsNotEmpty,
@@ -32,7 +31,4 @@ export class SignUpDto {
   @IsOptional()
   @IsString()
   referredCode?: string;
-
-  @IsArray()
-  cart: { productId: string; quantity: number }[];
 }

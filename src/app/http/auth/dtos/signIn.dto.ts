@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class SignInDto {
   @IsEmail()
@@ -7,7 +7,4 @@ export class SignInDto {
 
   @IsNotEmpty()
   password: string;
-
-  @IsArray()
-  cart: { productId: string; quantity: number }[];
 }

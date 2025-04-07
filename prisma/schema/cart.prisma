@@ -1,15 +1,15 @@
-model cart {
-    id     String     @id @default(auto()) @map("_id") @db.ObjectId
-    userId String     @unique @db.ObjectId
-    user   users      @relation(fields: [userId], references: [id])
-    items  cartItem[]
-}
+// model cart {
+//     id     String     @id @default(auto()) @map("_id") @db.ObjectId
+//     userId String     @unique @db.ObjectId
+//     user   users      @relation(fields: [userId], references: [id])
+//     items  cartItem[]
+// }
 
-model cartItem {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    cartId    String   @db.ObjectId
-    productId String   @db.ObjectId
-    cart      cart     @relation(fields: [cartId], references: [id])
-    product   products @relation(fields: [productId], references: [id])
-    quantity  Int
-}
+// model cartItem {
+//     id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//     cartId    String   @db.ObjectId
+//     productId String   @db.ObjectId
+//     cart      cart     @relation(fields: [cartId], references: [id])
+//     product   products @relation(fields: [productId], references: [id])
+//     quantity  Int
+// }

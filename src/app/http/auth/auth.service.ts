@@ -51,14 +51,6 @@ export class AuthService {
       .slice(0, 7)
       .toUpperCase();
 
-    const cartItems =
-      data.cart && data.cart.length > 0
-        ? data.cart.map((item) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-          }))
-        : [];
-
     const newUser = await this.prismaService.users.create({
       data: {
         firstName: data.firstName,
@@ -68,31 +60,6 @@ export class AuthService {
         referredCode: referralCodeGenerated,
         referredBy: await this.authHelpers.getReferrerId(data.referredCode),
         bonusesHistory: [],
-        cart: {
-          create: {
-            items: {
-              create: cartItems,
-            },
-          },
-        },
-      },
-      include: {
-        cart: {
-          include: {
-            items: {
-              include: {
-                product: {
-                  select: {
-                    id: true,
-                    title: true,
-                    price: true,
-                    media: { select: { main: { select: { url: true } } } },
-                  },
-                },
-              },
-            },
-          },
-        },
       },
     });
 
@@ -102,12 +69,10 @@ export class AuthService {
 
     const tokens = this.authHelpers.generateTokens(newUser);
     const userWithoutPassword = exclude(newUser, ['password']);
-    const cleanedCart = this.authHelpers.cleanCartData(newUser.cart);
 
     return {
       user: {
         ...userWithoutPassword,
-        cart: cleanedCart,
       },
       ...tokens,
     };
@@ -116,9 +81,6 @@ export class AuthService {
   async signIn(data: SignInDto): Promise<AuthResponse> {
     const user = await this.prismaService.users.findUnique({
       where: { email: data.email },
-      include: {
-        cart: { include: { items: { include: { product: true } } } },
-      },
     });
 
     if (!user) {
@@ -135,16 +97,12 @@ export class AuthService {
       );
     }
 
-    const updatedCart = await this.authHelpers.updateCart(user.id, data.cart);
-
     const tokens = this.authHelpers.generateTokens(user);
     const userWithoutPassword = exclude(user, ['password']);
-    const cleanedCart = this.authHelpers.cleanCartData(updatedCart);
 
     return {
       user: {
         ...userWithoutPassword,
-        cart: cleanedCart,
       },
       ...tokens,
     };

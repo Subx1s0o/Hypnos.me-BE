@@ -1,5 +1,4 @@
 import { Request } from 'express';
-import { CartCleaned } from './cart.types';
 import { Role } from './role.type';
 
 type BonusesHistoryEntry = {
@@ -17,7 +16,6 @@ export type User = {
   bonuses: number;
   role: Role;
   bonusesHistory: BonusesHistoryEntry[];
-  cart?: CartCleaned;
   phone?: string;
   birthday?: Date;
   referredCode: string;
