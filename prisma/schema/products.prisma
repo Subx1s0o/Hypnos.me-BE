@@ -20,7 +20,5 @@ model products {
     diamondDetails  DiamondDetails
     reviews         review[]
     sizeDetails     Int[]
-    // cartItems       cartItem[]
-    FavoritesItem   favoritesItem[]
     viewedProducts  viewedProducts[]
 }
