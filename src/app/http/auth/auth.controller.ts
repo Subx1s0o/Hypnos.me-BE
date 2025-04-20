@@ -49,9 +49,11 @@ export class AuthController {
   @Auth()
   async changePassword(
     @Body() data: ChangePasswordDto,
-    @Req() req: Request & { user: string },
+    @Req() req: Request & { user: { id: string } },
   ): Promise<void> {
-    const userID = req.user;
+    const userID = req.user.id;
+
+    console.log(userID);
 
     if (!userID) {
       throw new BadRequestException('User ID is required');
