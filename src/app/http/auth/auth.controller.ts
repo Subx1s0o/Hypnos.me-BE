@@ -53,8 +53,6 @@ export class AuthController {
   ): Promise<void> {
     const userID = req.user.id;
 
-    console.log(userID);
-
     if (!userID) {
       throw new BadRequestException('User ID is required');
     }
