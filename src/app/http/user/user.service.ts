@@ -1,6 +1,7 @@
 import { PrismaService } from '@/libs/common';
 import { NotFoundException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common/decorators';
+import { UpdateUserDto } from './dto/update';
 
 @Injectable()
 export class UserService {
@@ -14,5 +15,20 @@ export class UserService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
+  }
+
+  async updateUser(userId: string, body: UpdateUserDto) {
+    const user = await this.prisma.users.update({
+      where: { id: userId },
+      data: body,
+      omit: {
+        password: true,
+        createdAt: true,
+        updatedAt: true,
+        id: true,
+        role: true,
+      },
+    });
+    return user;
   }
 }
