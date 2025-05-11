@@ -109,15 +109,14 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string): Promise<TokensResponse> {
-    const verified = this.jwtService.verify(refreshToken);
-
-    if (!verified) {
+    try {
+      const verified = this.jwtService.verify(refreshToken);
+      return this.authHelpers.generateTokens(verified.sub);
+    } catch (error) {
       throw new UnauthorizedException(
-        'The Token is Invalid or Expired, Please Sign-In',
+        '[JWT_EXPIRED]- The Token is Invalid or Expired, Please Sign-In',
       );
     }
-
-    return this.authHelpers.generateTokens(verified.sub);
   }
 
   async changePassword(
