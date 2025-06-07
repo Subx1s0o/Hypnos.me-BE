@@ -1,0 +1,7 @@
+model logs {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt DateTime @default(now())
+    name      String
+    data      Json
+    rrn       String?
+}

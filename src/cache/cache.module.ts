@@ -10,11 +10,14 @@ import { CacheService } from './cache.service';
     NestCacheModule.registerAsync({
       useFactory: async () => ({
         store: redisStore,
-        url: `redis://${config.redis.host}:${config.redis.port}`,
+        host: config.redis.host,
+        port: Number(config.redis.port),
+        password: config.redis.password || '',
+        username: config.redis.username || '',
       }),
     }),
   ],
   providers: [CacheService],
-  exports: [CacheService],
+  exports: [CacheService, NestCacheModule],
 })
 export class CacheModule {}

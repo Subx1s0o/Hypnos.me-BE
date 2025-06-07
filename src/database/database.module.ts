@@ -5,6 +5,7 @@ import { ProductsRepository } from './repositories/products.repository';
 import { ReviewsRepository } from './repositories/reviews.repository';
 import { UserRepository } from './repositories/user.repository';
 import { ViewedProductsRepository } from './repositories/viewed-products.repository';
+import { LogsRepository } from './repositories/logs.repository';
 
 @Global()
 @Module({
@@ -15,6 +16,7 @@ import { ViewedProductsRepository } from './repositories/viewed-products.reposit
     ReviewsRepository,
     UserRepository,
     ViewedProductsRepository,
+    LogsRepository,
   ],
   exports: [
     PrismaService,
@@ -23,6 +25,7 @@ import { ViewedProductsRepository } from './repositories/viewed-products.reposit
     ReviewsRepository,
     UserRepository,
     ViewedProductsRepository,
+    LogsRepository,
   ],
 })
 export class DatabaseModule {}
