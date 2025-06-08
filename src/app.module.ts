@@ -60,10 +60,7 @@ import { DatabaseModule } from './database/database.module';
       },
     }),
   ],
-  controllers: [...(config.role === 'GATEWAY' ? GATEWAY_COMPONENTS : [])],
-  providers: [
-    ...(config.role === 'WORKER' ? WORKER_PROCESSORS : []),
-    ...(config.role === 'WORKER' ? WORKER_SCHEDULERS : []),
-  ],
+  controllers: [...GATEWAY_COMPONENTS],
+  providers: [...WORKER_PROCESSORS, ...WORKER_SCHEDULERS],
 })
 export class AppModule {}

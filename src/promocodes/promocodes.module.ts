@@ -7,5 +7,6 @@ import { PromocodesService } from './promocodes.service';
   imports: [],
   controllers: [PromocodesController],
   providers: [PromocodesService],
+  exports: [PromocodesService],
 })
 export class PromocodesModule {}

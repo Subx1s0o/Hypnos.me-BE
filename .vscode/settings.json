@@ -1,0 +1,9 @@
+{
+  "prisma.showPrismaDataPlatformNotification": false,
+  "[prisma]": {
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false
+  },
+  "prisma.fileWatcher": false
+}

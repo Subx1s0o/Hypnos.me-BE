@@ -19,5 +19,6 @@ import { config } from '@/core/config';
     },
     PaymentsService,
   ],
+  exports: [PaymentsService],
 })
 export class PaymentsModule {}

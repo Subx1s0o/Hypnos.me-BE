@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common/decorators';
 import { HttpStatus } from '@nestjs/common/enums';
 import { AppException } from '@/core/exceptions/app.exception';
-import { CreatePromocodeDto } from './create.dto';
+import { CreatePromocodeDto } from './dto/create.dto';
 import { PromocodesRepository } from '@/database/repositories/promocodes.repository';
 
 @Injectable()

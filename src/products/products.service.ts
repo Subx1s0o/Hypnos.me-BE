@@ -10,6 +10,7 @@ import { UpdateGoodDto } from './dto/update';
 
 import { Prisma } from '@prisma/client';
 import { ProductCatalogQueryDto } from './dto/product-catalog-query.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 // import { StoreService } from '@/store/store.service';
 
 @Injectable()
@@ -18,6 +19,7 @@ export class ProductsService {
     // private readonly store: StoreService,
     private readonly productsRepository: ProductsRepository,
     private readonly userRepository: UserRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async getAllGoods({
@@ -154,7 +156,7 @@ export class ProductsService {
     };
   }
 
-  async getGood(slug: string): Promise<Good> {
+  async getGood(slug: string, userId?: string | null): Promise<Good> {
     const data = await this.productsRepository.get({
       where: { slug },
     });
@@ -170,6 +172,11 @@ export class ProductsService {
         },
       );
     }
+
+    this.eventEmitter.emit('viewed', {
+      user: userId,
+      slug,
+    });
 
     return data;
   }
@@ -326,17 +333,15 @@ export class ProductsService {
   // }
 
   async getViewedGoods(userId: string): Promise<Good[]> {
-    const userWithViewedProducts = (await this.userRepository.get({
-      where: { id: userId },
-      include: {
-        viewedProducts: {
-          orderBy: { date: 'desc' },
-          include: { product: true },
-        },
-      },
-    } as any)) as any;
+    const userWithViewedProducts =
+      await this.userRepository.getUserWithViewedProducts(userId);
 
-    if (!userWithViewedProducts) return [];
+    if (
+      !userWithViewedProducts ||
+      !userWithViewedProducts.viewedProducts ||
+      !Array.isArray(userWithViewedProducts.viewedProducts)
+    )
+      return [];
 
     return userWithViewedProducts.viewedProducts.map((vp: any) => vp.product);
   }

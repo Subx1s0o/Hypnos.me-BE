@@ -41,7 +41,7 @@ export abstract class BaseRepository<
   }
 
   async get(
-    args: any,
+    args: any & { omit?: Record<string, boolean> },
     options: { useCache?: boolean; ttl?: number; usePrimary?: boolean } = {},
   ): Promise<TData | null> {
     try {
@@ -51,18 +51,19 @@ export abstract class BaseRepository<
       if (useCache) {
         const cached = await this.getFromCache<TData>(cacheKey);
         if (cached) {
-          return cached;
+          return this.applyOmit(cached, args.omit);
         }
       }
 
+      const { omit, ...prismaArgs } = args;
       const model = usePrimary ? this.getPrimaryModel() : this.getModel();
-      const result = await model.findUnique(args);
+      const result = await model.findUnique(prismaArgs);
 
       if (useCache && result) {
         await this.setCache(cacheKey, result, ttl);
       }
 
-      return result;
+      return this.applyOmit(result, omit);
     } catch (error) {
       console.error(`Error in ${this.modelName}.get:`, error);
       throw error;
@@ -70,7 +71,9 @@ export abstract class BaseRepository<
   }
 
   async getMany(
-    args?: Prisma.Args<Prisma.TypeMap['model'][TModel], 'findMany'>,
+    args?: Prisma.Args<Prisma.TypeMap['model'][TModel], 'findMany'> & {
+      omit?: Record<string, boolean>;
+    },
     options: { useCache?: boolean; ttl?: number; usePrimary?: boolean } = {},
   ): Promise<TData[]> {
     try {
@@ -80,18 +83,21 @@ export abstract class BaseRepository<
       if (useCache) {
         const cached = await this.getFromCache<TData[]>(cacheKey);
         if (cached) {
-          return cached;
+          return this.applyOmitToArray(cached, args?.omit);
         }
       }
 
+      const { omit, ...prismaArgs } = args || {};
       const model = usePrimary ? this.getPrimaryModel() : this.getModel();
-      const result = await model.findMany(args);
+      const result = await model.findMany(
+        Object.keys(prismaArgs).length > 0 ? prismaArgs : undefined,
+      );
 
       if (useCache) {
         await this.setCache(cacheKey, result, ttl);
       }
 
-      return result;
+      return this.applyOmitToArray(result, omit);
     } catch (error) {
       console.error(`Error in ${this.modelName}.getMany:`, error);
       throw error;
@@ -150,20 +156,25 @@ export abstract class BaseRepository<
   }
 
   async update(
-    args: Prisma.Args<Prisma.TypeMap['model'][TModel], 'update'>,
+    args: Prisma.Args<Prisma.TypeMap['model'][TModel], 'update'> & {
+      omit?: Record<string, boolean>;
+    },
     options: { invalidateCache?: boolean } = {},
   ): Promise<TData> {
     try {
       const { invalidateCache = true } = options;
 
-      const result = await this.getPrimaryModel().update(args);
+      const { omit, ...prismaArgs } = args;
+      const result = await this.getPrimaryModel().update(prismaArgs);
 
       if (invalidateCache) {
-        const cacheKey = this.getCacheKey('get', args);
+        const cacheKey = this.getCacheKey('get', {
+          where: (prismaArgs as any).where,
+        });
         await this.setCache(cacheKey, result);
       }
 
-      return result;
+      return this.applyOmit(result, omit);
     } catch (error) {
       console.error(`Error in ${this.modelName}.update:`, error);
       throw error;
@@ -296,6 +307,37 @@ export abstract class BaseRepository<
         await Promise.all(keys.map((key) => this.cacheManager.del(key)));
       }
     } catch (error) {}
+  }
+
+  private applyOmit<T>(
+    data: T | null,
+    omit?: Record<string, boolean>,
+  ): T | null {
+    if (!data || !omit) {
+      return data;
+    }
+
+    const keysToOmit = Object.keys(omit).filter((key) => omit[key]);
+    if (keysToOmit.length === 0) {
+      return data;
+    }
+
+    const result = { ...data };
+    keysToOmit.forEach((key) => {
+      delete (result as any)[key];
+    });
+
+    return result;
+  }
+
+  private applyOmitToArray<T>(data: T[], omit?: Record<string, boolean>): T[] {
+    if (!data || !omit) {
+      return data;
+    }
+
+    return data
+      .map((item) => this.applyOmit(item, omit))
+      .filter(Boolean) as T[];
   }
 
   async transaction<T>(

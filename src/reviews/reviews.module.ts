@@ -7,5 +7,6 @@ import { CacheModule } from '@/cache/cache.module';
   imports: [CacheModule],
   controllers: [ReviewsController],
   providers: [ReviewsService],
+  exports: [ReviewsService],
 })
 export class ReviewsModule {}

@@ -43,4 +43,17 @@ export class UserRepository extends BaseRepository<'users', User> {
   ): Promise<void> {
     return super.delete(args, options);
   }
+
+  async getUserWithViewedProducts(userId: string) {
+    const model = this.getModel();
+    return await model.findUnique({
+      where: { id: userId },
+      include: {
+        viewedProducts: {
+          orderBy: { date: 'desc' },
+          include: { product: true },
+        },
+      },
+    });
+  }
 }

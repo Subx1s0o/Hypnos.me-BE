@@ -18,14 +18,10 @@ import { ProductsService } from './products.service';
 import { ParseCategoryPipe } from '@/core/pipes/categories.pipe';
 import { NonNecessaryAuth } from '@/core/decorators/NonNecessaryAuth';
 import { ProductCatalogQueryDto } from './dto/product-catalog-query.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller('goods')
 export class ProductsController {
-  constructor(
-    private readonly productsService: ProductsService,
-    private readonly eventEmitter: EventEmitter2,
-  ) {}
+  constructor(private readonly productsService: ProductsService) {}
 
   @Get()
   @UseInterceptors(CacheInterceptor)
@@ -63,12 +59,7 @@ export class ProductsController {
     @Param('slug') slug: string,
     @Req() req: AuthRequest,
   ): Promise<Good> {
-    this.eventEmitter.emit('viewed', {
-      user: req.user?.id || null,
-      slug,
-    });
-
-    return await this.productsService.getGood(slug);
+    return await this.productsService.getGood(slug, req.user?.id || null);
   }
 
   // @Post()
