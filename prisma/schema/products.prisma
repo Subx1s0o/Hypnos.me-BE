@@ -21,4 +21,6 @@ model products {
     reviews         review[]
     sizeDetails     Int[]
     viewedProducts  viewedProducts[]
+    Payment         Payment?         @relation(fields: [paymentId], references: [id])
+    paymentId       String?          @db.ObjectId
 }

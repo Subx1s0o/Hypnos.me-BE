@@ -1,6 +1,5 @@
 import { Auth } from '@/core/decorators/Auth';
 import {
-  BadRequestException,
   Body,
   Controller,
   HttpCode,
@@ -9,6 +8,7 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
+import { AppException } from '@/core/exceptions/app.exception';
 
 import { Request } from 'express';
 import { AuthService } from './auth.service';
@@ -54,7 +54,10 @@ export class AuthController {
     const userID = req.user.id;
 
     if (!userID) {
-      throw new BadRequestException('User ID is required');
+      throw new AppException('User ID is required', HttpStatus.BAD_REQUEST, {
+        className: this.constructor.name,
+        methodName: this.changePassword.name,
+      });
     }
 
     return await this.authService.changePassword(
@@ -79,7 +82,10 @@ export class AuthController {
     @Body() resetPasswordDto: ResetPasswordDto,
   ): Promise<void> {
     if (!token) {
-      throw new BadRequestException('Token is required');
+      throw new AppException('Token is required', HttpStatus.BAD_REQUEST, {
+        className: this.constructor.name,
+        methodName: this.resetPassword.name,
+      });
     }
 
     return await this.authService.resetPassword(

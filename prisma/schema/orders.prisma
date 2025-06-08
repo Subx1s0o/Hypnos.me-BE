@@ -1,0 +1,11 @@
+model Order {
+    id            String   @id @default(auto()) @map("_id") @db.ObjectId
+    userId        String   @db.ObjectId
+    paymentId     String   @unique @db.ObjectId
+    payment       Payment  @relation(fields: [paymentId], references: [id])
+    userOrderData Json
+    user          users    @relation(fields: [userId], references: [id])
+    status        String
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+}

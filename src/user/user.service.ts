@@ -1,5 +1,6 @@
-import { NotFoundException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common/decorators';
+import { HttpStatus } from '@nestjs/common';
+import { AppException } from '@/core/exceptions/app.exception';
 import { UpdateUserDto } from './dto/update';
 import { UserRepository } from '../database/repositories/user.repository';
 
@@ -15,7 +16,11 @@ export class UserService {
       },
     });
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user)
+      throw new AppException('User not found', HttpStatus.NOT_FOUND, {
+        className: this.constructor.name,
+        methodName: this.getUser.name,
+      });
 
     return user;
   }

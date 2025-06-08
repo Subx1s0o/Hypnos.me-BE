@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common/decorators';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
+import { HttpStatus } from '@nestjs/common';
+import { AppException } from '@/core/exceptions/app.exception';
 import { CanActivate, ExecutionContext } from '@nestjs/common/interfaces';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { Request } from 'express';
@@ -14,7 +15,14 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException("The Token isn't provided");
+      throw new AppException(
+        "The Token isn't provided",
+        HttpStatus.UNAUTHORIZED,
+        {
+          className: this.constructor.name,
+          methodName: this.canActivate.name,
+        },
+      );
     }
 
     try {
@@ -28,9 +36,23 @@ export class AuthGuard implements CanActivate {
       };
     } catch (error) {
       if (error instanceof TokenExpiredError) {
-        throw new UnauthorizedException('The Token is Expired, Please Sign-In');
+        throw new AppException(
+          'The Token is Expired, Please Sign-In',
+          HttpStatus.UNAUTHORIZED,
+          {
+            className: this.constructor.name,
+            methodName: this.canActivate.name,
+          },
+        );
       } else {
-        throw new UnauthorizedException('The Token is Invalid, Please Sign-In');
+        throw new AppException(
+          'The Token is Invalid, Please Sign-In',
+          HttpStatus.UNAUTHORIZED,
+          {
+            className: this.constructor.name,
+            methodName: this.canActivate.name,
+          },
+        );
       }
     }
 

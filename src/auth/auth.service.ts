@@ -1,14 +1,5 @@
-import {
-  BadRequestException,
-  ConflictException,
-  ForbiddenException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { AppException } from '@/core/exceptions/app.exception';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { AuthResponse } from './types/auth-response.type';
@@ -37,8 +28,14 @@ export class AuthService {
     });
 
     if (isUserExists) {
-      throw new ConflictException(
+      throw new AppException(
         'The User is Already Been Registered, Please Sign-In',
+        HttpStatus.CONFLICT,
+        {
+          className: this.constructor.name,
+          methodName: this.signUp.name,
+          body: data,
+        },
       );
     }
 
@@ -81,16 +78,28 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException(
+      throw new AppException(
         "The Email or Password is Wrong, or User doesn't Exist",
+        HttpStatus.BAD_REQUEST,
+        {
+          className: this.constructor.name,
+          methodName: this.signIn.name,
+          body: data,
+        },
       );
     }
 
     const verifiedPassword = await compare(data.password, user.password);
 
     if (!verifiedPassword) {
-      throw new UnauthorizedException(
+      throw new AppException(
         "The Email or Password is Wrong, or User doesn't Exist",
+        HttpStatus.UNAUTHORIZED,
+        {
+          className: this.constructor.name,
+          methodName: this.signIn.name,
+          body: data,
+        },
       );
     }
 
@@ -110,8 +119,13 @@ export class AuthService {
       const verified = this.jwtService.verify(refreshToken);
       return this.authHelpers.generateTokens(verified.sub);
     } catch (error) {
-      throw new UnauthorizedException(
+      throw new AppException(
         '[JWT_EXPIRED]- The Token is Invalid or Expired, Please Sign-In',
+        HttpStatus.UNAUTHORIZED,
+        {
+          className: this.constructor.name,
+          methodName: this.refresh.name,
+        },
       );
     }
   }
@@ -126,20 +140,33 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException('User does not exist');
+      throw new AppException('User does not exist', HttpStatus.BAD_REQUEST, {
+        className: this.constructor.name,
+        methodName: this.changePassword.name,
+      });
     }
 
     if (oldPasssword === newPassword) {
-      throw new BadRequestException(
+      throw new AppException(
         'The new password must be different from the old password',
+        HttpStatus.BAD_REQUEST,
+        {
+          className: this.constructor.name,
+          methodName: this.changePassword.name,
+        },
       );
     }
 
     const verifiedPassword = await compare(oldPasssword, user.password);
 
     if (!verifiedPassword) {
-      throw new ForbiddenException(
+      throw new AppException(
         "The old password doesn't match with real password",
+        HttpStatus.FORBIDDEN,
+        {
+          className: this.constructor.name,
+          methodName: this.changePassword.name,
+        },
       );
     }
     const hashedPassword = await hash(newPassword, 10);
@@ -152,14 +179,23 @@ export class AuthService {
         },
       });
     } catch {
-      throw new InternalServerErrorException(
+      throw new AppException(
         'Error while changing the password, please try again later',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          className: this.constructor.name,
+          methodName: this.changePassword.name,
+        },
       );
     }
 
-    throw new HttpException(
+    throw new AppException(
       'The password is successfully changed',
       HttpStatus.OK,
+      {
+        className: this.constructor.name,
+        methodName: this.changePassword.name,
+      },
     );
   }
 
@@ -169,7 +205,15 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException("The user wasn't found, Please Sign-Up");
+      throw new AppException(
+        "The user wasn't found, Please Sign-Up",
+        HttpStatus.BAD_REQUEST,
+        {
+          className: this.constructor.name,
+          methodName: this.forgotPassword.name,
+          body: { email },
+        },
+      );
     }
 
     const token = this.jwtService.sign({ id: user.id }, { expiresIn: '20m' });
@@ -181,14 +225,25 @@ export class AuthService {
         text: token,
       });
     } catch {
-      throw new InternalServerErrorException(
+      throw new AppException(
         `Error while sending email to ${email}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          className: this.constructor.name,
+          methodName: this.forgotPassword.name,
+          body: { email },
+        },
       );
     }
 
-    throw new HttpException(
+    throw new AppException(
       `The email was successfully sended to ${email}`,
       HttpStatus.OK,
+      {
+        className: this.constructor.name,
+        methodName: this.forgotPassword.name,
+        body: { email },
+      },
     );
   }
 
@@ -196,7 +251,14 @@ export class AuthService {
     const verified = this.jwtService.verify(token);
 
     if (!verified) {
-      throw new BadRequestException('The Token is Invalid or Expired');
+      throw new AppException(
+        'The Token is Invalid or Expired',
+        HttpStatus.BAD_REQUEST,
+        {
+          className: this.constructor.name,
+          methodName: this.resetPassword.name,
+        },
+      );
     }
 
     const user = await this.userRepository.get({
@@ -204,7 +266,14 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException("The User Wasn't Found, try Sign-Up first");
+      throw new AppException(
+        "The User Wasn't Found, try Sign-Up first",
+        HttpStatus.NOT_FOUND,
+        {
+          className: this.constructor.name,
+          methodName: this.resetPassword.name,
+        },
+      );
     }
 
     const hashPassword = await hash(newPassword, 10);
@@ -217,12 +286,23 @@ export class AuthService {
         },
       });
     } catch {
-      throw new InternalServerErrorException('Error while updating User');
+      throw new AppException(
+        'Error while updating User',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          className: this.constructor.name,
+          methodName: this.resetPassword.name,
+        },
+      );
     }
 
-    throw new HttpException(
+    throw new AppException(
       'The password was successfully reset',
       HttpStatus.OK,
+      {
+        className: this.constructor.name,
+        methodName: this.resetPassword.name,
+      },
     );
   }
 }

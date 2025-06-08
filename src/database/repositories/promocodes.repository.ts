@@ -1,4 +1,4 @@
-import { BaseRepository } from '@/database/base-repository';
+import { BaseRepository } from '@/database/repositories/base-repository';
 import { Injectable } from '@nestjs/common';
 import { Promocode } from 'types';
 import { Prisma } from '@prisma/client';

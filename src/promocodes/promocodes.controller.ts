@@ -12,7 +12,7 @@ export class PromocodesController {
 
   @MessagePattern('create-promocode')
   async create(createPromoCodeDto: CreatePromocodeDto): Promise<void> {
-    return await this.promocodesService.create(createPromoCodeDto);
+    return await this.promocodesService.createPromocode(createPromoCodeDto);
   }
 
   @MessagePattern('all-promocodes')

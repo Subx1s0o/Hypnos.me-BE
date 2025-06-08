@@ -1,6 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from 'types';
-
+import { Injectable, HttpStatus } from '@nestjs/common';
+import { AppException } from '@/core/exceptions/app.exception';
 import { CreateAdminDto } from './dtos/create.dto';
 import { UserRepository } from '@/database/repositories/user.repository';
 
@@ -14,8 +13,14 @@ export class AdminService {
     });
 
     if (!user) {
-      throw new NotFoundException(
+      throw new AppException(
         `The user with id ${data.userId} wasn't found`,
+        HttpStatus.NOT_FOUND,
+        {
+          className: this.constructor.name,
+          methodName: this.changeRole.name,
+          body: data,
+        },
       );
     }
 
@@ -30,7 +35,7 @@ export class AdminService {
     return updatedUser;
   }
 
-  async getAdmins(): Promise<Omit<User, 'password'>[]> {
+  async getAdmins() {
     const admins = await this.userRepository.getMany({
       where: { role: 'admin' },
       omit: {

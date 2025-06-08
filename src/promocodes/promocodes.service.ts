@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common/decorators';
 import { HttpStatus } from '@nestjs/common/enums';
-import {
-  BadRequestException,
-  ConflictException,
-  HttpException,
-  NotFoundException,
-} from '@nestjs/common/exceptions';
+import { AppException } from '@/core/exceptions/app.exception';
 import { CreatePromocodeDto } from './create.dto';
 import { PromocodesRepository } from '@/database/repositories/promocodes.repository';
 
@@ -13,29 +8,35 @@ import { PromocodesRepository } from '@/database/repositories/promocodes.reposit
 export class PromocodesService {
   constructor(private readonly promocodesRepository: PromocodesRepository) {}
 
-  async create(createPromocodeDto: CreatePromocodeDto) {
-    const promo = await this.promocodesRepository.get({
-      where: { code: createPromocodeDto.code },
+  async createPromocode(data: CreatePromocodeDto) {
+    const promoncodeData = await this.promocodesRepository.get({
+      where: { code: data.code },
     });
 
-    if (promo) {
-      throw new ConflictException(
-        'Promocode with the same name already exists.',
+    if (promoncodeData) {
+      throw new AppException(
+        'Promocode with this code already exists.',
+        HttpStatus.CONFLICT,
+        {
+          className: this.constructor.name,
+          methodName: this.createPromocode.name,
+          body: data,
+        },
       );
     }
 
     await this.promocodesRepository.create({
-      data: {
-        code: createPromocodeDto.code,
-        discount: createPromocodeDto.discount,
-        count: createPromocodeDto.count,
-        expirationDate: createPromocodeDto.expirationDate,
-      },
+      data,
     });
 
-    throw new HttpException(
-      'Promocode was successfully created.',
+    throw new AppException(
+      'Promocode created successfully.',
       HttpStatus.CREATED,
+      {
+        className: this.constructor.name,
+        methodName: this.createPromocode.name,
+        body: data,
+      },
     );
   }
 
@@ -47,14 +48,23 @@ export class PromocodesService {
     const promo = await this.promocodesRepository.get({ where: { id } });
 
     if (!promo) {
-      throw new NotFoundException('Promocode not found.');
+      throw new AppException('Promocode not found.', HttpStatus.NOT_FOUND, {
+        className: this.constructor.name,
+        methodName: this.remove.name,
+        params: { id },
+      });
     }
 
     await this.promocodesRepository.delete({ where: { id } });
 
-    throw new HttpException(
+    throw new AppException(
       'Promocode was successfully deleted.',
       HttpStatus.OK,
+      {
+        className: this.constructor.name,
+        methodName: this.remove.name,
+        params: { id },
+      },
     );
   }
 
@@ -64,18 +74,34 @@ export class PromocodesService {
     });
 
     if (!promoCode) {
-      throw new NotFoundException('Promocode not found.');
+      throw new AppException('Promocode not found.', HttpStatus.NOT_FOUND, {
+        className: this.constructor.name,
+        methodName: this.applyPromoCode.name,
+        params: { code },
+      });
     }
 
     const now = new Date();
     if (promoCode.expirationDate < now) {
       await this.promocodesRepository.delete({ where: { code } });
-      throw new BadRequestException('Promocode has expired.');
+      throw new AppException('Promocode has expired.', HttpStatus.BAD_REQUEST, {
+        className: this.constructor.name,
+        methodName: this.applyPromoCode.name,
+        params: { code },
+      });
     }
 
     if (promoCode.count <= 0) {
       await this.promocodesRepository.delete({ where: { code } });
-      throw new BadRequestException('Promocode has been used up.');
+      throw new AppException(
+        'Promocode has been used up.',
+        HttpStatus.BAD_REQUEST,
+        {
+          className: this.constructor.name,
+          methodName: this.applyPromoCode.name,
+          params: { code },
+        },
+      );
     }
 
     const discount = promoCode.discount;
@@ -85,12 +111,14 @@ export class PromocodesService {
       data: { count: promoCode.count - 1 },
     });
 
-    throw new HttpException(
-      {
-        message: 'Promocode applied successfully.',
-        discount,
-      },
+    throw new AppException(
+      `Promocode applied successfully. Discount: ${discount}%`,
       HttpStatus.OK,
+      {
+        className: this.constructor.name,
+        methodName: this.applyPromoCode.name,
+        params: { code },
+      },
     );
   }
 }

@@ -1,11 +1,8 @@
 import { ProductsRepository } from '@/database/repositories/products.repository';
 import { UserRepository } from '@/database/repositories/user.repository';
 import { Injectable } from '@nestjs/common/decorators';
-import {
-  BadRequestException,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common/exceptions';
+import { HttpStatus } from '@nestjs/common';
+import { AppException } from '@/core/exceptions/app.exception';
 
 import { CategoriesType, Good, GoodPreview } from 'types';
 
@@ -43,7 +40,11 @@ export class ProductsService {
       pageNumber <= 0 ||
       limitNumber <= 0
     ) {
-      throw new BadRequestException('Invalid page or limit');
+      throw new AppException('Invalid page or limit', HttpStatus.BAD_REQUEST, {
+        className: this.constructor.name,
+        methodName: this.getAllGoods.name,
+        query: { page, limit, category, search },
+      });
     }
 
     const skip = (pageNumber - 1) * limitNumber;
@@ -159,7 +160,15 @@ export class ProductsService {
     });
 
     if (!data) {
-      throw new NotFoundException("The good with that slug wasn't found");
+      throw new AppException(
+        "The good with that slug wasn't found",
+        HttpStatus.NOT_FOUND,
+        {
+          className: this.constructor.name,
+          methodName: this.getGood.name,
+          params: { slug },
+        },
+      );
     }
 
     return data;
@@ -212,13 +221,27 @@ export class ProductsService {
     try {
       good = await this.productsRepository.get({ where: { id } });
     } catch {
-      throw new BadRequestException(
+      throw new AppException(
         'Repository Error while getting good, invalid Id',
+        HttpStatus.BAD_REQUEST,
+        {
+          className: this.constructor.name,
+          methodName: this.updateGood.name,
+          params: { id },
+        },
       );
     }
 
     if (!good) {
-      throw new NotFoundException("The good with current ID wasn't found");
+      throw new AppException(
+        "The good with current ID wasn't found",
+        HttpStatus.NOT_FOUND,
+        {
+          className: this.constructor.name,
+          methodName: this.updateGood.name,
+          params: { id },
+        },
+      );
     }
 
     const updatedProduct = await this.productsRepository.update({
@@ -227,8 +250,14 @@ export class ProductsService {
     });
 
     if (!updatedProduct) {
-      throw new InternalServerErrorException(
+      throw new AppException(
         'Repository Error while updating good',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          className: this.constructor.name,
+          methodName: this.updateGood.name,
+          params: { id },
+        },
       );
     }
   }

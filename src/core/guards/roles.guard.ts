@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common/decorators';
-import { ForbiddenException } from '@nestjs/common/exceptions';
+import { HttpStatus } from '@nestjs/common';
+import { AppException } from '@/core/exceptions/app.exception';
 import { CanActivate, ExecutionContext } from '@nestjs/common/interfaces';
 import { Reflector } from '@nestjs/core';
 import { Role } from 'types';
@@ -16,18 +17,37 @@ export class RolesGuard implements CanActivate {
     const user = context.switchToHttp().getRequest().user;
 
     if (!user) {
-      throw new ForbiddenException('User ID not found in request');
+      throw new AppException(
+        'User ID not found in request',
+        HttpStatus.FORBIDDEN,
+        {
+          className: this.constructor.name,
+          methodName: this.canActivate.name,
+        },
+      );
     }
 
     if (!user) {
-      throw new ForbiddenException('User not found to process request');
+      throw new AppException(
+        'User not found to process request',
+        HttpStatus.FORBIDDEN,
+        {
+          className: this.constructor.name,
+          methodName: this.canActivate.name,
+        },
+      );
     }
 
     const hasRequiredRole = requiredRoles.some((role) => user.role === role);
 
     if (!hasRequiredRole) {
-      throw new ForbiddenException(
+      throw new AppException(
         `Access denied: only accessible to users with role ${requiredRoles.join(', ')}`,
+        HttpStatus.FORBIDDEN,
+        {
+          className: this.constructor.name,
+          methodName: this.canActivate.name,
+        },
       );
     }
 

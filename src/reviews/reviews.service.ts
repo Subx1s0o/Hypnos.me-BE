@@ -1,4 +1,5 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
+import { AppException } from '@/core/exceptions/app.exception';
 import { ReviewDto } from './dto/review.dto';
 import { ReviewsRepository } from '../database/repositories/reviews.repository';
 import { ProductsRepository } from '../database/repositories/products.repository';
@@ -17,7 +18,10 @@ export class ReviewsService {
     });
 
     if (!product) {
-      throw new BadRequestException('Product not found');
+      throw new AppException('Product not found', HttpStatus.BAD_REQUEST, {
+        className: this.constructor.name,
+        methodName: this.createReview.name,
+      });
     }
 
     await this.reviewsRepository.transaction(async (tx) => {

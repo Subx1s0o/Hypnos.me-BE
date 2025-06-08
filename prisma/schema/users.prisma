@@ -8,6 +8,7 @@ model users {
     role           Role             @default(user)
     bonusesHistory bonusesHistory[]
     viewedProducts viewedProducts[]
+    orders         Order[]
     phone          String?
     birthday       DateTime?
     referredCode   String           @unique
