@@ -9,6 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "start:dev": "nest start -w",
+    "start:prod": "nest start",
     "lint": "eslint \"src/**/*.ts\" --fix"
   },
   "dependencies": {
