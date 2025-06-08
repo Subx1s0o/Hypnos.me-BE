@@ -3,7 +3,7 @@ export type Review = {
   name: string;
   email: string;
   comment: string;
-  rate: number;
+  rate: number; // Integer between 1-5
   productId: string;
   createdAt: Date;
   updatedAt: Date;

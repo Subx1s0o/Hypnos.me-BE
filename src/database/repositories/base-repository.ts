@@ -144,8 +144,13 @@ export abstract class BaseRepository<
       const result = await this.getPrimaryModel().create(args);
 
       if (invalidateCache) {
+        // Cache the new object
         const cacheKey = this.getCacheKey('get', { where: { id: result.id } });
         await this.setCache(cacheKey, result);
+
+        // Invalidate getMany and count caches as they might now be stale
+        await this.clearCacheByPattern(`${this.modelName}:getMany`);
+        await this.clearCacheByPattern(`${this.modelName}:count`);
       }
 
       return result;
@@ -172,6 +177,10 @@ export abstract class BaseRepository<
           where: (prismaArgs as any).where,
         });
         await this.setCache(cacheKey, result);
+
+        // Invalidate getMany and count caches as they might now be stale
+        await this.clearCacheByPattern(`${this.modelName}:getMany`);
+        await this.clearCacheByPattern(`${this.modelName}:count`);
       }
 
       return this.applyOmit(result, omit);
@@ -214,6 +223,10 @@ export abstract class BaseRepository<
       if (invalidateCache) {
         const cacheKey = this.getCacheKey('get', args);
         await this.cacheManager.del(cacheKey);
+
+        // Invalidate getMany and count caches as they might now be stale
+        await this.clearCacheByPattern(`${this.modelName}:getMany`);
+        await this.clearCacheByPattern(`${this.modelName}:count`);
       }
     } catch (error) {
       console.error(`Error in ${this.modelName}.delete:`, error);

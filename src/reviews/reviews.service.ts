@@ -24,52 +24,58 @@ export class ReviewsService {
       });
     }
 
-    await this.reviewsRepository.transaction(async (tx) => {
-      const newReview = await tx.review.create({
-        data: {
-          ...data,
-          productId: product.id,
-        },
-      });
-
-      const existingReviews = await this.reviewsRepository.getMany({
-        where: { productId: product.id },
-      });
-      const allReviews = [...existingReviews, newReview];
-
-      const totalRating = allReviews.reduce(
-        (sum, review) => sum + review.rate,
-        0,
-      );
-      const averageRating = totalRating / allReviews.length;
-
-      const roundedRating = Math.round(averageRating * 2) / 2;
-
-      const finalRating = Number.isInteger(roundedRating)
-        ? roundedRating
-        : Math.floor(roundedRating * 2) / 2;
-
-      return await tx.products.update({
-        where: { slug },
-        data: {
-          rating: finalRating,
-        },
-      });
+    const newReview = await this.reviewsRepository.create({
+      data: {
+        ...data,
+        productId: product.id,
+      },
     });
+
+    const allReviews = await this.reviewsRepository.getMany({
+      where: { productId: product.id },
+    });
+
+    const totalRating = allReviews.reduce(
+      (sum, review) => sum + review.rate,
+      0,
+    );
+    const finalRating = totalRating / allReviews.length;
+
+    await this.productsRepository.update({
+      where: { slug },
+      data: {
+        rating: finalRating,
+      },
+    });
+
+    return newReview;
   }
 
   async getReviews(slug: string, page: number, limit: number) {
     const product = await this.productsRepository.get({
       where: { slug },
     });
+
+    if (!product) {
+      throw new AppException('Product not found', HttpStatus.NOT_FOUND, {
+        className: this.constructor.name,
+        methodName: this.getReviews.name,
+      });
+    }
+
     const reviews = await this.reviewsRepository.getMany({
-      where: { productId: product.id },
+      where: {
+        productId: product.id,
+      },
       skip: (page - 1) * limit,
       take: limit,
+      orderBy: { createdAt: 'desc' },
     });
 
     const totalReviews = await this.reviewsRepository.count({
-      where: { productId: product.id },
+      where: {
+        productId: product.id,
+      },
     });
 
     return {

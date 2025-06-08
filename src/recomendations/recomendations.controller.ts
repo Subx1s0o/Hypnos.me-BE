@@ -13,25 +13,11 @@ export class RecomendationsController {
     @Req() req: AuthRequest,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
-    @Query('viewed-products') viewedProducts?: string,
   ) {
-    const parsedViewedProducts = viewedProducts
-      ? JSON.parse(viewedProducts)
-      : [];
-
-    if (req.user) {
-      return this.recomendationsService.getUserRecomendations(
-        +page || 1,
-        +limit || 10,
-        req.user.id,
-      );
-    } else {
-      return this.recomendationsService.getUserRecomendations(
-        +page || 1,
-        +limit || 10,
-        undefined,
-        parsedViewedProducts,
-      );
-    }
+    return this.recomendationsService.getUserRecomendations(
+      +page || 1,
+      +limit || 10,
+      req.user?.id,
+    );
   }
 }
