@@ -36,7 +36,15 @@ import { DatabaseModule } from './database/database.module';
     JwtModule.registerAsync({
       global: true,
       useFactory: async () => ({
-        secret: config.jwt.secret,
+        privateKey: config.jwt.privateKey,
+        publicKey: config.jwt.publicKey,
+        signOptions: {
+          algorithm: config.jwt.algorithm,
+          expiresIn: config.jwt.expiresIn,
+        },
+        verifyOptions: {
+          algorithms: [config.jwt.algorithm],
+        },
       }),
     }),
     BullModule.forRoot({

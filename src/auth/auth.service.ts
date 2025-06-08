@@ -116,7 +116,10 @@ export class AuthService {
 
   async refresh(refreshToken: string): Promise<TokensResponse> {
     try {
-      const verified = this.jwtService.verify(refreshToken);
+      const verified = this.jwtService.verify(refreshToken, {
+        publicKey: config.jwt.publicKey,
+        algorithms: [config.jwt.algorithm],
+      });
       return this.authHelpers.generateTokens(verified.sub);
     } catch (error) {
       throw new AppException(
@@ -216,7 +219,14 @@ export class AuthService {
       );
     }
 
-    const token = this.jwtService.sign({ id: user.id }, { expiresIn: '20m' });
+    const token = this.jwtService.sign(
+      { id: user.id },
+      {
+        expiresIn: '20m',
+        privateKey: config.jwt.privateKey,
+        algorithm: config.jwt.algorithm,
+      },
+    );
 
     try {
       await this.mailer.sendMail({
@@ -248,7 +258,10 @@ export class AuthService {
   }
 
   async resetPassword(token: string, newPassword: string) {
-    const verified = this.jwtService.verify(token);
+    const verified = this.jwtService.verify(token, {
+      publicKey: config.jwt.publicKey,
+      algorithms: [config.jwt.algorithm],
+    });
 
     if (!verified) {
       throw new AppException(

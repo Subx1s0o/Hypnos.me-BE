@@ -11,8 +11,10 @@ export const config = {
     password: process.env.REDIS_PASSWORD,
   },
   jwt: {
-    secret: process.env.JWT_SECRET,
-    expiresIn: process.env.JWT_EXPIRES_IN,
+    privateKey: process.env.JWT_PRIVATE_KEY?.replace(/\\n/g, '\n') || '',
+    publicKey: process.env.JWT_PUBLIC_KEY?.replace(/\\n/g, '\n') || '',
+    expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    algorithm: 'RS256' as const,
   },
   admin: {
     login: process.env.ADMIN_LOGIN,

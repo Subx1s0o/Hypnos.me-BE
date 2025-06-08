@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'types';
 import { TokensResponse } from '../types/tokens-response.type';
 import { UserRepository } from '@/database/repositories/user.repository';
+import { config } from '@/core/config';
 
 @Injectable()
 export class AuthHelpersService {
@@ -14,11 +15,19 @@ export class AuthHelpersService {
   generateTokens(user: User): TokensResponse {
     const accessToken = this.jwtService.sign(
       { id: user.id, role: user.role },
-      { expiresIn: '30m' },
+      {
+        expiresIn: '30m',
+        privateKey: config.jwt.privateKey,
+        algorithm: config.jwt.algorithm,
+      },
     );
     const refreshToken = this.jwtService.sign(
       { id: user.id, role: user.role },
-      { expiresIn: '5d' },
+      {
+        expiresIn: '5d',
+        privateKey: config.jwt.privateKey,
+        algorithm: config.jwt.algorithm,
+      },
     );
     return {
       accessToken,
