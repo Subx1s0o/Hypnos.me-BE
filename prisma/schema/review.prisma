@@ -3,7 +3,7 @@ model review {
     name      String
     email     String
     comment   String
-    rate      Float
+    rate      Int
     productId String   @db.ObjectId
     product   products @relation(fields: [productId], references: [id])
     createdAt DateTime @default(now())

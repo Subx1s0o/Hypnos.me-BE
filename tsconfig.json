@@ -17,11 +17,9 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    
+
     "paths": {
-        "@/*": ["src/*"],
-      "@payments/*": ["src/app/microservices/payments/*"],
-      "@cloudinary/*": ["src/app/microservices/cloudinary/*"],
-    },
+      "@/*": ["src/*"]
+    }
   }
 }

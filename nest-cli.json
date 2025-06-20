@@ -1,12 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src/app/http",
+  "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "src/app/http/tsconfig.app.json",
-    "plugins": [ {
+    "plugins": [{
       "name": "@nestjs/swagger",
       "options": {
         "classValidatorShim": true,
@@ -14,47 +13,5 @@
         "dtoFileNameSuffix": [".dto.ts", ".entity.ts"]
       }
     }]
-  },
-  "projects": {
-    "http": {
-      "type": "application",
-      "root": "src/app/http",
-      "entryFile": "main",
-      "sourceRoot": "src/app/http",
-      "compilerOptions": {
-        "tsConfigPath": "src/app/http/tsconfig.app.json"
-      }
-    },
-    "payments": {
-      "type": "application",
-      "root": "src/app/microservices/payments",
-      "entryFile": "main",
-      "sourceRoot": "src/app/microservices/payments",
-      "compilerOptions": {
-        "tsConfigPath": "src/app/microservices/payments/tsconfig.app.json"
-      }
-    },
-   
-    "cloudinary": {
-      "type": "application",
-      "root": "src/app/microservices/cloudinary",
-      "entryFile": "main",
-      "sourceRoot": "src/app/microservices/cloudinary",
-      "compilerOptions": {
-        "tsConfigPath": "src/app/microservices/cloudinary/tsconfig.app.json"
-      }
-    },
-
-    "viewed-products": {
-      "type": "application",
-      "root": "src/app/microservices/viewed-products",
-      "entryFile": "main",
-      "sourceRoot": "src/app/microservices/viewed-products",
-      "compilerOptions": {
-        "tsConfigPath": "src/app/microservices/viewed-products/tsconfig.app.json"
-      }
-    }
-  },
-  "monorepo": true,
-  "root": "src/app/http"
+  }
 }
