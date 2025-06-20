@@ -53,3 +53,9 @@ type MediaDetails {
     url    String
     status MediaStatus
 }
+
+enum BonusType {
+    referral
+    purchase
+    subscription
+}

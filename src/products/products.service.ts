@@ -31,7 +31,7 @@ export class ProductsService {
     page: string;
     limit: string;
     category?: CategoriesType;
-    search: string;
+    search?: string;
   }): Promise<{ data: GoodPreview[]; totalPages: number; count: number }> {
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
@@ -52,7 +52,10 @@ export class ProductsService {
     const skip = (pageNumber - 1) * limitNumber;
 
     const totalItems = await this.productsRepository.count({
-      where: category ? { category } : {},
+      where: {
+        category: category ? category : undefined,
+        title: search ? { contains: search, mode: 'insensitive' } : undefined,
+      },
     });
 
     const totalPages = Math.ceil(totalItems / limitNumber);
