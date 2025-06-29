@@ -42,7 +42,7 @@ export class AppInterceptor implements NestInterceptor {
             errorName,
             {
               message: error.message,
-              stack: error.stack,
+
               statusCode: error.status || 500,
               context: contextInfo,
               methodArgs: methodArgs,
